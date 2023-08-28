@@ -21,7 +21,7 @@ import org.onlab.packet.MplsLabel;
 import org.onlab.packet.VlanId;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Abstraction of a single traffic treatment step.
  */
@@ -95,6 +95,11 @@ public abstract class L2ModificationInstruction implements Instruction {
     }
 
     public abstract L2SubType subtype();
+
+    @Override
+    public void write(ByteBuf c){
+
+    }
 
     @Override
     public final Type type() {

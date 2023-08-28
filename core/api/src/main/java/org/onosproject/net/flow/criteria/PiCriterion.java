@@ -30,7 +30,7 @@ import org.onosproject.net.pi.runtime.PiTernaryFieldMatch;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.StringJoiner;
-
+import io.netty.buffer.ByteBuf;
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.onlab.util.ImmutableByteSequence.copyFrom;
 
@@ -70,6 +70,12 @@ public final class PiCriterion implements Criterion {
         return Optional.ofNullable(fieldMatchMap.get(fieldId));
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.PROTOCOL_INDEPENDENT;

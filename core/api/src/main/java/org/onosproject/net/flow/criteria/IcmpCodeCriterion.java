@@ -16,7 +16,7 @@
 package org.onosproject.net.flow.criteria;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of ICMP code criterion (8 bits unsigned integer).
  */
@@ -32,7 +32,13 @@ public final class IcmpCodeCriterion implements Criterion {
     IcmpCodeCriterion(short icmpCode) {
         this.icmpCode = (short) (icmpCode & MASK);
     }
-
+    
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.ICMPV4_CODE;

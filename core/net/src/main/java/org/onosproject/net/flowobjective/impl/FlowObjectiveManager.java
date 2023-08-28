@@ -52,6 +52,7 @@ import org.onosproject.net.flowobjective.Objective.Operation;
 import org.onosproject.net.flowobjective.ObjectiveError;
 import org.onosproject.net.flowobjective.ObjectiveEvent;
 import org.onosproject.net.flowobjective.ObjectiveEvent.Type;
+import org.onosproject.net.flowobjective.impl.FlowObjectiveManager.PendingFlowObjective;
 import org.onosproject.net.group.GroupService;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
@@ -110,7 +111,7 @@ public class FlowObjectiveManager implements FlowObjectiveService {
     private static final String VERIFIER_PATTERN = "verifier-%d";
     private static final String GROUP_THREAD_NAME = "onos/objective";
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(FlowObjectiveManager.class);
 
     /** Number of worker threads. */
     private int numThreads = FOM_NUM_THREADS_DEFAULT;
@@ -342,6 +343,7 @@ public class FlowObjectiveManager implements FlowObjectiveService {
     @Override
     public void forward(DeviceId deviceId, ForwardingObjective forwardingObjective) {
         checkPermission(FLOWRULE_WRITE);
+        //log.info("Manager ready to forward message!");
         if (forwardingObjective.nextId() == null ||
                 flowObjectiveStore.getNextGroup(forwardingObjective.nextId()) != null ||
                 !queueFwdObjective(deviceId, forwardingObjective)) {

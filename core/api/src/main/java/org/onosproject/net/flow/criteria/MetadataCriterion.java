@@ -16,7 +16,7 @@
 package org.onosproject.net.flow.criteria;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of Metadata criterion.
  */
@@ -32,6 +32,12 @@ public final class MetadataCriterion implements Criterion {
         this.metadata = metadata;
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.METADATA;

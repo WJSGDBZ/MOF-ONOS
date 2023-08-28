@@ -29,6 +29,7 @@ import org.onosproject.net.flow.criteria.Criterion;
 import org.onosproject.net.flow.criteria.ExtensionSelector;
 import org.onosproject.net.flow.criteria.PiCriterion;
 
+import io.netty.buffer.ByteBuf;
 import java.util.Set;
 
 /**
@@ -55,6 +56,9 @@ public interface TrafficSelector {
     /**
      * Builder of traffic selector entities.
      */
+
+    void writeTo(ByteBuf bb);
+
     interface Builder {
 
         /**
@@ -65,6 +69,14 @@ public interface TrafficSelector {
          * @return self
          */
         Builder add(Criterion criterion);
+
+        /**
+         * Just Test
+         *
+         * @param None
+         * @return a selection builder
+         */
+        Builder matchProtocolTest();
 
         /**
          * Matches an inport.

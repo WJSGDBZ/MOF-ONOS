@@ -43,6 +43,7 @@ import org.onosproject.openflow.controller.OpenFlowEvent;
 import org.onosproject.openflow.controller.PacketListener;
 import org.onosproject.openflow.controller.RoleState;
 import org.onosproject.openflow.controller.driver.OpenFlowAgent;
+import org.onosproject.openflow.controller.mof.impl.MofFlowStatsReplyImpl;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -76,6 +77,8 @@ import org.projectfloodlight.openflow.protocol.OFTableStatsEntry;
 import org.projectfloodlight.openflow.protocol.OFTableStatsReply;
 import org.projectfloodlight.openflow.protocol.action.OFActionOutput;
 import org.projectfloodlight.openflow.protocol.instruction.OFInstruction;
+import org.projectfloodlight.openflow.protocol.XidGenerator;
+import org.projectfloodlight.openflow.protocol.XidGenerators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,6 +99,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static org.onlab.util.Tools.groupedThreads;
 import static org.onosproject.openflow.controller.impl.OsgiPropertyConstants.*;
+import org.onosproject.openflow.controller.mof.api.*;
 
 @Component(
         immediate = true,
@@ -258,6 +262,9 @@ public class OpenFlowControllerImpl implements OpenFlowController {
     protected Set<OpenFlowMessageListener> ofMessageListener = new CopyOnWriteArraySet<>();
 
     protected Multimap<Dpid, OFFlowStatsEntry> fullFlowStats =
+            ArrayListMultimap.create();
+
+    protected Multimap<Dpid, MofFlowStatsEntry> mofFullFlowStats =
             ArrayListMultimap.create();
 
     protected Multimap<Dpid, OFFlowLightweightStatsEntry> fullFlowLightweightStats =
@@ -581,11 +588,16 @@ public class OpenFlowControllerImpl implements OpenFlowController {
                 break;
 
             case FLOW:
-                Collection<OFFlowStatsEntry> flowStats = publishFlowStats(dpid, (OFFlowStatsReply) reply);
-                if (flowStats != null) {
-                    OFFlowStatsReply.Builder rep =
-                            OFFactories.getFactory(reply.getVersion()).buildFlowStatsReply();
-                    rep.setEntries(ImmutableList.copyOf(flowStats));
+                log.info("controller receive STATS FLOW REPLY Message!");
+                // Collection<OFFlowStatsEntry> flowStats = publishFlowStats(dpid, (OFFlowStatsReply) reply);
+                Collection<MofFlowStatsEntry> mflowStats = publishMofFlowStats(dpid, (MofFlowStatsReply) reply);
+                
+                if (mflowStats != null) {
+                    // OFFlowStatsReply.Builder rep =
+                    //         OFFactories.getFactory(reply.getVersion()).buildFlowStatsReply();
+                    MofFlowStatsReply.Builder rep = new MofFlowStatsReplyImpl.Builder();
+
+                    rep.setEntries(ImmutableList.copyOf(mflowStats));
                     rep.setXid(reply.getXid());
                     executorMsgs.execute(new OFMessageHandler(dpid, rep.build()));
                 }
@@ -680,7 +692,7 @@ public class OpenFlowControllerImpl implements OpenFlowController {
                     }
                     fsr.setEntries(entries);
 
-                    flowStats = publishFlowStats(dpid, fsr.build());
+                    Collection<OFFlowStatsEntry> flowStats = publishFlowStats(dpid, fsr.build());
                     if (flowStats != null) {
                         OFFlowStatsReply.Builder rep =
                                 sw.factory().buildFlowStatsReply();
@@ -703,6 +715,16 @@ public class OpenFlowControllerImpl implements OpenFlowController {
         fullFlowStats.putAll(dpid, reply.getEntries());
         if (!reply.getFlags().contains(OFStatsReplyFlags.REPLY_MORE)) {
             return fullFlowStats.removeAll(dpid);
+        }
+        return null;
+    }
+
+    private synchronized Collection<MofFlowStatsEntry> publishMofFlowStats(Dpid dpid,
+                                                                       MofFlowStatsReply reply) {
+        //TODO: Get rid of synchronized
+        mofFullFlowStats.putAll(dpid, reply.getEntries());
+        if (!reply.getFlags().contains(OFStatsReplyFlags.REPLY_MORE)) {
+            return mofFullFlowStats.removeAll(dpid);
         }
         return null;
     }
@@ -871,7 +893,9 @@ public class OpenFlowControllerImpl implements OpenFlowController {
         }
 
         private void purgeStatsSwitch(Dpid dpid) {
-            fullFlowStats.removeAll(dpid);
+            // fullFlowStats.removeAll(dpid);
+            mofFullFlowStats.removeAll(dpid);
+
             fullFlowLightweightStats.removeAll(dpid);
             fullTableStats.removeAll(dpid);
             fullGroupStats.removeAll(dpid);

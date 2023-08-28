@@ -124,7 +124,7 @@ public class FlowRuleManager
         FlowRuleProvider, FlowRuleProviderService>
         implements FlowRuleService, FlowRuleProviderRegistry {
 
-    private final Logger log = getLogger(getClass());
+    private final Logger log = getLogger(FlowRuleManager.class);
 
     private static final String DEVICE_ID_NULL = "Device ID cannot be null";
     private static final String FLOW_RULE_NULL = "FlowRule cannot be null";
@@ -316,7 +316,7 @@ public class FlowRuleManager
     @Override
     public void applyFlowRules(FlowRule... flowRules) {
         checkPermission(FLOWRULE_WRITE);
-
+        log.info("FlowRuleManager Ready to apply rule!!!");
         apply(buildFlowRuleOperations(true, null, flowRules));
     }
 

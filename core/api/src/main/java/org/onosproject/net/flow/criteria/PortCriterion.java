@@ -18,7 +18,7 @@ package org.onosproject.net.flow.criteria;
 import org.onosproject.net.PortNumber;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of input port criterion.
  */
@@ -36,6 +36,18 @@ public final class PortCriterion implements Criterion {
     PortCriterion(PortNumber port, Type type) {
         this.port = port;
         this.type = type;
+    }
+
+    @Override
+    public void write(ByteBuf bb){
+        bb.writeInt((int)port.toLong());
+    }
+    @Override
+    public void writeMask(ByteBuf bb){
+        bb.writeInt(0xFFFFFFFF);
+    }
+    public static void writeZero(ByteBuf bb){
+        bb.writeInt(0x0);
     }
 
     @Override

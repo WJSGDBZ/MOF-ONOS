@@ -24,7 +24,8 @@ import org.onosproject.net.flow.DefaultTrafficTreatment;
 import org.onosproject.net.flow.TrafficTreatment;
 import org.onosproject.net.flow.instructions.Instruction;
 import org.onosproject.net.flow.instructions.Instructions;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.stream.IntStream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -33,6 +34,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Traffic treatment codec.
  */
 public final class TrafficTreatmentCodec extends JsonCodec<TrafficTreatment> {
+    private static final Logger log = LoggerFactory.getLogger(TrafficTreatmentCodec.class);
     private static final String INSTRUCTIONS = "instructions";
     private static final String DEFERRED = "deferred";
     private static final String CLEAR_DEFERRED = "clearDeferred";
@@ -68,6 +70,8 @@ public final class TrafficTreatmentCodec extends JsonCodec<TrafficTreatment> {
         for (final Instruction instruction : treatment.deferred()) {
             jsonDeferred.add(instructionCodec.encode(instruction, context));
         }
+
+        log.debug("TrafficTreatmentCodec encoder: {}", result.toString());
 
         return result;
     }

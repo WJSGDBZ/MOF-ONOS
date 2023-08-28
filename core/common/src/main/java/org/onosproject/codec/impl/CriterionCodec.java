@@ -87,6 +87,7 @@ public final class CriterionCodec extends JsonCodec<Criterion> {
     @Override
     public ObjectNode encode(Criterion criterion, CodecContext context) {
         EncodeCriterionCodecHelper encoder = new EncodeCriterionCodecHelper(criterion, context);
+        log.debug("CriterionCodec encode was used");
         return encoder.encode();
     }
 

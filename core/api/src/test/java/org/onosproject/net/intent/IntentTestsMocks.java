@@ -52,6 +52,7 @@ import org.onosproject.net.topology.PathServiceAdapter;
 import org.onosproject.net.topology.TopologyVertex;
 import org.onosproject.store.Timestamp;
 
+import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -83,6 +84,11 @@ public class IntentTestsMocks {
         @Override
         public Criterion getCriterion(Type type) {
             return null;
+        }
+
+        @Override
+        private void writeTo(ByteBuf bb){
+            // don't move;
         }
     }
 

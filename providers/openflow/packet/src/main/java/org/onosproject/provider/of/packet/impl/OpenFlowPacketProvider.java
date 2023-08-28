@@ -129,6 +129,7 @@ public class OpenFlowPacketProvider extends AbstractProvider implements PacketPr
                 p = portDesc(((OutputInstruction) inst).port());
 
                 OFPacketOut po = packetOut(sw, packet.data().array(), p.getPortNo(), inPort);
+                //log.info("OpenflowPacketProvider: PacketOut ready to emit");
                 sw.sendMsg(po);
             }
         }
@@ -188,6 +189,7 @@ public class OpenFlowPacketProvider extends AbstractProvider implements PacketPr
             OpenFlowCorePacketContext corePktCtx =
                     new OpenFlowCorePacketContext(System.currentTimeMillis(),
                             inPkt, outPkt, pktCtx.isHandled(), pktCtx);
+            //log.info("providerService ready to process packet!!!");
             providerService.processPacket(corePktCtx);
         }
 

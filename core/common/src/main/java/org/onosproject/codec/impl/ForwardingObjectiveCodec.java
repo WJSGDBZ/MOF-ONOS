@@ -91,6 +91,8 @@ public final class ForwardingObjectiveCodec extends JsonCodec<ForwardingObjectiv
             result.set(TREATMENT, trafficTreatmentNode);
         }
 
+        log.debug("Encoder: {}", result.toString());
+
         return result;
     }
 

@@ -87,6 +87,7 @@ import org.slf4j.Logger;
 
 import java.util.Collections;
 import java.util.Dictionary;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -109,6 +110,12 @@ import static org.onosproject.provider.of.flow.impl.OsgiPropertyConstants.POLL_S
 import static org.onosproject.provider.of.flow.impl.OsgiPropertyConstants.POLL_STATS_PERIODICALLY_DEFAULT;
 import static org.onlab.util.Tools.groupedThreads;
 import static org.slf4j.LoggerFactory.getLogger;
+
+import org.onosproject.openflow.controller.mof.api.MofFlowStatsEntry;
+import org.onosproject.openflow.controller.mof.api.MofFlowStatsReply;
+
+import org.onosproject.provider.of.flow.mof.api.MofFlowMod;
+import org.onosproject.provider.of.flow.impl.MofFlowEntryBuilder;
 
 /**
  * Provider which uses an OpenFlow controller to detect network end-station
@@ -407,14 +414,22 @@ public class OpenFlowRuleProvider extends AbstractProvider
         pendingBatches.put(batch.id(), new InternalCacheEntry(batch));
         // Build a batch of flow mods - to reduce the number i/o asked to the SO
         Set<OFFlowMod> mods = Sets.newHashSet();
-        OFFlowMod mod;
+        Set<MofFlowMod> mmods = Sets.newHashSet();
+        OFFlowMod mod = null;
+        MofFlowMod mmod = null;
+        // Test
+        //List<OFMessage> modsTosend = Lists.newArrayList();
+
         for (FlowRuleBatchEntry fbe : batch.getOperations()) {
+            MofFlowModBuilder mbuilder = new MofFlowModBuilder(fbe.target(),
+                            Optional.of(batch.id()), Optional.of(driverService));
             FlowModBuilder builder =
                     FlowModBuilder.builder(fbe.target(), sw.factory(),
                             Optional.of(batch.id()), Optional.of(driverService));
             switch (fbe.operator()) {
                 case ADD:
-                    mod = builder.buildFlowAdd();
+                    //mod = builder.buildFlowAdd();
+                    mmod = mbuilder.buildMofFlowAdd();
                     break;
                 case REMOVE:
                     mod = builder.buildFlowDel();
@@ -427,10 +442,13 @@ public class OpenFlowRuleProvider extends AbstractProvider
                             fbe.operator(), fbe);
                     continue;
             }
-            mods.add(mod);
+            if(mod != null) mods.add(mod);
+            if (mmod != null) mmods.add(mmod);
         }
         // Build a list to mantain the order
-        List<OFMessage> modsTosend = Lists.newArrayList(mods);
+        List<OFMessage> modsTosend = Lists.newArrayList(mmods);
+        modsTosend.addAll(mods);
+
         OFBarrierRequest.Builder builder = sw.factory().buildBarrierRequest()
                 .setXid(batch.id());
         // Adds finally the barrier request
@@ -514,6 +532,7 @@ public class OpenFlowRuleProvider extends AbstractProvider
                     break;
                 case STATS_REPLY:
                     if (((OFStatsReply) msg).getStatsType() == OFStatsType.FLOW) {
+                        log.info("provider process MofFlowStatsReply Message!");
                         // Let's unblock first the collector
                         SwitchDataCollector collector;
                         if (adaptiveFlowSampling) {
@@ -524,7 +543,7 @@ public class OpenFlowRuleProvider extends AbstractProvider
                         if (collector != null) {
                             collector.received();
                         }
-                        pushFlowMetrics(dpid, (OFFlowStatsReply) msg, getDriver(deviceId));
+                        pushMofFlowMetrics(dpid, (MofFlowStatsReply) msg, getDriver(deviceId));
                     } else if (((OFStatsReply) msg).getStatsType() == OFStatsType.TABLE) {
                         pushTableStatistics(dpid, (OFTableStatsReply) msg);
                     } else if (((OFStatsReply) msg).getStatsType() == OFStatsType.FLOW_LIGHTWEIGHT) {
@@ -741,6 +760,52 @@ public class OpenFlowRuleProvider extends AbstractProvider
                 Set<FlowEntry> flowEntries = replies.getEntries().stream()
                         .map(entry -> new FlowEntryBuilder(did, entry, handler).build())
                         .collect(Collectors.toSet());
+
+                // call existing entire flow stats update with flowMissing synchronization
+                providerService.pushFlowMetrics(did, flowEntries);
+            }
+        }
+
+
+        private void pushMofFlowMetrics(Dpid dpid, MofFlowStatsReply replies, DriverHandler handler) {
+
+            DeviceId did = DeviceId.deviceId(Dpid.uri(dpid));
+            NewAdaptiveFlowStatsCollector afsc = afsCollectors.get(dpid);
+
+
+            if (adaptiveFlowSampling && afsc != null)  {
+                Set<FlowEntry> flowEntries = new HashSet<>();
+                List<MofFlowStatsEntry> Entries = replies.getEntries();
+                for(MofFlowStatsEntry entry : Entries){
+                    flowEntries.add(
+                        new MofFlowEntryBuilder(did, entry, handler)
+                        .withSetAfsc(afsc)
+                        .build());
+                }
+                // Check that OFFlowStatsReply Xid is same with the one of OFFlowStatsRequest?
+                if (afsc.getFlowMissingXid() != NewAdaptiveFlowStatsCollector.NO_FLOW_MISSING_XID) {
+                        log.debug("OpenFlowRuleProvider:pushFlowMetrics, flowMissingXid={}, "
+                                          + "OFFlowStatsReply Xid={}, for {}",
+                                  afsc.getFlowMissingXid(), replies.getXid(), dpid);
+                    if (afsc.getFlowMissingXid() == replies.getXid()) {
+                        // call entire flow stats update with flowMissing synchronization.
+                        // used existing pushFlowMetrics
+                        providerService.pushFlowMetrics(did, flowEntries);
+                    }
+                    // reset flowMissingXid to NO_FLOW_MISSING_XID
+                    afsc.setFlowMissingXid(NewAdaptiveFlowStatsCollector.NO_FLOW_MISSING_XID);
+                } else {
+                    // call individual flow stats update
+                    providerService.pushFlowMetricsWithoutFlowMissing(did, flowEntries);
+                }
+            } else {
+                Set<FlowEntry> flowEntries = new HashSet<>();
+                List<MofFlowStatsEntry> Entries = replies.getEntries();
+                for(MofFlowStatsEntry entry : Entries){
+                    flowEntries.add(
+                        new MofFlowEntryBuilder(did, entry, handler)
+                        .build());
+                }
 
                 // call existing entire flow stats update with flowMissing synchronization
                 providerService.pushFlowMetrics(did, flowEntries);

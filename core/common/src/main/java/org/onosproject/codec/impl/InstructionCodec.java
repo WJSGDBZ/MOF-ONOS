@@ -80,7 +80,7 @@ public final class InstructionCodec extends JsonCodec<Instruction> {
     @Override
     public ObjectNode encode(Instruction instruction, CodecContext context) {
         checkNotNull(instruction, "Instruction cannot be null");
-
+        log.debug("InstructionCodec");
         return new EncodeInstructionCodecHelper(instruction, context).encode();
     }
 

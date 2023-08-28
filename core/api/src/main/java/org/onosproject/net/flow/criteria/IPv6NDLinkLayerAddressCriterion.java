@@ -18,7 +18,7 @@ package org.onosproject.net.flow.criteria;
 import org.onlab.packet.MacAddress;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of IPv6 Neighbor Discovery link-layer address criterion.
  */
@@ -38,6 +38,12 @@ public final class IPv6NDLinkLayerAddressCriterion implements Criterion {
         this.type = type;
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return this.type;

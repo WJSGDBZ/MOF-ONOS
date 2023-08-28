@@ -18,7 +18,7 @@ package org.onosproject.net.flow.criteria;
 import org.onlab.packet.EthType;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of Ethernet type criterion (16 bits unsigned integer).
  */
@@ -44,6 +44,20 @@ public final class EthTypeCriterion implements Criterion {
      */
     EthTypeCriterion(EthType ethType) {
         this.ethType = ethType;
+    }
+
+    @Override
+    public void write(ByteBuf bb){
+        bb.writeShort(ethType.toShort());
+    }
+
+    @Override
+    public void writeMask(ByteBuf bb){
+        bb.writeShort(0xFFFF);
+    }
+
+    public static void writeZero(ByteBuf bb){
+        bb.writeShort(0x0);
     }
 
     @Override

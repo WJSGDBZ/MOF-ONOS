@@ -16,7 +16,7 @@
 package org.onosproject.net.flow.criteria;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of IP ECN (Explicit Congestion Notification) criterion
  * (2 bits).
@@ -34,6 +34,12 @@ public final class IPEcnCriterion implements Criterion {
         this.ipEcn = (byte) (ipEcn & MASK);
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.IP_ECN;

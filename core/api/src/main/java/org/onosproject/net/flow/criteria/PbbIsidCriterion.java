@@ -16,7 +16,7 @@
 package org.onosproject.net.flow.criteria;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of PBB I-SID criterion (24 bits unsigned integer).
  */
@@ -33,6 +33,12 @@ public final class PbbIsidCriterion implements Criterion {
         this.pbbIsid = pbbIsid & MASK;
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Criterion.Type type() {
         return Criterion.Type.PBB_ISID;

@@ -16,7 +16,7 @@
 package org.onosproject.net.flow.criteria;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of MPLS TC criterion (3 bits).
  */
@@ -33,6 +33,12 @@ public final class MplsTcCriterion implements Criterion {
         this.mplsTc = (byte) (mplsTc & MASK);
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.MPLS_TC;

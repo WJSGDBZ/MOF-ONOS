@@ -14,6 +14,64 @@
  * limitations under the License.
  */
 
+// package org.onosproject.incubator.net.virtual.impl;
+
+// import com.google.common.cache.Cache;
+// import com.google.common.cache.CacheBuilder;
+// import com.google.common.cache.RemovalCause;
+// import com.google.common.cache.RemovalNotification;
+// import com.google.common.collect.Maps;
+// import com.google.common.collect.Sets;
+// import com.google.common.collect.ImmutableMap;
+// import org.apache.commons.lang3.tuple.Pair;
+// import org.onlab.osgi.ServiceDirectory;
+// import org.onlab.util.KryoNamespace;
+// import org.onosproject.core.ApplicationId;
+// import org.onosproject.incubator.net.virtual.AbstractVnetService;
+// import org.onosproject.incubator.net.virtual.NetworkId;
+// import org.onosproject.incubator.net.virtual.VirtualNetworkFlowObjectiveStore;
+// import org.onosproject.incubator.net.virtual.VirtualNetworkService;
+// import org.onosproject.net.DeviceId;
+// import org.onosproject.net.behaviour.NextGroup;
+// import org.onosproject.net.behaviour.Pipeliner;
+// import org.onosproject.net.behaviour.PipelinerContext;
+// import org.onosproject.net.device.DeviceService;
+// import org.onosproject.net.driver.AbstractHandlerBehaviour;
+// import org.onosproject.net.flow.DefaultFlowRule;
+// import org.onosproject.net.flow.DefaultTrafficSelector;
+// import org.onosproject.net.flow.DefaultTrafficTreatment;
+// import org.onosproject.net.flow.FlowRule;
+// import org.onosproject.net.flow.FlowRuleOperations;
+// import org.onosproject.net.flow.FlowRuleOperationsContext;
+// import org.onosproject.net.flow.FlowRuleService;
+// import org.onosproject.net.flow.TrafficSelector;
+// import org.onosproject.net.flow.TrafficTreatment;
+// import org.onosproject.net.flowobjective.FilteringObjective;
+// import org.onosproject.net.flowobjective.FlowObjectiveService;
+// import org.onosproject.net.flowobjective.FlowObjectiveStore;
+// import org.onosproject.net.flowobjective.FlowObjectiveStoreDelegate;
+// import org.onosproject.net.flowobjective.ForwardingObjective;
+// import org.onosproject.net.flowobjective.NextObjective;
+// import org.onosproject.net.flowobjective.Objective;
+// import org.onosproject.net.flowobjective.ObjectiveError;
+// import org.onosproject.net.flowobjective.ObjectiveEvent;
+// import org.onosproject.net.flowobjective.impl.FlowObjectiveManager.PendingFlowObjective;
+// import org.onosproject.net.group.DefaultGroupKey;
+// import org.onosproject.net.group.GroupKey;
+// import org.slf4j.Logger;
+
+// import java.util.ArrayList;
+// import java.util.List;
+// import java.util.Map;
+// import java.util.Objects;
+// import java.util.Set;
+// import java.util.concurrent.ExecutorService;
+// import java.util.concurrent.TimeUnit;
+
+// import static com.google.common.base.Preconditions.checkNotNull;
+// import static org.onlab.util.BoundedThreadPool.newFixedThreadPool;
+// import static org.onlab.util.Tools.groupedThreads;
+// import static org.slf4j.LoggerFactory.getLogger;
 package org.onosproject.incubator.net.virtual.impl;
 
 import com.google.common.cache.Cache;
@@ -71,7 +129,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.onlab.util.BoundedThreadPool.newFixedThreadPool;
 import static org.onlab.util.Tools.groupedThreads;
 import static org.slf4j.LoggerFactory.getLogger;
-
 /**
  * Provides implementation of the flow objective programming service for virtual networks.
  */
@@ -85,7 +142,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class VirtualNetworkFlowObjectiveManager extends AbstractVnetService
         implements FlowObjectiveService {
-
     public static final int INSTALL_RETRY_ATTEMPTS = 5;
     public static final long INSTALL_RETRY_INTERVAL = 1000; // ms
 
@@ -113,7 +169,7 @@ public class VirtualNetworkFlowObjectiveManager extends AbstractVnetService
     private final Map<Integer, Set<PendingFlowObjective>> pendingForwards =
             Maps.newConcurrentMap();
     private final Map<Integer, Set<PendingFlowObjective>> pendingNexts =
-            Maps.newConcurrentMap();
+    Maps.newConcurrentMap();
 
     // local store to track which nextObjectives were sent to which device
     // for debugging purposes
@@ -144,6 +200,7 @@ public class VirtualNetworkFlowObjectiveManager extends AbstractVnetService
 
     @Override
     public void forward(DeviceId deviceId, ForwardingObjective forwardingObjective) {
+        log.info("VirtualNetworkManager ready to forward message!");
         if (forwardingObjective.nextId() == null ||
                 forwardingObjective.op() == Objective.Operation.REMOVE ||
                 flowObjectiveStore.getNextGroup(forwardingObjective.nextId()) != null ||

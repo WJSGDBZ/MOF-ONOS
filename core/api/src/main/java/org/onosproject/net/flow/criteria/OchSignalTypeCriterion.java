@@ -18,7 +18,7 @@ package org.onosproject.net.flow.criteria;
 import org.onosproject.net.OchSignalType;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -37,6 +37,12 @@ public class OchSignalTypeCriterion implements Criterion {
         this.signalType = checkNotNull(signalType);
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.OCH_SIGTYPE;

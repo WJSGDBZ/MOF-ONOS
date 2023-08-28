@@ -16,7 +16,7 @@
 package org.onosproject.net.flow.criteria;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of Internet Protocol Number criterion (8 bits unsigned)
  * integer.
@@ -35,6 +35,12 @@ public final class IPProtocolCriterion implements Criterion {
         this.proto = (short) (protocol & MASK);
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.IP_PROTO;

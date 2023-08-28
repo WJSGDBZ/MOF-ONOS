@@ -62,6 +62,7 @@ import org.onosproject.net.flow.instructions.Instructions;
 import org.onosproject.net.provider.ProviderId;
 import org.onosproject.store.service.TestStorageService;
 
+import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -382,6 +383,11 @@ public class VirtualNetworkFlowRuleManagerTest extends VirtualNetworkTestUtil {
 
         //for controlling hashcode uniqueness;
         private final int testval;
+
+        @Override
+        private void writeTo(ByteBuf bb){
+            // don't move;
+        }
 
         public TestSelector(int val) {
             testval = val;

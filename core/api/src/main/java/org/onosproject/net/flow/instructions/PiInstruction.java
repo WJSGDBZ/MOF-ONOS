@@ -22,7 +22,7 @@ import com.google.common.base.Objects;
 import org.onosproject.net.pi.runtime.PiActionProfileGroupId;
 import org.onosproject.net.pi.runtime.PiActionProfileMemberId;
 import org.onosproject.net.pi.runtime.PiTableAction;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Representation of a protocol-independent instruction.
  */
@@ -47,6 +47,11 @@ public final class PiInstruction implements Instruction {
      */
     public PiTableAction action() {
         return tableAction;
+    }
+
+    @Override
+    public void write(ByteBuf c){
+
     }
 
     @Override

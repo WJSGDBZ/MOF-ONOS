@@ -24,14 +24,16 @@ import org.onosproject.net.flow.FlowEntry;
 import org.onosproject.net.flow.FlowRule;
 import org.onosproject.net.flow.TrafficSelector;
 import org.onosproject.net.flow.TrafficTreatment;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Flow entry JSON codec.
  */
 public final class FlowEntryCodec extends JsonCodec<FlowEntry> {
-
+    private static final Logger log =
+            LoggerFactory.getLogger(FlowEntryCodec.class);
     public static final String GROUP_ID = "groupId";
     public static final String STATE = "state";
     public static final String LIFE = "life";
@@ -69,6 +71,8 @@ public final class FlowEntryCodec extends JsonCodec<FlowEntry> {
                     context.codec(TrafficSelector.class);
             result.set(SELECTOR, selectorCodec.encode(flowEntry.selector(), context));
         }
+
+        log.debug("FlowEntryCodec encode: {}", result.toString());
 
         return result;
     }

@@ -18,7 +18,7 @@ package org.onosproject.net.flow.criteria;
 import org.onlab.packet.TpPort;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of TCP port criterion (16 bits unsigned integer).
  */
@@ -52,6 +52,12 @@ public final class TcpPortCriterion implements Criterion {
         this(tcpPort, null, type);
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return this.type;

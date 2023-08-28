@@ -16,7 +16,7 @@
 package org.onosproject.net.flow.criteria;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of IPv6 Flow Label (RFC 6437) criterion (20 bits unsigned
  * integer).
@@ -34,6 +34,12 @@ public final class IPv6FlowLabelCriterion implements Criterion {
         this.flowLabel = flowLabel & MASK;
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.IPV6_FLABEL;

@@ -31,11 +31,15 @@ import org.onosproject.net.pi.model.PiTableId;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.onlab.util.Tools.nullIsIllegal;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * Flow rule JSON codec.
  */
 public final class FlowRuleCodec extends JsonCodec<FlowRule> {
+    private static final Logger log =
+            LoggerFactory.getLogger(FlowRuleCodec.class);
+
 
     private static final String PRIORITY = "priority";
     private static final String TIMEOUT = "timeout";
@@ -80,6 +84,8 @@ public final class FlowRuleCodec extends JsonCodec<FlowRule> {
                     context.codec(TrafficSelector.class);
             result.set(SELECTOR, selectorCodec.encode(flowRule.selector(), context));
         }
+
+        log.debug("FlowRuleCodec: {}", result.toString());
 
         return result;
     }

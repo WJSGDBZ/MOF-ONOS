@@ -18,12 +18,15 @@ package org.onosproject.net.flowobjective;
 import com.google.common.annotations.Beta;
 
 import org.onosproject.core.ApplicationId;
+import org.onosproject.net.flow.DefaultTrafficTreatment;
 import org.onosproject.net.flow.TrafficSelector;
 import org.onosproject.net.flow.TrafficTreatment;
 
+import java.rmi.server.Operation;
 import java.util.Objects;
 import java.util.Optional;
-
+import org.slf4j.Logger;
+import static org.slf4j.LoggerFactory.getLogger;
 import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -33,7 +36,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @Beta
 public final class DefaultForwardingObjective implements ForwardingObjective {
-
+    private final Logger log = getLogger(DefaultForwardingObjective.class);
     private final TrafficSelector selector;
     private final Flag flag;
     private final boolean permanent;
@@ -49,6 +52,7 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
     private final int id;
 
     private DefaultForwardingObjective(Builder builder) {
+        //log.info("DefaultForwardingObjective start to build");
         this.selector = builder.selector;
         this.flag = builder.flag;
         this.permanent = builder.permanent;

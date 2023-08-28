@@ -37,17 +37,24 @@ import org.onosproject.net.flow.instructions.Instruction;
 import org.onosproject.net.flow.instructions.Instructions;
 import org.onosproject.net.meter.MeterId;
 
+import org.onosproject.net.PortNumber;
+import io.netty.buffer.ByteBuf;
+import com.google.common.hash.PrimitiveSink;
+
+import org.onosproject.net.flow.instructions.Instruction;
+import org.onosproject.net.flow.instructions.Instructions.*;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import org.onosproject.net.pi.runtime.PiTableAction;
-
+import org.slf4j.Logger;
+import static org.slf4j.LoggerFactory.getLogger;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Default traffic treatment implementation.
  */
 public final class DefaultTrafficTreatment implements TrafficTreatment {
-
+    private final Logger log = getLogger(DefaultTrafficTreatment.class);
     private final List<Instruction> immediate;
     private final List<Instruction> deferred;
     private final List<Instruction> all;
@@ -57,8 +64,8 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
 
     private final boolean hasClear;
 
-    private static final DefaultTrafficTreatment EMPTY
-            = new DefaultTrafficTreatment(ImmutableList.of(Instructions.createNoAction()));
+    private static final DefaultTrafficTreatment EMPTY = new DefaultTrafficTreatment(
+            ImmutableList.of(Instructions.createNoAction()));
     private final Set<Instructions.MeterInstruction> meter;
 
     /**
@@ -67,6 +74,7 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
      * @param immediate immediate instructions
      */
     private DefaultTrafficTreatment(List<Instruction> immediate) {
+        // log.info("DefaultTrafficTreatment start to build");
         this.immediate = ImmutableList.copyOf(checkNotNull(immediate));
         this.deferred = ImmutableList.of();
         this.all = this.immediate;
@@ -80,19 +88,18 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
     /**
      * Creates a new traffic treatment from the specified list of instructions.
      *
-     * @param deferred deferred instructions
+     * @param deferred  deferred instructions
      * @param immediate immediate instructions
-     * @param table table transition instruction
-     * @param clear instruction to clear the deferred actions list
+     * @param table     table transition instruction
+     * @param clear     instruction to clear the deferred actions list
      */
     private DefaultTrafficTreatment(List<Instruction> deferred,
-                                    List<Instruction> immediate,
-                                    Instructions.TableTypeTransition table,
-                                    boolean clear,
-                                    Instructions.MetadataInstruction meta,
-                                    Set<Instructions.MeterInstruction> meters,
-                                    Instructions.StatTriggerInstruction statTrigger
-                                    ) {
+            List<Instruction> immediate,
+            Instructions.TableTypeTransition table,
+            boolean clear,
+            Instructions.MetadataInstruction meta,
+            Set<Instructions.MeterInstruction> meters,
+            Instructions.StatTriggerInstruction statTrigger) {
         this.immediate = ImmutableList.copyOf(checkNotNull(immediate));
         this.deferred = ImmutableList.copyOf(checkNotNull(deferred));
         this.all = new ImmutableList.Builder<Instruction>()
@@ -104,6 +111,23 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
         this.hasClear = clear;
         this.meter = ImmutableSet.copyOf(meters);
         this.statTrigger = statTrigger;
+    }
+
+    public void writeTo(ByteBuf bb) {
+        log.info("DefaultTrafficTreatment ready to write!!!");
+        // mof
+        // action List<Instruction> all;
+        for (Instruction ins : all) {
+            ins.write(bb);
+        }
+    }
+
+    public static DefaultTrafficTreatment readFrom(ByteBuf bb) {
+        return null;
+    }
+
+    public static void putTo(PrimitiveSink sink){
+
     }
 
     @Override
@@ -183,7 +207,7 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
         return new Builder(treatment);
     }
 
-    //FIXME: Order of instructions may affect hashcode
+    // FIXME: Order of instructions may affect hashcode
     @Override
     public int hashCode() {
         return Objects.hash(immediate, deferred, table, meta);
@@ -290,7 +314,7 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown instruction type: " +
-                                                               instruction.type());
+                            instruction.type());
             }
 
             return this;
@@ -399,7 +423,6 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
         public Builder decMplsTtl() {
             return add(Instructions.decMplsTtl());
         }
-
 
         @Override
         public Builder group(GroupId groupId) {
@@ -532,13 +555,13 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
 
         @Override
         public TrafficTreatment.Builder extension(ExtensionTreatment extension,
-                                                  DeviceId deviceId) {
+                DeviceId deviceId) {
             return add(Instructions.extension(extension, deviceId));
         }
 
         @Override
         public TrafficTreatment.Builder statTrigger(Map<StatTriggerField, Long> statTriggerFieldMap,
-                                                    StatTriggerFlag statTriggerFlag) {
+                StatTriggerFlag statTriggerFlag) {
             return add(Instructions.statTrigger(statTriggerFieldMap, statTriggerFlag));
         }
 

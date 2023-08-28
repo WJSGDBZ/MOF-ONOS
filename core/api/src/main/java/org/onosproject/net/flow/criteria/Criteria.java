@@ -31,6 +31,8 @@ import org.onosproject.net.OduSignalId;
 import org.onosproject.net.OduSignalType;
 import org.onosproject.net.PortNumber;
 import org.onosproject.net.flow.criteria.Criterion.Type;
+import io.netty.buffer.ByteBuf;
+import org.onosproject.net.flow.criteria.TestCriterion;
 
 /**
  * Factory class to create various traffic selection criteria.
@@ -42,6 +44,17 @@ public final class Criteria {
     // Ban construction
     private Criteria() {
     }
+
+    /**
+     * Test
+     *
+     * @param None
+     * @return match criterion
+     */
+    public static Criterion matchProtocolTest() {
+        return new TestCriterion(-1, Type.Test);
+    }
+    
 
     /**
      * Creates a match on IN_PORT field using the specified value.
@@ -648,6 +661,10 @@ public final class Criteria {
      */
     private static class DummyCriterion implements Criterion {
 
+        @Override
+        public void write(ByteBuf bb){}
+        @Override
+        public void writeMask(ByteBuf bb){}
         @Override
         public Type type() {
             return Type.DUMMY;

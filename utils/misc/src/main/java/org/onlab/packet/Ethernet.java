@@ -42,6 +42,9 @@ public class Ethernet extends BasePacket {
     private static final String HEX_PROTO = "0x%s";
 
     public static final short TYPE_ARP = EthType.EtherType.ARP.ethType().toShort();
+
+    public static final short TYPE_MOF = EthType.EtherType.MOF.ethType().toShort();
+    
     public static final short TYPE_RARP = EthType.EtherType.RARP.ethType().toShort();
     public static final short TYPE_IPV4 = EthType.EtherType.IPV4.ethType().toShort();
     public static final short TYPE_IPV6 = EthType.EtherType.IPV6.ethType().toShort();

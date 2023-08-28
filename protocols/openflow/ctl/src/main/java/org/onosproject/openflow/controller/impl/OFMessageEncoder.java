@@ -57,6 +57,8 @@ public final class OFMessageEncoder extends ChannelOutboundHandlerAdapter {
     public void write(ChannelHandlerContext ctx,
                       Object msg,
                       ChannelPromise promise) {
+        //success!
+        //log.info("OFMessageEncoder ready to write!!!");
 
         ByteBuf buf = null;
         try {

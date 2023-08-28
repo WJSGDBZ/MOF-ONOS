@@ -16,7 +16,7 @@
 package org.onosproject.net.flow.criteria;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of ICMPv6 type criterion (8 bits unsigned integer).
  */
@@ -33,6 +33,12 @@ public final class Icmpv6TypeCriterion implements Criterion {
         this.icmpv6Type = (short) (icmpv6Type & MASK);
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.ICMPV6_TYPE;

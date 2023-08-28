@@ -19,6 +19,7 @@ import java.util.stream.IntStream;
 
 import org.onosproject.codec.CodecContext;
 import org.onosproject.codec.JsonCodec;
+//import org.onosproject.config.ResourceIdParser;
 import org.onosproject.net.flow.DefaultTrafficSelector;
 import org.onosproject.net.flow.TrafficSelector;
 import org.onosproject.net.flow.criteria.Criterion;
@@ -28,12 +29,15 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * Traffic selector codec.
  */
 public final class TrafficSelectorCodec extends JsonCodec<TrafficSelector> {
     private static final String CRITERIA = "criteria";
+
+    private static final Logger log = LoggerFactory.getLogger(TrafficSelectorCodec.class);
 
     @Override
     public ObjectNode encode(TrafficSelector selector, CodecContext context) {
@@ -49,6 +53,8 @@ public final class TrafficSelectorCodec extends JsonCodec<TrafficSelector> {
                 jsonCriteria.add(criterionCodec.encode(criterion, context));
             }
         }
+
+        log.debug("TrafficSelectorCodec: {}", result.toString());
 
         return result;
     }

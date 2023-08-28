@@ -15,6 +15,7 @@
  */
 package org.onosproject.net.flow.criteria;
 
+import io.netty.buffer.ByteBuf;
 
 /**
  * Representation of a single header field selection.
@@ -23,6 +24,9 @@ public interface Criterion {
 
     String SEPARATOR = ":";
 
+    void write(ByteBuf bb);
+
+    void writeMask(ByteBuf bb);
     /**
      * Types of fields to which the selection criterion may apply.
      */
@@ -224,7 +228,10 @@ public interface Criterion {
         EXTENSION,
 
         /** An empty criterion. */
-        DUMMY
+        DUMMY,
+
+        /** An Test criterion. */
+        Test
     }
 
     /**

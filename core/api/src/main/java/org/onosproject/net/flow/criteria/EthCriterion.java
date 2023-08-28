@@ -18,7 +18,7 @@ package org.onosproject.net.flow.criteria;
 import org.onlab.packet.MacAddress;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of MAC address criterion.
  */
@@ -50,6 +50,27 @@ public final class EthCriterion implements Criterion {
      */
     EthCriterion(MacAddress mac, Type type) {
         this(mac, null, type);
+    }
+
+    @Override
+    public void write(ByteBuf bb){
+        if(this.type == Type.ETH_DST || this.type == Type.ETH_SRC){
+            bb.writeInt((int) (mac.toLong() >> 16));
+            bb.writeShort((int) mac.toLong() & 0xFFFF);
+        }
+    }
+
+    @Override
+    public void writeMask(ByteBuf bb){
+        if(this.type == Type.ETH_DST || this.type == Type.ETH_SRC){
+            bb.writeInt(0xFFFFFFFF);
+            bb.writeShort(0xFFFF);
+        }
+    }
+
+    public static void writeZero(ByteBuf bb){
+        bb.writeInt(0x0);
+        bb.writeShort(0x0);
     }
 
     @Override

@@ -18,7 +18,7 @@ package org.onosproject.net.flow.criteria;
 import org.onlab.packet.VlanId;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
@@ -52,6 +52,12 @@ public final class VlanIdCriterion implements Criterion {
         this.type = type;
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return type;

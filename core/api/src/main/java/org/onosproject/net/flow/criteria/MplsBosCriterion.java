@@ -16,7 +16,7 @@
 package org.onosproject.net.flow.criteria;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of MPLS BOS criterion (1 bit).
  */
@@ -27,6 +27,12 @@ public class MplsBosCriterion implements Criterion {
         this.mplsBos = mplsBos;
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.MPLS_BOS;

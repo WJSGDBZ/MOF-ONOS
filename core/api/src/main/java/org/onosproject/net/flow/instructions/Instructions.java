@@ -45,6 +45,7 @@ import org.onosproject.net.flow.instructions.L4ModificationInstruction.ModTransp
 import org.onosproject.net.meter.MeterId;
 import org.onosproject.net.pi.runtime.PiTableAction;
 
+import io.netty.buffer.ByteBuf;
 import java.util.Map;
 import java.util.Objects;
 
@@ -564,6 +565,11 @@ public final class Instructions {
         private NoActionInstruction() {}
 
         @Override
+        public void write(ByteBuf c){
+
+        }
+
+        @Override
         public Type type() {
             return Type.NOACTION;
         }
@@ -598,6 +604,22 @@ public final class Instructions {
 
         private OutputInstruction(PortNumber port) {
             this.port = port;
+        }
+
+        @Override
+        public void write(ByteBuf bb){
+            // fixed value property type = 0
+            bb.writeByte(0x0);
+            // raw
+            bb.writeByte(0xff);
+            // len
+            bb.writeShort(0x10);
+            // port
+            bb.writeInt((int)this.port.toLong());
+            // maxlen
+            bb.writeShort(0x0);
+            //pad
+            bb.writeZero(6);
         }
 
         public PortNumber port() {
@@ -642,7 +664,10 @@ public final class Instructions {
         private GroupInstruction(GroupId groupId) {
             this.groupId = groupId;
         }
+        @Override
+        public void write(ByteBuf c){
 
+        }
         public GroupId groupId() {
             return groupId;
         }
@@ -691,6 +716,11 @@ public final class Instructions {
         private SetQueueInstruction(long queueId, PortNumber port) {
             this.queueId = queueId;
             this.port = port;
+        }
+
+        @Override
+        public void write(ByteBuf c){
+
         }
 
         public long queueId() {
@@ -751,6 +781,11 @@ public final class Instructions {
         }
 
         @Override
+        public void write(ByteBuf c){
+
+        }
+
+        @Override
         public Type type() {
             return Type.METER;
         }
@@ -787,6 +822,11 @@ public final class Instructions {
 
         TableTypeTransition(Integer tableId) {
             this.tableId = tableId;
+        }
+
+        @Override
+        public void write(ByteBuf c){
+
         }
 
         @Override
@@ -832,6 +872,11 @@ public final class Instructions {
         MetadataInstruction(long metadata, long metadataMask) {
             this.metadata = metadata;
             this.metadataMask = metadataMask;
+        }
+
+        @Override
+        public void write(ByteBuf c){
+
         }
 
         @Override
@@ -890,6 +935,11 @@ public final class Instructions {
             return extensionTreatment;
         }
 
+        @Override
+        public void write(ByteBuf c){
+
+        }
+
         public DeviceId deviceId() {
             return deviceId;
         }
@@ -933,6 +983,11 @@ public final class Instructions {
                                       StatTriggerFlag flag) {
             this.statTriggerFieldMap = ImmutableMap.copyOf(statTriggerMap);
             this.statTriggerFlag = flag;
+        }
+
+        @Override
+        public void write(ByteBuf c){
+
         }
 
         public Map<StatTriggerField, Long> getStatTriggerFieldMap() {
@@ -995,6 +1050,11 @@ public final class Instructions {
 
         public int maxLen() {
             return maxLen;
+        }
+
+        @Override
+        public void write(ByteBuf c){
+
         }
 
         @Override

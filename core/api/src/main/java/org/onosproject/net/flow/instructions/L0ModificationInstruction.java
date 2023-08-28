@@ -18,6 +18,7 @@ package org.onosproject.net.flow.instructions;
 import org.onosproject.net.OchSignal;
 
 import java.util.Objects;
+import io.netty.buffer.ByteBuf;
 
 public abstract class L0ModificationInstruction implements Instruction {
 
@@ -34,6 +35,11 @@ public abstract class L0ModificationInstruction implements Instruction {
     }
 
     public abstract L0SubType subtype();
+
+    @Override
+    public void write(ByteBuf c){
+
+    }
 
     @Override
     public final Type type() {

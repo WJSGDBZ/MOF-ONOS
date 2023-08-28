@@ -18,7 +18,7 @@ package org.onosproject.net.flow.criteria;
 import org.onlab.packet.MplsLabel;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of MPLS tag criterion (20 bits).
  */
@@ -30,6 +30,12 @@ public final class MplsCriterion implements Criterion {
         this.mplsLabel = mplsLabel;
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.MPLS_LABEL;

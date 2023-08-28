@@ -620,7 +620,7 @@ public class ReactiveForwarding {
         // packet out first.
         //
         Ethernet inPkt = context.inPacket().parsed();
-        TrafficSelector.Builder selectorBuilder = DefaultTrafficSelector.builder();
+        
 
         // If PacketOutOnly or ARP packet than forward directly to output port
         if (packetOutOnly || inPkt.getEtherType() == Ethernet.TYPE_ARP) {
@@ -628,118 +628,20 @@ public class ReactiveForwarding {
             return;
         }
 
-        //
-        // If matchDstMacOnly
-        //    Create flows matching dstMac only
-        // Else
-        //    Create flows with default matching and include configured fields
-        //
-        if (matchDstMacOnly) {
-            selectorBuilder.matchEthDst(inPkt.getDestinationMAC());
-        } else {
-            selectorBuilder.matchInPort(context.inPacket().receivedFrom().port())
-                    .matchEthSrc(inPkt.getSourceMAC())
-                    .matchEthDst(inPkt.getDestinationMAC());
+        TrafficSelector.Builder selectorBuilder = DefaultTrafficSelector.builder();
+        selectorBuilder.matchInPort(context.inPacket().receivedFrom().port())
+                        .matchEthSrc(inPkt.getSourceMAC())
+                        .matchEthDst(inPkt.getDestinationMAC())
+                        .matchEthType(Ethernet.TYPE_MOF);
 
-            // If configured Match Vlan ID
-            if (matchVlanId && inPkt.getVlanID() != Ethernet.VLAN_UNTAGGED) {
-                selectorBuilder.matchVlanId(VlanId.vlanId(inPkt.getVlanID()));
-            }
-
-            //
-            // If configured and EtherType is IPv4 - Match IPv4 and
-            // TCP/UDP/ICMP fields
-            //
-            if (matchIpv4Address && inPkt.getEtherType() == Ethernet.TYPE_IPV4) {
-                IPv4 ipv4Packet = (IPv4) inPkt.getPayload();
-                byte ipv4Protocol = ipv4Packet.getProtocol();
-                Ip4Prefix matchIp4SrcPrefix =
-                        Ip4Prefix.valueOf(ipv4Packet.getSourceAddress(),
-                                          Ip4Prefix.MAX_MASK_LENGTH);
-                Ip4Prefix matchIp4DstPrefix =
-                        Ip4Prefix.valueOf(ipv4Packet.getDestinationAddress(),
-                                          Ip4Prefix.MAX_MASK_LENGTH);
-                selectorBuilder.matchEthType(Ethernet.TYPE_IPV4)
-                        .matchIPSrc(matchIp4SrcPrefix)
-                        .matchIPDst(matchIp4DstPrefix);
-
-                if (matchIpv4Dscp) {
-                    byte dscp = ipv4Packet.getDscp();
-                    byte ecn = ipv4Packet.getEcn();
-                    selectorBuilder.matchIPDscp(dscp).matchIPEcn(ecn);
-                }
-
-                if (matchTcpUdpPorts && ipv4Protocol == IPv4.PROTOCOL_TCP) {
-                    TCP tcpPacket = (TCP) ipv4Packet.getPayload();
-                    selectorBuilder.matchIPProtocol(ipv4Protocol)
-                            .matchTcpSrc(TpPort.tpPort(tcpPacket.getSourcePort()))
-                            .matchTcpDst(TpPort.tpPort(tcpPacket.getDestinationPort()));
-                }
-                if (matchTcpUdpPorts && ipv4Protocol == IPv4.PROTOCOL_UDP) {
-                    UDP udpPacket = (UDP) ipv4Packet.getPayload();
-                    selectorBuilder.matchIPProtocol(ipv4Protocol)
-                            .matchUdpSrc(TpPort.tpPort(udpPacket.getSourcePort()))
-                            .matchUdpDst(TpPort.tpPort(udpPacket.getDestinationPort()));
-                }
-                if (matchIcmpFields && ipv4Protocol == IPv4.PROTOCOL_ICMP) {
-                    ICMP icmpPacket = (ICMP) ipv4Packet.getPayload();
-                    selectorBuilder.matchIPProtocol(ipv4Protocol)
-                            .matchIcmpType(icmpPacket.getIcmpType())
-                            .matchIcmpCode(icmpPacket.getIcmpCode());
-                }
-            }
-
-            //
-            // If configured and EtherType is IPv6 - Match IPv6 and
-            // TCP/UDP/ICMP fields
-            //
-            if (matchIpv6Address && inPkt.getEtherType() == Ethernet.TYPE_IPV6) {
-                IPv6 ipv6Packet = (IPv6) inPkt.getPayload();
-                byte ipv6NextHeader = ipv6Packet.getNextHeader();
-                Ip6Prefix matchIp6SrcPrefix =
-                        Ip6Prefix.valueOf(ipv6Packet.getSourceAddress(),
-                                          Ip6Prefix.MAX_MASK_LENGTH);
-                Ip6Prefix matchIp6DstPrefix =
-                        Ip6Prefix.valueOf(ipv6Packet.getDestinationAddress(),
-                                          Ip6Prefix.MAX_MASK_LENGTH);
-                selectorBuilder.matchEthType(Ethernet.TYPE_IPV6)
-                        .matchIPv6Src(matchIp6SrcPrefix)
-                        .matchIPv6Dst(matchIp6DstPrefix);
-
-                if (matchIpv6FlowLabel) {
-                    selectorBuilder.matchIPv6FlowLabel(ipv6Packet.getFlowLabel());
-                }
-
-                if (matchTcpUdpPorts && ipv6NextHeader == IPv6.PROTOCOL_TCP) {
-                    TCP tcpPacket = (TCP) ipv6Packet.getPayload();
-                    selectorBuilder.matchIPProtocol(ipv6NextHeader)
-                            .matchTcpSrc(TpPort.tpPort(tcpPacket.getSourcePort()))
-                            .matchTcpDst(TpPort.tpPort(tcpPacket.getDestinationPort()));
-                }
-                if (matchTcpUdpPorts && ipv6NextHeader == IPv6.PROTOCOL_UDP) {
-                    UDP udpPacket = (UDP) ipv6Packet.getPayload();
-                    selectorBuilder.matchIPProtocol(ipv6NextHeader)
-                            .matchUdpSrc(TpPort.tpPort(udpPacket.getSourcePort()))
-                            .matchUdpDst(TpPort.tpPort(udpPacket.getDestinationPort()));
-                }
-                if (matchIcmpFields && ipv6NextHeader == IPv6.PROTOCOL_ICMP6) {
-                    ICMP6 icmp6Packet = (ICMP6) ipv6Packet.getPayload();
-                    selectorBuilder.matchIPProtocol(ipv6NextHeader)
-                            .matchIcmpv6Type(icmp6Packet.getIcmpType())
-                            .matchIcmpv6Code(icmp6Packet.getIcmpCode());
-                }
-            }
+        // If configured Match Vlan ID
+        if (matchVlanId && inPkt.getVlanID() != Ethernet.VLAN_UNTAGGED) {
+            selectorBuilder.matchVlanId(VlanId.vlanId(inPkt.getVlanID()));
         }
-        TrafficTreatment treatment;
-        if (inheritFlowTreatment) {
-            treatment = context.treatmentBuilder()
-                    .setOutput(portNumber)
-                    .build();
-        } else {
-            treatment = DefaultTrafficTreatment.builder()
-                    .setOutput(portNumber)
-                    .build();
-        }
+
+        TrafficTreatment treatment = DefaultTrafficTreatment.builder()
+                                                            .setOutput(portNumber)
+                                                            .build();
 
         ForwardingObjective forwardingObjective = DefaultForwardingObjective.builder()
                 .withSelector(selectorBuilder.build())

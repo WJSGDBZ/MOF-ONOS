@@ -40,6 +40,7 @@ public class EthType {
         EAPOL(0x888e, "eapol", org.onlab.packet.EAPOL.deserializer()),
         PPPoED(0x8863, "pppoed", org.onlab.packet.PPPoED.deserializer()),
         SLOW(0x8809, "slow", org.onlab.packet.Slow.deserializer()),
+        MOF(0x8888, "mof", null),
         UNKNOWN(0, "unknown", null);
 
 

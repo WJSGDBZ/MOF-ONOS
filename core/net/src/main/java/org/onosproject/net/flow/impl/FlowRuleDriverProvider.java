@@ -62,7 +62,7 @@ import static org.onosproject.net.flow.oldbatch.FlowRuleBatchEntry.FlowRuleOpera
  */
 class FlowRuleDriverProvider extends AbstractProvider implements FlowRuleProvider {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(FlowRuleDriverProvider.class);
 
     // Perhaps to be extracted for better reuse as we deal with other.
     public static final String SCHEME = "default";
@@ -130,6 +130,7 @@ class FlowRuleDriverProvider extends AbstractProvider implements FlowRuleProvide
 
     @Override
     public void executeBatch(FlowRuleBatchOperation batch) {
+        log.info("FlowRuleDriveProvider execute Batch!!");
         ImmutableList.Builder<FlowRule> toAdd = ImmutableList.builder();
         ImmutableList.Builder<FlowRule> toRemove = ImmutableList.builder();
         for (FlowRuleBatchEntry fbe : batch.getOperations()) {
@@ -170,6 +171,7 @@ class FlowRuleDriverProvider extends AbstractProvider implements FlowRuleProvide
 
     private Collection<FlowRule> applyFlowRules(DeviceId deviceId, Collection<FlowRule> flowRules) {
         FlowRuleProgrammable programmer = getFlowRuleProgrammable(deviceId);
+        log.info("truly programmer is {}", programmer.getClass().toString());
         return programmer != null ? programmer.applyFlowRules(flowRules) : ImmutableList.of();
     }
 

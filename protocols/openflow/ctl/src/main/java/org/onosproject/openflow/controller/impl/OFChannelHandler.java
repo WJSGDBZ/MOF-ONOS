@@ -1925,6 +1925,8 @@ class OFChannelHandler extends ChannelInboundHandlerAdapter
 
     @Override
     public boolean sendMsg(Iterable<OFMessage> msgs) {
+        //success
+        //log.info("Channel ready to send OFMessage!!!");
         if (channel.isActive()) {
             if (log.isTraceEnabled()) {
                 log.trace("Sending messages for switch {} via openflow channel: {}", getSwitchInfoString(), msgs);

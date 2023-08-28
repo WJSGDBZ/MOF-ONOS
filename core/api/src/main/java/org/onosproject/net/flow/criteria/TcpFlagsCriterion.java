@@ -16,7 +16,7 @@
 package org.onosproject.net.flow.criteria;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of TCP flags criterion (12 bits unsigned integer).
  */
@@ -33,6 +33,12 @@ public final class TcpFlagsCriterion implements Criterion {
         this.flags = flags & MASK;
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.TCP_FLAGS;

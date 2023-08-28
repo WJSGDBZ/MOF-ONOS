@@ -19,7 +19,7 @@ import org.onlab.packet.IpAddress;
 import org.onlab.packet.MacAddress;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Abstraction of a single traffic treatment step.
  */
@@ -107,6 +107,11 @@ public abstract class L3ModificationInstruction implements Instruction {
      * @return type of instruction
      */
     public abstract L3SubType subtype();
+
+    @Override
+    public void write(ByteBuf c){
+
+    }
 
     @Override
     public final Type type() {

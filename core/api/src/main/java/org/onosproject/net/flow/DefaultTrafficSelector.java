@@ -28,6 +28,8 @@ import org.onosproject.net.DeviceId;
 import org.onosproject.net.PortNumber;
 import org.onosproject.net.flow.criteria.Criteria;
 import org.onosproject.net.flow.criteria.Criterion;
+import org.onosproject.net.flow.criteria.EthCriterion;
+import org.onosproject.net.flow.criteria.EthTypeCriterion;
 import org.onosproject.net.flow.criteria.ExtensionCriterion;
 import org.onosproject.net.flow.criteria.ExtensionSelector;
 import org.onosproject.net.flow.criteria.ExtensionSelectorType;
@@ -42,6 +44,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.sound.sampled.AudioFileFormat.Type;
+
+import io.netty.buffer.ByteBuf;
+import com.google.common.hash.PrimitiveSink;
+import org.slf4j.Logger;
+import static org.slf4j.LoggerFactory.getLogger;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.onosproject.net.flow.criteria.Criterion.Type.EXTENSION;
 
@@ -49,21 +57,22 @@ import static org.onosproject.net.flow.criteria.Criterion.Type.EXTENSION;
  * Default traffic selector implementation.
  */
 public final class DefaultTrafficSelector implements TrafficSelector {
-
-    private static final Comparator<? super Criterion> TYPE_COMPARATOR =
-            (c1, c2) -> {
-                if (c1.type() == EXTENSION && c2.type() == EXTENSION) {
-                    return ((ExtensionCriterion) c1).extensionSelector().type().toInt()
-                            - ((ExtensionCriterion) c2).extensionSelector().type().toInt();
-                } else {
-                    return c1.type().compareTo(c2.type());
-                }
-            };
+    private final Logger log = getLogger(DefaultTrafficSelector.class);
+    private static final Comparator<? super Criterion> TYPE_COMPARATOR = (c1, c2) -> {
+        if (c1.type() == EXTENSION && c2.type() == EXTENSION) {
+            return ((ExtensionCriterion) c1).extensionSelector().type().toInt()
+                    - ((ExtensionCriterion) c2).extensionSelector().type().toInt();
+        } else {
+            return c1.type().compareTo(c2.type());
+        }
+    };
 
     private final Set<Criterion> criteria;
 
-    private static final TrafficSelector EMPTY
-            = new DefaultTrafficSelector(Collections.emptySet(), Collections.emptySet());
+    private final HashMap<Criterion.Type, Criterion> match;
+
+    private static final TrafficSelector EMPTY = new DefaultTrafficSelector(Collections.emptySet(),
+            Collections.emptySet());
 
     /**
      * Creates a new traffic selector with the specified criteria.
@@ -72,6 +81,18 @@ public final class DefaultTrafficSelector implements TrafficSelector {
      * @param extCriteria extension criteria
      */
     private DefaultTrafficSelector(Collection<Criterion> criteria, Collection<Criterion> extCriteria) {
+        // log.info("DefaultTrafficSelector start to build");
+        this.match = new HashMap<>();
+        TreeSet<Criterion> elements = new TreeSet<>(TYPE_COMPARATOR);
+        elements.addAll(criteria);
+        elements.addAll(extCriteria);
+        this.criteria = ImmutableSet.copyOf(elements);
+    }
+
+    private DefaultTrafficSelector(Collection<Criterion> criteria, Collection<Criterion> extCriteria,
+            HashMap<Criterion.Type, Criterion> match) {
+        // log.info("DefaultTrafficSelector start to build");
+        this.match = match;
         TreeSet<Criterion> elements = new TreeSet<>(TYPE_COMPARATOR);
         elements.addAll(criteria);
         elements.addAll(extCriteria);
@@ -118,6 +139,70 @@ public final class DefaultTrafficSelector implements TrafficSelector {
                 .toString();
     }
 
+    public void writeTo(ByteBuf bb) {
+        log.info("DefaultTrafficSelector ready to write!!!");
+        // mof
+        // flow flow_mask pad
+
+        // flow
+        // pad_before inport
+        bb.writeZero(472);
+        if (match.containsKey(Criterion.Type.ETH_DST)) {
+            match.get(Criterion.Type.ETH_DST).write(bb);
+        } else {
+            EthCriterion.writeZero(bb);
+        }
+        if (match.containsKey(Criterion.Type.ETH_SRC)) {
+            match.get(Criterion.Type.ETH_SRC).write(bb);
+        } else {
+            EthCriterion.writeZero(bb);
+        }
+        if (match.containsKey(Criterion.Type.ETH_TYPE)) {
+            match.get(Criterion.Type.ETH_TYPE).write(bb);
+        } else {
+            EthTypeCriterion.writeZero(bb);
+        }
+
+        // pad_after inport
+        bb.writeZero(366);
+
+        // flow_mask
+        // pad_before inport
+        bb.writeZero(472);
+
+        if (match.containsKey(Criterion.Type.ETH_DST)) {
+            match.get(Criterion.Type.ETH_DST).writeMask(bb);
+        } else {
+            EthCriterion.writeZero(bb);
+        }
+        if (match.containsKey(Criterion.Type.ETH_SRC)) {
+            match.get(Criterion.Type.ETH_SRC).writeMask(bb);
+        } else {
+            EthCriterion.writeZero(bb);
+        }
+        if (match.containsKey(Criterion.Type.ETH_TYPE)) {
+            match.get(Criterion.Type.ETH_TYPE).writeMask(bb);
+        } else {
+            EthTypeCriterion.writeZero(bb);
+        }
+
+        // pad_after inport
+        bb.writeZero(366);
+
+        // tun pad
+        bb.writeZero(2056);
+        // log.info("mof match = {}", bb.toString());
+    }
+
+    public static DefaultTrafficSelector readFrom(ByteBuf bb) {
+
+        return null;
+    }
+
+    public static void putTo(PrimitiveSink sink){
+
+    }
+
     /**
      * Returns a new traffic selector builder.
      *
@@ -154,6 +239,7 @@ public final class DefaultTrafficSelector implements TrafficSelector {
 
         private final Map<Criterion.Type, Criterion> selector = new HashMap<>();
         private final Map<ExtensionSelectorType, Criterion> extSelector = new HashMap<>();
+        private final HashMap<Criterion.Type, Criterion> match = new HashMap<>();
 
         private Builder() {
         }
@@ -170,8 +256,14 @@ public final class DefaultTrafficSelector implements TrafficSelector {
                 extSelector.put(((ExtensionCriterion) criterion).extensionSelector().type(), criterion);
             } else {
                 selector.put(criterion.type(), criterion);
+                match.put(criterion.type(), criterion);
             }
             return this;
+        }
+
+        @Override
+        public Builder matchProtocolTest() {
+            return add(Criteria.matchProtocolTest());
         }
 
         @Override
@@ -421,13 +513,13 @@ public final class DefaultTrafficSelector implements TrafficSelector {
 
         @Override
         public TrafficSelector.Builder extension(ExtensionSelector extensionSelector,
-                                                 DeviceId deviceId) {
+                DeviceId deviceId) {
             return add(Criteria.extension(extensionSelector, deviceId));
         }
 
         @Override
         public TrafficSelector build() {
-            return new DefaultTrafficSelector(selector.values(), extSelector.values());
+            return new DefaultTrafficSelector(selector.values(), extSelector.values(), match);
         }
     }
 }

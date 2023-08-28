@@ -18,7 +18,7 @@ package org.onosproject.net.flow.criteria;
 import org.onlab.packet.Ip6Address;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of IPv6 Neighbor Discovery target address criterion.
  */
@@ -34,6 +34,12 @@ public final class IPv6NDTargetAddressCriterion implements Criterion {
         this.targetAddress = targetAddress;
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.IPV6_ND_TARGET;

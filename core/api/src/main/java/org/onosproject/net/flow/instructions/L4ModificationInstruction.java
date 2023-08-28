@@ -18,7 +18,7 @@ package org.onosproject.net.flow.instructions;
 import org.onlab.packet.TpPort;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 import static com.google.common.base.MoreObjects.toStringHelper;
 
 /**
@@ -59,6 +59,11 @@ public abstract class L4ModificationInstruction implements Instruction {
      * @return type of instruction
      */
     public abstract L4SubType subtype();
+
+    @Override
+    public void write(ByteBuf c){
+
+    }
 
     @Override
     public Type type() {

@@ -19,7 +19,7 @@ package org.onosproject.net.flow.criteria;
 import org.onosproject.net.DeviceId;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Criterion for implementing selector extensions.
  */
@@ -57,6 +57,12 @@ public class ExtensionCriterion implements Criterion {
         return deviceId;
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.EXTENSION;

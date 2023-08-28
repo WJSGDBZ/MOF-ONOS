@@ -16,7 +16,7 @@
 package org.onosproject.net.flow.criteria;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of IPv6 Extension Header pseudo-field criterion
  * (16 bits). Those are defined in Criterion.IPv6ExthdrFlags.
@@ -35,6 +35,12 @@ public final class IPv6ExthdrFlagsCriterion implements Criterion {
         this.exthdrFlags = exthdrFlags & MASK;
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.IPV6_EXTHDR;

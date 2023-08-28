@@ -18,7 +18,7 @@ package org.onosproject.net.flow.criteria;
 import org.onosproject.net.OduSignalId;
 
 import java.util.Objects;
-
+import io.netty.buffer.ByteBuf;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -40,6 +40,12 @@ public final class OduSignalIdCriterion implements Criterion {
         this.oduSignalId = checkNotNull(oduSignalId);
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.ODU_SIGID;

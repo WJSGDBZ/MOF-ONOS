@@ -24,10 +24,13 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.util.List;
+import io.netty.buffer.ByteBuf;
 
 import org.projectfloodlight.openflow.protocol.OFFactories;
 import org.projectfloodlight.openflow.protocol.OFMessage;
 import org.projectfloodlight.openflow.protocol.OFMessageReader;
+import org.onosproject.openflow.controller.mof.impl.*;
+import org.projectfloodlight.openflow.exceptions.*;
 import org.slf4j.Logger;
 
 /**
@@ -36,6 +39,7 @@ import org.slf4j.Logger;
 public final class OFMessageDecoder extends ByteToMessageDecoder {
 
     private static final Logger log = getLogger(OFMessageDecoder.class);
+    final static int MINIMUM_LENGTH = 8;
 
     public static OFMessageDecoder getInstance() {
         // not Sharable
@@ -44,6 +48,21 @@ public final class OFMessageDecoder extends ByteToMessageDecoder {
 
     private OFMessageDecoder() {}
 
+    private OFMessage processMofMessage(ByteBuf bb) throws Exception {
+        if(!bb.isReadable())
+            return null; // Do Nothing;
+
+        if(bb.readableBytes() < MINIMUM_LENGTH)
+            return null; 
+
+        short wireVersion = (short)(bb.getByte(bb.readerIndex()) & 0xff);
+        if(wireVersion > 1)
+            return null; 
+        
+        OFMessage message = MofMessageImpl.READER.readFrom(bb);
+
+        return message;
+    }
 
     @Override
     protected void decode(ChannelHandlerContext ctx,
@@ -65,7 +84,10 @@ public final class OFMessageDecoder extends ByteToMessageDecoder {
         // The performance *may or may not* not be as good as before.
         OFMessageReader<OFMessage> reader = OFFactories.getGenericReader();
 
-        OFMessage message = reader.readFrom(byteBuf);
+        OFMessage message = processMofMessage(byteBuf);
+        if(message == null)
+            message = reader.readFrom(byteBuf);
+
         while (message != null) {
             out.add(message);
             message = reader.readFrom(byteBuf);

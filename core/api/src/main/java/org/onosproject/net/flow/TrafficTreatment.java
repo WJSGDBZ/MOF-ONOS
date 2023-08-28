@@ -34,11 +34,13 @@ import org.onosproject.net.flow.instructions.Instruction;
 import org.onosproject.net.flow.instructions.Instructions;
 import org.onosproject.net.meter.MeterId;
 import org.onosproject.net.pi.runtime.PiTableAction;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Abstraction of network traffic treatment.
  */
 public interface TrafficTreatment {
+
+    void writeTo(ByteBuf channelBuffer);
 
     /**
      * Returns the list of treatment instructions that will be applied

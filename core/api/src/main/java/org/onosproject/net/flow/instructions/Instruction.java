@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 package org.onosproject.net.flow.instructions;
-
+import io.netty.buffer.ByteBuf;
 /**
  * Abstraction of a single traffic treatment step.
  */
@@ -115,5 +115,7 @@ public interface Instruction {
      * @return type of instruction
      */
     Type type();
+
+    void write(ByteBuf c);
 
 }

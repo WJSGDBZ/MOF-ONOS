@@ -77,6 +77,7 @@ import org.onosproject.net.provider.AbstractProvider;
 import org.onosproject.net.provider.ProviderId;
 import org.onosproject.store.trivial.SimpleFlowRuleStore;
 
+import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -617,6 +618,11 @@ public class FlowRuleManagerTest {
 
         //for controlling hashcode uniqueness;
         private final int testval;
+
+        @Override
+        private void writeTo(ByteBuf bb){
+            // don't move;
+        }
 
         public TestSelector(int val) {
             testval = val;

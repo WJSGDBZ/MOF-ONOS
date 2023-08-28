@@ -16,6 +16,7 @@
 package org.onosproject.net.flow.criteria;
 
 import java.util.Objects;
+import io.netty.buffer.ByteBuf;
 /**
  * Implementation of Tunnel ID criterion.
  */
@@ -31,6 +32,12 @@ public class TunnelIdCriterion implements Criterion {
         this.tunnelId = tunnelId;
     }
 
+    @Override
+    public void write(ByteBuf bb){}
+    @Override
+    public void writeMask(ByteBuf bb){
+        
+    }
     @Override
     public Type type() {
         return Type.TUNNEL_ID;
