@@ -122,8 +122,30 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
         }
     }
 
-    public static DefaultTrafficTreatment readFrom(ByteBuf bb) {
-        return null;
+    public static DefaultTrafficTreatment readFrom(ByteBuf bb, int length) {
+        int end = bb.readerIndex() + length;
+        DefaultTrafficTreatment.Builder builder = DefaultTrafficTreatment.builder();
+
+        while (bb.readerIndex() < end) {
+            int start = bb.readerIndex();
+            byte type = bb.readByte();
+            bb.readerIndex(start);
+
+            switch (type){
+            case 0x0:
+                builder.add(OutputInstruction.readFrom(bb));
+                break;
+            default:
+                throw new IllegalStateException("ModFlowStateReply Action type {" + type + "} not support now!!!");
+            } 
+
+        }
+        if (bb.readerIndex() != end) {
+            throw new IllegalStateException("Overread length: length=" + length + " overread by "
+                    + (bb.readerIndex() - end));
+        }
+
+        return builder.build();
     }
 
     public static void putTo(PrimitiveSink sink){
@@ -183,7 +205,7 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
      *
      * @return traffic treatment builder
      */
-    public static TrafficTreatment.Builder builder() {
+    public static DefaultTrafficTreatment.Builder builder() {
         return new Builder();
     }
 
@@ -192,7 +214,7 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
      *
      * @return empty traffic treatment
      */
-    public static TrafficTreatment emptyTreatment() {
+    public static DefaultTrafficTreatment emptyTreatment() {
         return EMPTY;
     }
 
@@ -203,7 +225,7 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
      * @param treatment base treatment
      * @return traffic treatment builder
      */
-    public static TrafficTreatment.Builder builder(TrafficTreatment treatment) {
+    public static DefaultTrafficTreatment.Builder builder(TrafficTreatment treatment) {
         return new Builder(treatment);
     }
 
@@ -588,7 +610,7 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
         }
 
         @Override
-        public TrafficTreatment build() {
+        public DefaultTrafficTreatment build() {
             if (deferred.isEmpty() && immediate.isEmpty()
                     && table == null && !clear) {
                 immediate();

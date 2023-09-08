@@ -54,10 +54,6 @@ public final class OFMessageDecoder extends ByteToMessageDecoder {
 
         if(bb.readableBytes() < MINIMUM_LENGTH)
             return null; 
-
-        short wireVersion = (short)(bb.getByte(bb.readerIndex()) & 0xff);
-        if(wireVersion > 1)
-            return null; 
         
         OFMessage message = MofMessageImpl.READER.readFrom(bb);
 
@@ -90,7 +86,9 @@ public final class OFMessageDecoder extends ByteToMessageDecoder {
 
         while (message != null) {
             out.add(message);
-            message = reader.readFrom(byteBuf);
+            message = processMofMessage(byteBuf);
+            if(message == null)
+                message = reader.readFrom(byteBuf);
         }
     }
 

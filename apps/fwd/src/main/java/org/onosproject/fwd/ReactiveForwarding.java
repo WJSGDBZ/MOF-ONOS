@@ -123,6 +123,7 @@ import static org.onosproject.fwd.OsgiPropertyConstants.INHERIT_FLOW_TREATMENT;
 import static org.onosproject.fwd.OsgiPropertyConstants.INHERIT_FLOW_TREATMENT_DEFAULT;
 import static org.slf4j.LoggerFactory.getLogger;
 
+import org.onlab.packet.Mac_Dst;
 /**
  * Sample reactive forwarding application.
  */
@@ -628,23 +629,28 @@ public class ReactiveForwarding {
             return;
         }
 
-        TrafficSelector.Builder selectorBuilder = DefaultTrafficSelector.builder();
-        selectorBuilder.matchInPort(context.inPacket().receivedFrom().port())
-                        .matchEthSrc(inPkt.getSourceMAC())
-                        .matchEthDst(inPkt.getDestinationMAC())
-                        .matchEthType(Ethernet.TYPE_MOF);
+        Mac_Dst mac_dst = Mac_Dst.valueOf(inPkt.getDestinationMACAddress());
+        
+        TrafficSelector selector = DefaultTrafficSelector.builder()
+                                                        .matchMac_Dst(mac_dst)
+                                                        .build();
+        // selectorBuilder.matchInPort(context.inPacket().receivedFrom().port())
+        //                 .matchEthSrc(inPkt.getSourceMAC())
+        //                 .matchEthDst(inPkt.getDestinationMAC())
+        //                 .matchEthType(Ethernet.TYPE_MOF);
+        
 
         // If configured Match Vlan ID
-        if (matchVlanId && inPkt.getVlanID() != Ethernet.VLAN_UNTAGGED) {
-            selectorBuilder.matchVlanId(VlanId.vlanId(inPkt.getVlanID()));
-        }
+        // if (matchVlanId && inPkt.getVlanID() != Ethernet.VLAN_UNTAGGED) {
+        //     selectorBuilder.matchVlanId(VlanId.vlanId(inPkt.getVlanID()));
+        // }
 
         TrafficTreatment treatment = DefaultTrafficTreatment.builder()
                                                             .setOutput(portNumber)
                                                             .build();
 
         ForwardingObjective forwardingObjective = DefaultForwardingObjective.builder()
-                .withSelector(selectorBuilder.build())
+                .withSelector(selector)
                 .withTreatment(treatment)
                 .withPriority(flowPriority)
                 .withFlag(ForwardingObjective.Flag.VERSATILE)

@@ -606,6 +606,17 @@ public final class Instructions {
             this.port = port;
         }
 
+        public static OutputInstruction readFrom(ByteBuf bb){
+            byte type = bb.readByte();
+            byte raw = bb.readByte();
+            short len = bb.readShort();
+            int port = bb.readInt();
+            short maxlen = bb.readShort();
+            bb.skipBytes(6); //pad
+
+            return new OutputInstruction(PortNumber.portNumber(port));
+        }
+
         @Override
         public void write(ByteBuf bb){
             // fixed value property type = 0

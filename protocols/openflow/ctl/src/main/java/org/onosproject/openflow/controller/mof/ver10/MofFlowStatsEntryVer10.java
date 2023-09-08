@@ -685,28 +685,6 @@ public class MofFlowStatsEntryVer10 implements MofFlowStatsEntry {
 
     }
 
-    public static DefaultTrafficTreatment readTreatmentList(ByteBuf bb, int length) throws OFParseError {
-        // int end = bb.readerIndex() + length;
-
-        // List<DefaultTrafficTreatment> list = new ArrayList<>();
-
-        // if (logger.isTraceEnabled())
-        //     logger.trace("readList(length={}, reader= DefaultTrafficTreatment)", length);
-        // while (bb.readerIndex() < end) {
-        //     DefaultTrafficTreatment read = DefaultTrafficTreatment.readFrom(bb);
-        //     if (logger.isTraceEnabled())
-        //         logger.trace("readList: read={}, left={}", read, end - bb.readerIndex());
-        //     list.add(read);
-        // }
-        // if (bb.readerIndex() != end) {
-        //     throw new IllegalStateException("Overread length: length=" + length + " overread by "
-        //             + (bb.readerIndex() - end));
-        // }
-        // return list;
-
-        return null;
-    }
-
     public static final Reader READER = new Reader();
 
     // MofFlowStatsEntry
@@ -714,6 +692,8 @@ public class MofFlowStatsEntryVer10 implements MofFlowStatsEntry {
         @Override
         public MofFlowStatsEntry readFrom(ByteBuf bb) throws OFParseError {
             int start = bb.readerIndex();
+            DefaultTrafficSelector match = DefaultTrafficSelector.readFrom(bb); //Match/Mask
+
             int length = U16.f(bb.readShort());
             if (length < MINIMUM_LENGTH)
                 throw new OFParseError("Wrong length: Expected to be >= " + MINIMUM_LENGTH + ", was: " + length);
@@ -727,18 +707,19 @@ public class MofFlowStatsEntryVer10 implements MofFlowStatsEntry {
             TableId tableId = TableId.readByte(bb);
             // pad: 1 bytes
             bb.skipBytes(1);
-            DefaultTrafficSelector match = DefaultTrafficSelector.readFrom(bb); //Match
+
             long durationSec = U32.f(bb.readInt());
             long durationNsec = U32.f(bb.readInt());
             int priority = U16.f(bb.readShort());
             int idleTimeout = U16.f(bb.readShort());
             int hardTimeout = U16.f(bb.readShort());
             // pad: 6 bytes
-            bb.skipBytes(6);
+            bb.skipBytes(30);
             U64 cookie = U64.ofRaw(bb.readLong());
             U64 packetCount = U64.ofRaw(bb.readLong());
             U64 byteCount = U64.ofRaw(bb.readLong());
-            DefaultTrafficTreatment actions = readTreatmentList(bb, length - (bb.readerIndex() - start)); // Action
+
+            DefaultTrafficTreatment actions = DefaultTrafficTreatment.readFrom(bb, length - (bb.readerIndex() - start)); //Action
 
             MofFlowStatsEntryVer10 flowStatsEntryVer10 = new MofFlowStatsEntryVer10(
                     tableId,

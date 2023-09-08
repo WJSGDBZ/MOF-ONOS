@@ -24,9 +24,6 @@ public interface Criterion {
 
     String SEPARATOR = ":";
 
-    void write(ByteBuf bb);
-
-    void writeMask(ByteBuf bb);
     /**
      * Types of fields to which the selection criterion may apply.
      */
@@ -230,8 +227,92 @@ public interface Criterion {
         /** An empty criterion. */
         DUMMY,
 
-        /** An Test criterion. */
-        Test
+        MAC_DST,
+
+        MAC_SRC,
+
+        VLAN1_TPID,
+
+        VLAN1_QID,
+
+        VLAN2_TPID,
+
+        VLAN2_QID,
+
+        DL_TYPE,
+
+        VER_HL_E,
+
+        TOS_E,
+
+        TOT_LEN_E,
+
+        IP_ID_E,
+
+        FRAG_OFF_E,
+
+        TTL_E,
+
+        IPV4_E_TYPE,
+
+        IP_CHECK_E,
+
+        IP_SADDR_E,
+
+        IP_DADDR_E,
+
+        IPV6_VER_TP_FLB_E,
+
+        IPV6_PLEN_E,
+
+        IPV6_E_TYPE,
+
+        IPV6_HLMT_E,
+
+        IPV6_SRC_E,
+
+        IPV6_DST_E,
+
+        UDP_SOURCE,
+
+        UDP_DEST,
+
+        LEN,
+
+        UDP_CHECK,
+
+        SRV6_TYPE,
+
+        SRV6_HDR_EXT_LEN,
+
+        SRV6_ROUTING_TYPE,
+
+        SRV6_SEGMENTS_LEFT,
+
+        SRV6_LAST_ENTY,
+
+        SRV6_FLAGS,
+
+        SRV6_TAG,
+
+        SRV6_SEGMENTLIST1,
+
+        SRV6_SEGMENTLIST2,
+
+        SRV6_SEGMENTLIST3,
+
+        IPV6_VER_TP_FLB_I,
+
+        IPV6_PLEN_I,
+
+        IPV6_I_TYPE,
+
+        IPV6_HLMT_I,
+
+        IPV6_SRC_I,
+
+        IPV6_DST_I,
+
     }
 
     /**
@@ -241,6 +322,9 @@ public interface Criterion {
      */
     Type type();
 
+    void write(ByteBuf bb);
+    void writeMask(ByteBuf bb);
+    
     /**
      * Bit definitions for IPv6 Extension Header pseudo-field.
      * From page 79 of OpenFlow 1.5.0 spec.

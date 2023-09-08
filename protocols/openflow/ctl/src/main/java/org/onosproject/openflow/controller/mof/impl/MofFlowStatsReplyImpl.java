@@ -273,12 +273,9 @@ public class MofFlowStatsReplyImpl implements MofFlowStatsReply {
             int start = bb.readerIndex();
             // fixed value property version == 1
             byte version = bb.readByte();
-            if (version != (byte) 0x1)
-                throw new OFParseError("Wrong version: Expected=OFVersion.OF_10(1), got=" + version);
-            // fixed value property type == 17
+            // fixed value property type == 83
             byte type = bb.readByte();
-            if (type != (byte) 0x11)
-                throw new OFParseError("Wrong type: Expected=OFType.STATS_REPLY(17), got=" + type);
+
             int length = U16.f(bb.readShort());
             if (length < MINIMUM_LENGTH)
                 throw new OFParseError("Wrong length: Expected to be >= " + MINIMUM_LENGTH + ", was: " + length);
@@ -298,12 +295,12 @@ public class MofFlowStatsReplyImpl implements MofFlowStatsReply {
             List<MofFlowStatsEntry> entries = ChannelUtils.readList(bb, length - (bb.readerIndex() - start),
                                                 MofFlowStatsEntryVer10.READER);
 
-            MofFlowStatsReplyImpl flowStatsReplyVer10 = new MofFlowStatsReplyImpl(
-                    xid,
-                    flags,
-                    entries);
+            MofFlowStatsReplyImpl flowStatsReplyVer10 = new MofFlowStatsReplyImpl(xid,
+                                                                                  flags,
+                                                                                  entries);
             if (logger.isTraceEnabled())
                 logger.trace("readFrom - read={}", flowStatsReplyVer10);
+
             return flowStatsReplyVer10;
         }
     }

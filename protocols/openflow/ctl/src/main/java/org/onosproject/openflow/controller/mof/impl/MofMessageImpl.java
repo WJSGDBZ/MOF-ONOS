@@ -41,13 +41,14 @@ public class MofMessageImpl {
             // fixed value property version == 1
             byte version = bb.readByte();
             if (version != (byte) 0x1)
-                throw new OFParseError("Wrong version: Expected=OFVersion.OF_10(1), got=" + version);
+                return null;
+
             byte type = bb.readByte();
             bb.readerIndex(start);
             switch (type) {
-                case (byte) 0x11:
-                    log.info("receive mof STATS_REPLY message!");
-                    // discriminator value OFType.STATS_REPLY=17 for class OFStatsReplyVer10
+                case (byte) 0x53:
+                    log.info("receive MOF_STATS_REPLY message!");
+                    // discriminator value OFType.STATS_REPLY=83 for class OFStatsReplyVer10
                     return MofStatsReplyImpl.READER.readFrom(bb);
 
                 default:

@@ -1,18 +1,3 @@
-/*
- * Copyright 2014-present Open Networking Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.onosproject.net.flow.criteria;
 
 import org.onlab.packet.EthType;
@@ -34,6 +19,16 @@ import org.onosproject.net.flow.criteria.Criterion.Type;
 import io.netty.buffer.ByteBuf;
 import org.onosproject.net.flow.criteria.TestCriterion;
 
+import org.onlab.packet.Mac_Dst;
+import org.onlab.packet.Mac_Src;
+import org.onlab.packet.Ipv6_Src_E;
+import org.onlab.packet.Ipv6_Dst_E;
+import org.onlab.packet.Srv6_Segmentlist1;
+import org.onlab.packet.Srv6_Segmentlist2;
+import org.onlab.packet.Srv6_Segmentlist3;
+import org.onlab.packet.Ipv6_Src_I;
+import org.onlab.packet.Ipv6_Dst_I;
+
 /**
  * Factory class to create various traffic selection criteria.
  */
@@ -44,17 +39,6 @@ public final class Criteria {
     // Ban construction
     private Criteria() {
     }
-
-    /**
-     * Test
-     *
-     * @param None
-     * @return match criterion
-     */
-    public static Criterion matchProtocolTest() {
-        return new TestCriterion(-1, Type.Test);
-    }
-    
 
     /**
      * Creates a match on IN_PORT field using the specified value.
@@ -656,18 +640,367 @@ public final class Criteria {
         return new DummyCriterion();
     }
 
+    public static Criterion matchMac_Dst(Mac_Dst mac_dst) {
+        return new Mac_DstCriterion(mac_dst);
+    }
+  
+    public static Criterion matchMac_Dst(Mac_Dst mac_dst, Mac_Dst mask) {
+        return new Mac_DstCriterion(mac_dst, mask);
+    }
+
+    public static Criterion matchMac_Src(Mac_Src mac_src) {
+        return new Mac_SrcCriterion(mac_src);
+    }
+  
+    public static Criterion matchMac_Src(Mac_Src mac_src, Mac_Src mask) {
+        return new Mac_SrcCriterion(mac_src, mask);
+    }
+
+    public static Criterion matchVlan1_Tpid(short vlan1_tpid) {
+        return new Vlan1_TpidCriterion(vlan1_tpid);
+    }
+  
+    public static Criterion matchVlan1_Tpid(short vlan1_tpid, short mask) {
+        return new Vlan1_TpidCriterion(vlan1_tpid, mask);
+    }
+
+    public static Criterion matchVlan1_Qid(short vlan1_qid) {
+        return new Vlan1_QidCriterion(vlan1_qid);
+    }
+  
+    public static Criterion matchVlan1_Qid(short vlan1_qid, short mask) {
+        return new Vlan1_QidCriterion(vlan1_qid, mask);
+    }
+
+    public static Criterion matchVlan2_Tpid(short vlan2_tpid) {
+        return new Vlan2_TpidCriterion(vlan2_tpid);
+    }
+  
+    public static Criterion matchVlan2_Tpid(short vlan2_tpid, short mask) {
+        return new Vlan2_TpidCriterion(vlan2_tpid, mask);
+    }
+
+    public static Criterion matchVlan2_Qid(short vlan2_qid) {
+        return new Vlan2_QidCriterion(vlan2_qid);
+    }
+  
+    public static Criterion matchVlan2_Qid(short vlan2_qid, short mask) {
+        return new Vlan2_QidCriterion(vlan2_qid, mask);
+    }
+
+    public static Criterion matchDl_Type(short dl_type) {
+        return new Dl_TypeCriterion(dl_type);
+    }
+  
+    public static Criterion matchDl_Type(short dl_type, short mask) {
+        return new Dl_TypeCriterion(dl_type, mask);
+    }
+
+    public static Criterion matchVer_Hl_E(Byte ver_hl_e) {
+        return new Ver_Hl_ECriterion(ver_hl_e);
+    }
+  
+    public static Criterion matchVer_Hl_E(Byte ver_hl_e, Byte mask) {
+        return new Ver_Hl_ECriterion(ver_hl_e, mask);
+    }
+
+    public static Criterion matchTos_E(Byte tos_e) {
+        return new Tos_ECriterion(tos_e);
+    }
+  
+    public static Criterion matchTos_E(Byte tos_e, Byte mask) {
+        return new Tos_ECriterion(tos_e, mask);
+    }
+
+    public static Criterion matchTot_Len_E(short tot_len_e) {
+        return new Tot_Len_ECriterion(tot_len_e);
+    }
+  
+    public static Criterion matchTot_Len_E(short tot_len_e, short mask) {
+        return new Tot_Len_ECriterion(tot_len_e, mask);
+    }
+
+    public static Criterion matchIp_Id_E(short ip_id_e) {
+        return new Ip_Id_ECriterion(ip_id_e);
+    }
+  
+    public static Criterion matchIp_Id_E(short ip_id_e, short mask) {
+        return new Ip_Id_ECriterion(ip_id_e, mask);
+    }
+
+    public static Criterion matchFrag_Off_E(short frag_off_e) {
+        return new Frag_Off_ECriterion(frag_off_e);
+    }
+  
+    public static Criterion matchFrag_Off_E(short frag_off_e, short mask) {
+        return new Frag_Off_ECriterion(frag_off_e, mask);
+    }
+
+    public static Criterion matchTtl_E(Byte ttl_e) {
+        return new Ttl_ECriterion(ttl_e);
+    }
+  
+    public static Criterion matchTtl_E(Byte ttl_e, Byte mask) {
+        return new Ttl_ECriterion(ttl_e, mask);
+    }
+
+    public static Criterion matchIpv4_E_Type(Byte ipv4_e_type) {
+        return new Ipv4_E_TypeCriterion(ipv4_e_type);
+    }
+  
+    public static Criterion matchIpv4_E_Type(Byte ipv4_e_type, Byte mask) {
+        return new Ipv4_E_TypeCriterion(ipv4_e_type, mask);
+    }
+
+    public static Criterion matchIp_Check_E(short ip_check_e) {
+        return new Ip_Check_ECriterion(ip_check_e);
+    }
+  
+    public static Criterion matchIp_Check_E(short ip_check_e, short mask) {
+        return new Ip_Check_ECriterion(ip_check_e, mask);
+    }
+
+    public static Criterion matchIp_Saddr_E(int ip_saIp_Saddr_Er_e) {
+        return new Ip_Saddr_ECriterion(ip_saIp_Saddr_Er_e);
+    }
+  
+    public static Criterion matchIp_Saddr_E(int ip_saIp_Saddr_Er_e, int mask) {
+        return new Ip_Saddr_ECriterion(ip_saIp_Saddr_Er_e, mask);
+    }
+
+    public static Criterion matchIp_Daddr_E(int ip_daIp_Daddr_Er_e) {
+        return new Ip_Daddr_ECriterion(ip_daIp_Daddr_Er_e);
+    }
+  
+    public static Criterion matchIp_Daddr_E(int ip_daIp_Daddr_Er_e, int mask) {
+        return new Ip_Daddr_ECriterion(ip_daIp_Daddr_Er_e, mask);
+    }
+
+    public static Criterion matchIpv6_Ver_Tp_Flb_E(int ipv6_ver_tp_flb_e) {
+        return new Ipv6_Ver_Tp_Flb_ECriterion(ipv6_ver_tp_flb_e);
+    }
+  
+    public static Criterion matchIpv6_Ver_Tp_Flb_E(int ipv6_ver_tp_flb_e, int mask) {
+        return new Ipv6_Ver_Tp_Flb_ECriterion(ipv6_ver_tp_flb_e, mask);
+    }
+
+    public static Criterion matchIpv6_Plen_E(short ipv6_plen_e) {
+        return new Ipv6_Plen_ECriterion(ipv6_plen_e);
+    }
+  
+    public static Criterion matchIpv6_Plen_E(short ipv6_plen_e, short mask) {
+        return new Ipv6_Plen_ECriterion(ipv6_plen_e, mask);
+    }
+
+    public static Criterion matchIpv6_E_Type(Byte ipv6_e_type) {
+        return new Ipv6_E_TypeCriterion(ipv6_e_type);
+    }
+  
+    public static Criterion matchIpv6_E_Type(Byte ipv6_e_type, Byte mask) {
+        return new Ipv6_E_TypeCriterion(ipv6_e_type, mask);
+    }
+
+    public static Criterion matchIpv6_Hlmt_E(Byte ipv6_hlmt_e) {
+        return new Ipv6_Hlmt_ECriterion(ipv6_hlmt_e);
+    }
+  
+    public static Criterion matchIpv6_Hlmt_E(Byte ipv6_hlmt_e, Byte mask) {
+        return new Ipv6_Hlmt_ECriterion(ipv6_hlmt_e, mask);
+    }
+
+    public static Criterion matchIpv6_Src_E(Ipv6_Src_E ipv6_src_e) {
+        return new Ipv6_Src_ECriterion(ipv6_src_e);
+    }
+  
+    public static Criterion matchIpv6_Src_E(Ipv6_Src_E ipv6_src_e, Ipv6_Src_E mask) {
+        return new Ipv6_Src_ECriterion(ipv6_src_e, mask);
+    }
+
+    public static Criterion matchIpv6_Dst_E(Ipv6_Dst_E ipv6_dst_e) {
+        return new Ipv6_Dst_ECriterion(ipv6_dst_e);
+    }
+  
+    public static Criterion matchIpv6_Dst_E(Ipv6_Dst_E ipv6_dst_e, Ipv6_Dst_E mask) {
+        return new Ipv6_Dst_ECriterion(ipv6_dst_e, mask);
+    }
+
+    public static Criterion matchUdp_Source(short udp_source) {
+        return new Udp_SourceCriterion(udp_source);
+    }
+  
+    public static Criterion matchUdp_Source(short udp_source, short mask) {
+        return new Udp_SourceCriterion(udp_source, mask);
+    }
+
+    public static Criterion matchUdp_Dest(short udp_dest) {
+        return new Udp_DestCriterion(udp_dest);
+    }
+  
+    public static Criterion matchUdp_Dest(short udp_dest, short mask) {
+        return new Udp_DestCriterion(udp_dest, mask);
+    }
+
+    public static Criterion matchLen(short len) {
+        return new LenCriterion(len);
+    }
+  
+    public static Criterion matchLen(short len, short mask) {
+        return new LenCriterion(len, mask);
+    }
+
+    public static Criterion matchUdp_Check(short udp_check) {
+        return new Udp_CheckCriterion(udp_check);
+    }
+  
+    public static Criterion matchUdp_Check(short udp_check, short mask) {
+        return new Udp_CheckCriterion(udp_check, mask);
+    }
+
+    public static Criterion matchSrv6_Type(Byte srv6_type) {
+        return new Srv6_TypeCriterion(srv6_type);
+    }
+  
+    public static Criterion matchSrv6_Type(Byte srv6_type, Byte mask) {
+        return new Srv6_TypeCriterion(srv6_type, mask);
+    }
+
+    public static Criterion matchSrv6_Hdr_Ext_Len(Byte srv6_hdr_ext_len) {
+        return new Srv6_Hdr_Ext_LenCriterion(srv6_hdr_ext_len);
+    }
+  
+    public static Criterion matchSrv6_Hdr_Ext_Len(Byte srv6_hdr_ext_len, Byte mask) {
+        return new Srv6_Hdr_Ext_LenCriterion(srv6_hdr_ext_len, mask);
+    }
+
+    public static Criterion matchSrv6_Routing_Type(Byte srv6_routing_Type) {
+        return new Srv6_Routing_TypeCriterion(srv6_routing_Type);
+    }
+  
+    public static Criterion matchSrv6_Routing_Type(Byte srv6_routing_Type, Byte mask) {
+        return new Srv6_Routing_TypeCriterion(srv6_routing_Type, mask);
+    }
+
+    public static Criterion matchSrv6_Segments_Left(Byte srv6_segments_left) {
+        return new Srv6_Segments_LeftCriterion(srv6_segments_left);
+    }
+  
+    public static Criterion matchSrv6_Segments_Left(Byte srv6_segments_left, Byte mask) {
+        return new Srv6_Segments_LeftCriterion(srv6_segments_left, mask);
+    }
+
+    public static Criterion matchSrv6_Last_Enty(Byte srv6_last_enty) {
+        return new Srv6_Last_EntyCriterion(srv6_last_enty);
+    }
+  
+    public static Criterion matchSrv6_Last_Enty(Byte srv6_last_enty, Byte mask) {
+        return new Srv6_Last_EntyCriterion(srv6_last_enty, mask);
+    }
+
+    public static Criterion matchSrv6_Flags(Byte srv6_flags) {
+        return new Srv6_FlagsCriterion(srv6_flags);
+    }
+  
+    public static Criterion matchSrv6_Flags(Byte srv6_flags, Byte mask) {
+        return new Srv6_FlagsCriterion(srv6_flags, mask);
+    }
+
+    public static Criterion matchSrv6_Tag(short srv6_tag) {
+        return new Srv6_TagCriterion(srv6_tag);
+    }
+  
+    public static Criterion matchSrv6_Tag(short srv6_tag, short mask) {
+        return new Srv6_TagCriterion(srv6_tag, mask);
+    }
+
+    public static Criterion matchSrv6_Segmentlist1(Srv6_Segmentlist1 srv6_segmentlist1) {
+        return new Srv6_Segmentlist1Criterion(srv6_segmentlist1);
+    }
+  
+    public static Criterion matchSrv6_Segmentlist1(Srv6_Segmentlist1 srv6_segmentlist1, Srv6_Segmentlist1 mask) {
+        return new Srv6_Segmentlist1Criterion(srv6_segmentlist1, mask);
+    }
+
+    public static Criterion matchSrv6_Segmentlist2(Srv6_Segmentlist2 srv6_segmentlist2) {
+        return new Srv6_Segmentlist2Criterion(srv6_segmentlist2);
+    }
+  
+    public static Criterion matchSrv6_Segmentlist2(Srv6_Segmentlist2 srv6_segmentlist2, Srv6_Segmentlist2 mask) {
+        return new Srv6_Segmentlist2Criterion(srv6_segmentlist2, mask);
+    }
+
+    public static Criterion matchSrv6_Segmentlist3(Srv6_Segmentlist3 srv6_segmentlist3) {
+        return new Srv6_Segmentlist3Criterion(srv6_segmentlist3);
+    }
+  
+    public static Criterion matchSrv6_Segmentlist3(Srv6_Segmentlist3 srv6_segmentlist3, Srv6_Segmentlist3 mask) {
+        return new Srv6_Segmentlist3Criterion(srv6_segmentlist3, mask);
+    }
+
+    public static Criterion matchIpv6_Ver_Tp_Flb_I(int ipv6_ver_tp_flb_i) {
+        return new Ipv6_Ver_Tp_Flb_ICriterion(ipv6_ver_tp_flb_i);
+    }
+  
+    public static Criterion matchIpv6_Ver_Tp_Flb_I(int ipv6_ver_tp_flb_i, int mask) {
+        return new Ipv6_Ver_Tp_Flb_ICriterion(ipv6_ver_tp_flb_i, mask);
+    }
+
+    public static Criterion matchIpv6_Plen_I(short ipv6_plen_i) {
+        return new Ipv6_Plen_ICriterion(ipv6_plen_i);
+    }
+  
+    public static Criterion matchIpv6_Plen_I(short ipv6_plen_i, short mask) {
+        return new Ipv6_Plen_ICriterion(ipv6_plen_i, mask);
+    }
+
+    public static Criterion matchIpv6_I_Type(Byte ipv6_i_type) {
+        return new Ipv6_I_TypeCriterion(ipv6_i_type);
+    }
+  
+    public static Criterion matchIpv6_I_Type(Byte ipv6_i_type, Byte mask) {
+        return new Ipv6_I_TypeCriterion(ipv6_i_type, mask);
+    }
+
+    public static Criterion matchIpv6_Hlmt_I(Byte ipv6_hlmt_i) {
+        return new Ipv6_Hlmt_ICriterion(ipv6_hlmt_i);
+    }
+  
+    public static Criterion matchIpv6_Hlmt_I(Byte ipv6_hlmt_i, Byte mask) {
+        return new Ipv6_Hlmt_ICriterion(ipv6_hlmt_i, mask);
+    }
+
+    public static Criterion matchIpv6_Src_I(Ipv6_Src_I ipv6_src_i) {
+        return new Ipv6_Src_ICriterion(ipv6_src_i);
+    }
+  
+    public static Criterion matchIpv6_Src_I(Ipv6_Src_I ipv6_src_i, Ipv6_Src_I mask) {
+        return new Ipv6_Src_ICriterion(ipv6_src_i, mask);
+    }
+
+    public static Criterion matchIpv6_Dst_I(Ipv6_Dst_I ipv6_dst_i) {
+        return new Ipv6_Dst_ICriterion(ipv6_dst_i);
+    }
+  
+    public static Criterion matchIpv6_Dst_I(Ipv6_Dst_I ipv6_dst_i, Ipv6_Dst_I mask) {
+        return new Ipv6_Dst_ICriterion(ipv6_dst_i, mask);
+    }
+
+
     /**
      * Dummy Criterion used with @see{FilteringObjective}.
      */
     private static class DummyCriterion implements Criterion {
 
         @Override
-        public void write(ByteBuf bb){}
-        @Override
-        public void writeMask(ByteBuf bb){}
-        @Override
         public Type type() {
             return Type.DUMMY;
+        }
+
+        @Override
+        public void write(ByteBuf bb){
+        }
+    
+        @Override
+        public void writeMask(ByteBuf bb){
         }
     }
 }

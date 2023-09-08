@@ -415,8 +415,6 @@ public class OpenFlowRuleProvider extends AbstractProvider
         // Build a batch of flow mods - to reduce the number i/o asked to the SO
         Set<OFFlowMod> mods = Sets.newHashSet();
         Set<MofFlowMod> mmods = Sets.newHashSet();
-        OFFlowMod mod = null;
-        MofFlowMod mmod = null;
         // Test
         //List<OFMessage> modsTosend = Lists.newArrayList();
 
@@ -426,6 +424,9 @@ public class OpenFlowRuleProvider extends AbstractProvider
             FlowModBuilder builder =
                     FlowModBuilder.builder(fbe.target(), sw.factory(),
                             Optional.of(batch.id()), Optional.of(driverService));
+                            
+            OFFlowMod mod = null;
+            MofFlowMod mmod = null;
             switch (fbe.operator()) {
                 case ADD:
                     //mod = builder.buildFlowAdd();
@@ -530,9 +531,29 @@ public class OpenFlowRuleProvider extends AbstractProvider
                     FlowEntry fr = new FlowEntryBuilder(deviceId, removed, getDriver(deviceId)).build();
                     providerService.flowRemoved(fr);
                     break;
+                // case MofFlowStatsReplyImpl.MOF_STATS_REPLY:
+                //     if (((OFStatsReply) msg).getStatsType() == MofFlowStatsReplyImpl.MOF_FLOW) {
+                //         log.info("provider process MofFlowStatsReply Message!");
+                //         // Let's unblock first the collector
+                //         SwitchDataCollector collector;
+                //         if (adaptiveFlowSampling) {
+                //             collector = afsCollectors.get(dpid);
+                //         } else {
+                //             collector = simpleCollectors.get(dpid);
+                //         }
+                //         if (collector != null) {
+                //             collector.received();
+                //         }
+                //         pushMofFlowMetrics(dpid, (MofFlowStatsReply) msg, getDriver(deviceId));
+                //     } 
+                //     // else if (((OFStatsReply) msg).getStatsType() == OFStatsType.TABLE) {
+                //     //     pushTableStatistics(dpid, (OFTableStatsReply) msg);
+                //     // } else if (((OFStatsReply) msg).getStatsType() == OFStatsType.FLOW_LIGHTWEIGHT) {
+                //     //     pushFlowLightWeightMetrics(dpid, (OFFlowLightweightStatsReply) msg);
+                //     // }
+                //     break;
                 case STATS_REPLY:
                     if (((OFStatsReply) msg).getStatsType() == OFStatsType.FLOW) {
-                        log.info("provider process MofFlowStatsReply Message!");
                         // Let's unblock first the collector
                         SwitchDataCollector collector;
                         if (adaptiveFlowSampling) {
@@ -543,7 +564,7 @@ public class OpenFlowRuleProvider extends AbstractProvider
                         if (collector != null) {
                             collector.received();
                         }
-                        pushMofFlowMetrics(dpid, (MofFlowStatsReply) msg, getDriver(deviceId));
+                        pushFlowMetrics(dpid, (OFFlowStatsReply) msg, getDriver(deviceId));
                     } else if (((OFStatsReply) msg).getStatsType() == OFStatsType.TABLE) {
                         pushTableStatistics(dpid, (OFTableStatsReply) msg);
                     } else if (((OFStatsReply) msg).getStatsType() == OFStatsType.FLOW_LIGHTWEIGHT) {

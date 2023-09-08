@@ -586,16 +586,29 @@ public class OpenFlowControllerImpl implements OpenFlowController {
                     l.switchChanged(dpid);
                 }
                 break;
+            
+            // case MofFlowStatsReplyImpl.MOF_FLOW:
+            //     log.info("controller receive STATS FLOW REPLY Message!");
+            //     // Collection<OFFlowStatsEntry> flowStats = publishFlowStats(dpid, (OFFlowStatsReply) reply);
+            //     Collection<MofFlowStatsEntry> mflowStats = publishMofFlowStats(dpid, (MofFlowStatsReply) reply);
+                
+            //     if (mflowStats != null) {
+            //         // OFFlowStatsReply.Builder rep =
+            //         //         OFFactories.getFactory(reply.getVersion()).buildFlowStatsReply();
+            //         MofFlowStatsReply.Builder rep = new MofFlowStatsReplyImpl.Builder();
+
+            //         rep.setEntries(ImmutableList.copyOf(mflowStats));
+            //         rep.setXid(reply.getXid());
+            //         executorMsgs.execute(new OFMessageHandler(dpid, rep.build()));
+            //     }
+            //     break;
 
             case FLOW:
-                log.info("controller receive STATS FLOW REPLY Message!");
-                // Collection<OFFlowStatsEntry> flowStats = publishFlowStats(dpid, (OFFlowStatsReply) reply);
-                Collection<MofFlowStatsEntry> mflowStats = publishMofFlowStats(dpid, (MofFlowStatsReply) reply);
+                Collection<OFFlowStatsEntry> mflowStats = publishFlowStats(dpid, (OFFlowStatsReply) reply);
                 
                 if (mflowStats != null) {
-                    // OFFlowStatsReply.Builder rep =
-                    //         OFFactories.getFactory(reply.getVersion()).buildFlowStatsReply();
-                    MofFlowStatsReply.Builder rep = new MofFlowStatsReplyImpl.Builder();
+                    OFFlowStatsReply.Builder rep =
+                            OFFactories.getFactory(reply.getVersion()).buildFlowStatsReply();
 
                     rep.setEntries(ImmutableList.copyOf(mflowStats));
                     rep.setXid(reply.getXid());

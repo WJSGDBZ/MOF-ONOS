@@ -18,6 +18,11 @@ import org.projectfloodlight.openflow.util.*;
 import org.projectfloodlight.openflow.exceptions.*;
 import io.netty.buffer.ByteBuf;
 
+import org.onosproject.openflow.controller.mof.ver10.MofFlowStatsEntryVer10;
+import org.onosproject.openflow.controller.mof.api.*;
+import java.util.HashSet;
+import java.util.Set;
+
 public class MofStatsReplyImpl {
     // version: 1.0
     final static byte WIRE_VERSION = 1;
@@ -33,21 +38,19 @@ public class MofStatsReplyImpl {
             int start = bb.readerIndex();
             // fixed value property version == 1
             byte version = bb.readByte();
-            if (version != (byte) 0x1)
-                throw new OFParseError("Wrong version: Expected=OFVersion.OF_10(1), got=" + version);
-            // fixed value property type == 17
+            // fixed value property type == 83
             byte type = bb.readByte();
-            if (type != (byte) 0x11)
-                throw new OFParseError("Wrong type: Expected=OFType.STATS_REPLY(17), got=" + type);
             int length = U16.f(bb.readShort());
             if (length < MINIMUM_LENGTH)
                 throw new OFParseError("Wrong length: Expected to be >= " + MINIMUM_LENGTH + ", was: " + length);
             U32.f(bb.readInt());
+
             short statsType = bb.readShort();
             bb.readerIndex(start);
             switch (statsType) {
                 case (short) 0x1:
                     // discriminator value OFStatsType.FLOW=1 for class OFFlowStatsReplyVer10
+                    //log.info("receive MOF_FLOW_STATS_REPLY message!");
                     return MofFlowStatsReplyImpl.READER.readFrom(bb);
                 default:
                     return null;

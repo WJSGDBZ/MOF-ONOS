@@ -34,6 +34,7 @@ import org.onosproject.net.flow.criteria.ExtensionCriterion;
 import org.onosproject.net.flow.criteria.ExtensionSelector;
 import org.onosproject.net.flow.criteria.ExtensionSelectorType;
 import org.onosproject.net.flow.criteria.PiCriterion;
+import org.onosproject.net.flow.instructions.Instructions.OutputInstruction;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -53,6 +54,59 @@ import static org.slf4j.LoggerFactory.getLogger;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.onosproject.net.flow.criteria.Criterion.Type.EXTENSION;
 
+import org.onosproject.net.flow.criteria.Mac_DstCriterion;
+import org.onlab.packet.Mac_Dst;
+import org.onosproject.net.flow.criteria.Mac_SrcCriterion;
+import org.onlab.packet.Mac_Src;
+import org.onosproject.net.flow.criteria.Vlan1_TpidCriterion;
+import org.onosproject.net.flow.criteria.Vlan1_QidCriterion;
+import org.onosproject.net.flow.criteria.Vlan2_TpidCriterion;
+import org.onosproject.net.flow.criteria.Vlan2_QidCriterion;
+import org.onosproject.net.flow.criteria.Dl_TypeCriterion;
+import org.onosproject.net.flow.criteria.Ver_Hl_ECriterion;
+import org.onosproject.net.flow.criteria.Tos_ECriterion;
+import org.onosproject.net.flow.criteria.Tot_Len_ECriterion;
+import org.onosproject.net.flow.criteria.Ip_Id_ECriterion;
+import org.onosproject.net.flow.criteria.Frag_Off_ECriterion;
+import org.onosproject.net.flow.criteria.Ttl_ECriterion;
+import org.onosproject.net.flow.criteria.Ipv4_E_TypeCriterion;
+import org.onosproject.net.flow.criteria.Ip_Check_ECriterion;
+import org.onosproject.net.flow.criteria.Ip_Saddr_ECriterion;
+import org.onosproject.net.flow.criteria.Ip_Daddr_ECriterion;
+import org.onosproject.net.flow.criteria.Ipv6_Ver_Tp_Flb_ECriterion;
+import org.onosproject.net.flow.criteria.Ipv6_Plen_ECriterion;
+import org.onosproject.net.flow.criteria.Ipv6_E_TypeCriterion;
+import org.onosproject.net.flow.criteria.Ipv6_Hlmt_ECriterion;
+import org.onosproject.net.flow.criteria.Ipv6_Src_ECriterion;
+import org.onlab.packet.Ipv6_Src_E;
+import org.onosproject.net.flow.criteria.Ipv6_Dst_ECriterion;
+import org.onlab.packet.Ipv6_Dst_E;
+import org.onosproject.net.flow.criteria.Udp_SourceCriterion;
+import org.onosproject.net.flow.criteria.Udp_DestCriterion;
+import org.onosproject.net.flow.criteria.LenCriterion;
+import org.onosproject.net.flow.criteria.Udp_CheckCriterion;
+import org.onosproject.net.flow.criteria.Srv6_TypeCriterion;
+import org.onosproject.net.flow.criteria.Srv6_Hdr_Ext_LenCriterion;
+import org.onosproject.net.flow.criteria.Srv6_Routing_TypeCriterion;
+import org.onosproject.net.flow.criteria.Srv6_Segments_LeftCriterion;
+import org.onosproject.net.flow.criteria.Srv6_Last_EntyCriterion;
+import org.onosproject.net.flow.criteria.Srv6_FlagsCriterion;
+import org.onosproject.net.flow.criteria.Srv6_TagCriterion;
+import org.onosproject.net.flow.criteria.Srv6_Segmentlist1Criterion;
+import org.onlab.packet.Srv6_Segmentlist1;
+import org.onosproject.net.flow.criteria.Srv6_Segmentlist2Criterion;
+import org.onlab.packet.Srv6_Segmentlist2;
+import org.onosproject.net.flow.criteria.Srv6_Segmentlist3Criterion;
+import org.onlab.packet.Srv6_Segmentlist3;
+import org.onosproject.net.flow.criteria.Ipv6_Ver_Tp_Flb_ICriterion;
+import org.onosproject.net.flow.criteria.Ipv6_Plen_ICriterion;
+import org.onosproject.net.flow.criteria.Ipv6_I_TypeCriterion;
+import org.onosproject.net.flow.criteria.Ipv6_Hlmt_ICriterion;
+import org.onosproject.net.flow.criteria.Ipv6_Src_ICriterion;
+import org.onlab.packet.Ipv6_Src_I;
+import org.onosproject.net.flow.criteria.Ipv6_Dst_ICriterion;
+import org.onlab.packet.Ipv6_Dst_I;
+
 /**
  * Default traffic selector implementation.
  */
@@ -71,7 +125,7 @@ public final class DefaultTrafficSelector implements TrafficSelector {
 
     private final HashMap<Criterion.Type, Criterion> match;
 
-    private static final TrafficSelector EMPTY = new DefaultTrafficSelector(Collections.emptySet(),
+    private static final DefaultTrafficSelector EMPTY = new DefaultTrafficSelector(Collections.emptySet(),
             Collections.emptySet());
 
     /**
@@ -141,61 +195,557 @@ public final class DefaultTrafficSelector implements TrafficSelector {
 
     public void writeTo(ByteBuf bb) {
         log.info("DefaultTrafficSelector ready to write!!!");
-        // mof
-        // flow flow_mask pad
-
-        // flow
-        // pad_before inport
-        bb.writeZero(472);
-        if (match.containsKey(Criterion.Type.ETH_DST)) {
-            match.get(Criterion.Type.ETH_DST).write(bb);
-        } else {
-            EthCriterion.writeZero(bb);
+          //mof
+          // flow flow_mask pad
+    
+          // flow
+          //before ETH_DST
+        bb.writeZero(472);  
+    
+        if(match.containsKey(Criterion.Type.MAC_DST)){
+            match.get(Criterion.Type.MAC_DST).write(bb);
+        }else{
+            Mac_DstCriterion.writeZero(bb);
         }
-        if (match.containsKey(Criterion.Type.ETH_SRC)) {
-            match.get(Criterion.Type.ETH_SRC).write(bb);
-        } else {
-            EthCriterion.writeZero(bb);
+    
+        if(match.containsKey(Criterion.Type.MAC_SRC)){
+            match.get(Criterion.Type.MAC_SRC).write(bb);
+        }else{
+            Mac_SrcCriterion.writeZero(bb);
         }
-        if (match.containsKey(Criterion.Type.ETH_TYPE)) {
-            match.get(Criterion.Type.ETH_TYPE).write(bb);
-        } else {
-            EthTypeCriterion.writeZero(bb);
+    
+        if(match.containsKey(Criterion.Type.VLAN1_TPID)){
+            match.get(Criterion.Type.VLAN1_TPID).write(bb);
+        }else{
+            Vlan1_TpidCriterion.writeZero(bb);
         }
-
-        // pad_after inport
-        bb.writeZero(366);
-
+    
+        if(match.containsKey(Criterion.Type.VLAN1_QID)){
+            match.get(Criterion.Type.VLAN1_QID).write(bb);
+        }else{
+            Vlan1_QidCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.VLAN2_TPID)){
+            match.get(Criterion.Type.VLAN2_TPID).write(bb);
+        }else{
+            Vlan2_TpidCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.VLAN2_QID)){
+            match.get(Criterion.Type.VLAN2_QID).write(bb);
+        }else{
+            Vlan2_QidCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.DL_TYPE)){
+            match.get(Criterion.Type.DL_TYPE).write(bb);
+        }else{
+            Dl_TypeCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.VER_HL_E)){
+            match.get(Criterion.Type.VER_HL_E).write(bb);
+        }else{
+            Ver_Hl_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.TOS_E)){
+            match.get(Criterion.Type.TOS_E).write(bb);
+        }else{
+            Tos_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.TOT_LEN_E)){
+            match.get(Criterion.Type.TOT_LEN_E).write(bb);
+        }else{
+            Tot_Len_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IP_ID_E)){
+            match.get(Criterion.Type.IP_ID_E).write(bb);
+        }else{
+            Ip_Id_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.FRAG_OFF_E)){
+            match.get(Criterion.Type.FRAG_OFF_E).write(bb);
+        }else{
+            Frag_Off_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.TTL_E)){
+            match.get(Criterion.Type.TTL_E).write(bb);
+        }else{
+            Ttl_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV4_E_TYPE)){
+            match.get(Criterion.Type.IPV4_E_TYPE).write(bb);
+        }else{
+            Ipv4_E_TypeCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IP_CHECK_E)){
+            match.get(Criterion.Type.IP_CHECK_E).write(bb);
+        }else{
+            Ip_Check_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IP_SADDR_E)){
+            match.get(Criterion.Type.IP_SADDR_E).write(bb);
+        }else{
+            Ip_Saddr_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IP_DADDR_E)){
+            match.get(Criterion.Type.IP_DADDR_E).write(bb);
+        }else{
+            Ip_Daddr_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_VER_TP_FLB_E)){
+            match.get(Criterion.Type.IPV6_VER_TP_FLB_E).write(bb);
+        }else{
+            Ipv6_Ver_Tp_Flb_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_PLEN_E)){
+            match.get(Criterion.Type.IPV6_PLEN_E).write(bb);
+        }else{
+            Ipv6_Plen_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_E_TYPE)){
+            match.get(Criterion.Type.IPV6_E_TYPE).write(bb);
+        }else{
+            Ipv6_E_TypeCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_HLMT_E)){
+            match.get(Criterion.Type.IPV6_HLMT_E).write(bb);
+        }else{
+            Ipv6_Hlmt_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_SRC_E)){
+            match.get(Criterion.Type.IPV6_SRC_E).write(bb);
+        }else{
+            Ipv6_Src_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_DST_E)){
+            match.get(Criterion.Type.IPV6_DST_E).write(bb);
+        }else{
+            Ipv6_Dst_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.UDP_SOURCE)){
+            match.get(Criterion.Type.UDP_SOURCE).write(bb);
+        }else{
+            Udp_SourceCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.UDP_DEST)){
+            match.get(Criterion.Type.UDP_DEST).write(bb);
+        }else{
+            Udp_DestCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.LEN)){
+            match.get(Criterion.Type.LEN).write(bb);
+        }else{
+            LenCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.UDP_CHECK)){
+            match.get(Criterion.Type.UDP_CHECK).write(bb);
+        }else{
+            Udp_CheckCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_TYPE)){
+            match.get(Criterion.Type.SRV6_TYPE).write(bb);
+        }else{
+            Srv6_TypeCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_HDR_EXT_LEN)){
+            match.get(Criterion.Type.SRV6_HDR_EXT_LEN).write(bb);
+        }else{
+            Srv6_Hdr_Ext_LenCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_ROUTING_TYPE)){
+            match.get(Criterion.Type.SRV6_ROUTING_TYPE).write(bb);
+        }else{
+            Srv6_Routing_TypeCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_SEGMENTS_LEFT)){
+            match.get(Criterion.Type.SRV6_SEGMENTS_LEFT).write(bb);
+        }else{
+            Srv6_Segments_LeftCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_LAST_ENTY)){
+            match.get(Criterion.Type.SRV6_LAST_ENTY).write(bb);
+        }else{
+            Srv6_Last_EntyCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_FLAGS)){
+            match.get(Criterion.Type.SRV6_FLAGS).write(bb);
+        }else{
+            Srv6_FlagsCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_TAG)){
+            match.get(Criterion.Type.SRV6_TAG).write(bb);
+        }else{
+            Srv6_TagCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_SEGMENTLIST1)){
+            match.get(Criterion.Type.SRV6_SEGMENTLIST1).write(bb);
+        }else{
+            Srv6_Segmentlist1Criterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_SEGMENTLIST2)){
+            match.get(Criterion.Type.SRV6_SEGMENTLIST2).write(bb);
+        }else{
+            Srv6_Segmentlist2Criterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_SEGMENTLIST3)){
+            match.get(Criterion.Type.SRV6_SEGMENTLIST3).write(bb);
+        }else{
+            Srv6_Segmentlist3Criterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_VER_TP_FLB_I)){
+            match.get(Criterion.Type.IPV6_VER_TP_FLB_I).write(bb);
+        }else{
+            Ipv6_Ver_Tp_Flb_ICriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_PLEN_I)){
+            match.get(Criterion.Type.IPV6_PLEN_I).write(bb);
+        }else{
+            Ipv6_Plen_ICriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_I_TYPE)){
+            match.get(Criterion.Type.IPV6_I_TYPE).write(bb);
+        }else{
+            Ipv6_I_TypeCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_HLMT_I)){
+            match.get(Criterion.Type.IPV6_HLMT_I).write(bb);
+        }else{
+            Ipv6_Hlmt_ICriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_SRC_I)){
+            match.get(Criterion.Type.IPV6_SRC_I).write(bb);
+        }else{
+            Ipv6_Src_ICriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_DST_I)){
+            match.get(Criterion.Type.IPV6_DST_I).write(bb);
+        }else{
+            Ipv6_Dst_ICriterion.writeZero(bb);
+        }
+    
         // flow_mask
         // pad_before inport
         bb.writeZero(472);
-
-        if (match.containsKey(Criterion.Type.ETH_DST)) {
-            match.get(Criterion.Type.ETH_DST).writeMask(bb);
-        } else {
-            EthCriterion.writeZero(bb);
+    
+        if(match.containsKey(Criterion.Type.MAC_DST)){
+            match.get(Criterion.Type.MAC_DST).writeMask(bb);
+        }else{
+            Mac_DstCriterion.writeZero(bb);
         }
-        if (match.containsKey(Criterion.Type.ETH_SRC)) {
-            match.get(Criterion.Type.ETH_SRC).writeMask(bb);
-        } else {
-            EthCriterion.writeZero(bb);
+    
+        if(match.containsKey(Criterion.Type.MAC_SRC)){
+            match.get(Criterion.Type.MAC_SRC).writeMask(bb);
+        }else{
+            Mac_SrcCriterion.writeZero(bb);
         }
-        if (match.containsKey(Criterion.Type.ETH_TYPE)) {
-            match.get(Criterion.Type.ETH_TYPE).writeMask(bb);
-        } else {
-            EthTypeCriterion.writeZero(bb);
+    
+        if(match.containsKey(Criterion.Type.VLAN1_TPID)){
+            match.get(Criterion.Type.VLAN1_TPID).writeMask(bb);
+        }else{
+            Vlan1_TpidCriterion.writeZero(bb);
         }
-
-        // pad_after inport
-        bb.writeZero(366);
-
+    
+        if(match.containsKey(Criterion.Type.VLAN1_QID)){
+            match.get(Criterion.Type.VLAN1_QID).writeMask(bb);
+        }else{
+            Vlan1_QidCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.VLAN2_TPID)){
+            match.get(Criterion.Type.VLAN2_TPID).writeMask(bb);
+        }else{
+            Vlan2_TpidCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.VLAN2_QID)){
+            match.get(Criterion.Type.VLAN2_QID).writeMask(bb);
+        }else{
+            Vlan2_QidCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.DL_TYPE)){
+            match.get(Criterion.Type.DL_TYPE).writeMask(bb);
+        }else{
+            Dl_TypeCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.VER_HL_E)){
+            match.get(Criterion.Type.VER_HL_E).writeMask(bb);
+        }else{
+            Ver_Hl_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.TOS_E)){
+            match.get(Criterion.Type.TOS_E).writeMask(bb);
+        }else{
+            Tos_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.TOT_LEN_E)){
+            match.get(Criterion.Type.TOT_LEN_E).writeMask(bb);
+        }else{
+            Tot_Len_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IP_ID_E)){
+            match.get(Criterion.Type.IP_ID_E).writeMask(bb);
+        }else{
+            Ip_Id_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.FRAG_OFF_E)){
+            match.get(Criterion.Type.FRAG_OFF_E).writeMask(bb);
+        }else{
+            Frag_Off_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.TTL_E)){
+            match.get(Criterion.Type.TTL_E).writeMask(bb);
+        }else{
+            Ttl_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV4_E_TYPE)){
+            match.get(Criterion.Type.IPV4_E_TYPE).writeMask(bb);
+        }else{
+            Ipv4_E_TypeCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IP_CHECK_E)){
+            match.get(Criterion.Type.IP_CHECK_E).writeMask(bb);
+        }else{
+            Ip_Check_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IP_SADDR_E)){
+            match.get(Criterion.Type.IP_SADDR_E).writeMask(bb);
+        }else{
+            Ip_Saddr_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IP_DADDR_E)){
+            match.get(Criterion.Type.IP_DADDR_E).writeMask(bb);
+        }else{
+            Ip_Daddr_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_VER_TP_FLB_E)){
+            match.get(Criterion.Type.IPV6_VER_TP_FLB_E).writeMask(bb);
+        }else{
+            Ipv6_Ver_Tp_Flb_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_PLEN_E)){
+            match.get(Criterion.Type.IPV6_PLEN_E).writeMask(bb);
+        }else{
+            Ipv6_Plen_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_E_TYPE)){
+            match.get(Criterion.Type.IPV6_E_TYPE).writeMask(bb);
+        }else{
+            Ipv6_E_TypeCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_HLMT_E)){
+            match.get(Criterion.Type.IPV6_HLMT_E).writeMask(bb);
+        }else{
+            Ipv6_Hlmt_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_SRC_E)){
+            match.get(Criterion.Type.IPV6_SRC_E).writeMask(bb);
+        }else{
+            Ipv6_Src_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_DST_E)){
+            match.get(Criterion.Type.IPV6_DST_E).writeMask(bb);
+        }else{
+            Ipv6_Dst_ECriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.UDP_SOURCE)){
+            match.get(Criterion.Type.UDP_SOURCE).writeMask(bb);
+        }else{
+            Udp_SourceCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.UDP_DEST)){
+            match.get(Criterion.Type.UDP_DEST).writeMask(bb);
+        }else{
+            Udp_DestCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.LEN)){
+            match.get(Criterion.Type.LEN).writeMask(bb);
+        }else{
+            LenCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.UDP_CHECK)){
+            match.get(Criterion.Type.UDP_CHECK).writeMask(bb);
+        }else{
+            Udp_CheckCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_TYPE)){
+            match.get(Criterion.Type.SRV6_TYPE).writeMask(bb);
+        }else{
+            Srv6_TypeCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_HDR_EXT_LEN)){
+            match.get(Criterion.Type.SRV6_HDR_EXT_LEN).writeMask(bb);
+        }else{
+            Srv6_Hdr_Ext_LenCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_ROUTING_TYPE)){
+            match.get(Criterion.Type.SRV6_ROUTING_TYPE).writeMask(bb);
+        }else{
+            Srv6_Routing_TypeCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_SEGMENTS_LEFT)){
+            match.get(Criterion.Type.SRV6_SEGMENTS_LEFT).writeMask(bb);
+        }else{
+            Srv6_Segments_LeftCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_LAST_ENTY)){
+            match.get(Criterion.Type.SRV6_LAST_ENTY).writeMask(bb);
+        }else{
+            Srv6_Last_EntyCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_FLAGS)){
+            match.get(Criterion.Type.SRV6_FLAGS).writeMask(bb);
+        }else{
+            Srv6_FlagsCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_TAG)){
+            match.get(Criterion.Type.SRV6_TAG).writeMask(bb);
+        }else{
+            Srv6_TagCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_SEGMENTLIST1)){
+            match.get(Criterion.Type.SRV6_SEGMENTLIST1).writeMask(bb);
+        }else{
+            Srv6_Segmentlist1Criterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_SEGMENTLIST2)){
+            match.get(Criterion.Type.SRV6_SEGMENTLIST2).writeMask(bb);
+        }else{
+            Srv6_Segmentlist2Criterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.SRV6_SEGMENTLIST3)){
+            match.get(Criterion.Type.SRV6_SEGMENTLIST3).writeMask(bb);
+        }else{
+            Srv6_Segmentlist3Criterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_VER_TP_FLB_I)){
+            match.get(Criterion.Type.IPV6_VER_TP_FLB_I).writeMask(bb);
+        }else{
+            Ipv6_Ver_Tp_Flb_ICriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_PLEN_I)){
+            match.get(Criterion.Type.IPV6_PLEN_I).writeMask(bb);
+        }else{
+            Ipv6_Plen_ICriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_I_TYPE)){
+            match.get(Criterion.Type.IPV6_I_TYPE).writeMask(bb);
+        }else{
+            Ipv6_I_TypeCriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_HLMT_I)){
+            match.get(Criterion.Type.IPV6_HLMT_I).writeMask(bb);
+        }else{
+            Ipv6_Hlmt_ICriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_SRC_I)){
+            match.get(Criterion.Type.IPV6_SRC_I).writeMask(bb);
+        }else{
+            Ipv6_Src_ICriterion.writeZero(bb);
+        }
+    
+        if(match.containsKey(Criterion.Type.IPV6_DST_I)){
+            match.get(Criterion.Type.IPV6_DST_I).writeMask(bb);
+        }else{
+            Ipv6_Dst_ICriterion.writeZero(bb);
+        }
+    
+    
         // tun pad
         bb.writeZero(2056);
         // log.info("mof match = {}", bb.toString());
-    }
+      }
 
     public static DefaultTrafficSelector readFrom(ByteBuf bb) {
+        // DefaultTrafficSelector.Builder builder = DefaultTrafficSelector.builder();
+        // HashMap<Criterion.Type, Criterion.Builder> wildcard = new HashMap<>();
+        
+        // // Mask
+        // Criterion.Builder mac_dst_builder = new Mac_Dst_Criterion.Builder();
+        // if(mac_dst_builder.readMask(bb)){
+        //     wildcard.put(Criterion.Type.MAC_DST, mac_dst_builder);
+        // }
+        // //.......
+        // // Flow
+        // if(wildcard.containsKey(Criterion.Type.MAC_DST)){
+        //     mac_dst_builder = wildcard.get(Criterion.Type.MAC_DST);
+        //     mac_dst_builder.readData(bb);
+        //     builder.add(mac_dst_builder.build());
+        // }
 
+        // return builder.build();
         return null;
     }
 
@@ -208,7 +758,7 @@ public final class DefaultTrafficSelector implements TrafficSelector {
      *
      * @return traffic selector builder
      */
-    public static TrafficSelector.Builder builder() {
+    public static DefaultTrafficSelector.Builder builder() {
         return new Builder();
     }
 
@@ -217,7 +767,7 @@ public final class DefaultTrafficSelector implements TrafficSelector {
      *
      * @return empty traffic selector
      */
-    public static TrafficSelector emptySelector() {
+    public static DefaultTrafficSelector emptySelector() {
         return EMPTY;
     }
 
@@ -228,7 +778,7 @@ public final class DefaultTrafficSelector implements TrafficSelector {
      * @param selector base selector
      * @return traffic selector builder
      */
-    public static TrafficSelector.Builder builder(TrafficSelector selector) {
+    public static DefaultTrafficSelector.Builder builder(TrafficSelector selector) {
         return new Builder(selector);
     }
 
@@ -259,11 +809,6 @@ public final class DefaultTrafficSelector implements TrafficSelector {
                 match.put(criterion.type(), criterion);
             }
             return this;
-        }
-
-        @Override
-        public Builder matchProtocolTest() {
-            return add(Criteria.matchProtocolTest());
         }
 
         @Override
@@ -512,13 +1057,443 @@ public final class DefaultTrafficSelector implements TrafficSelector {
         }
 
         @Override
+        public Builder matchMac_Dst(Mac_Dst mac_dst) {
+            return add(Criteria.matchMac_Dst(mac_dst));
+        }
+  
+        @Override
+        public Builder matchMac_Dst(Mac_Dst mac_dst, Mac_Dst mask) {
+            return add(Criteria.matchMac_Dst(mac_dst, mask));
+        }
+
+        @Override
+        public Builder matchMac_Src(Mac_Src mac_src) {
+            return add(Criteria.matchMac_Src(mac_src));
+        }
+  
+        @Override
+        public Builder matchMac_Src(Mac_Src mac_src, Mac_Src mask) {
+            return add(Criteria.matchMac_Src(mac_src, mask));
+        }
+
+        @Override
+        public Builder matchVlan1_Tpid(short vlan1_tpid) {
+            return add(Criteria.matchVlan1_Tpid(vlan1_tpid));
+        }
+  
+        @Override
+        public Builder matchVlan1_Tpid(short vlan1_tpid, short mask) {
+            return add(Criteria.matchVlan1_Tpid(vlan1_tpid, mask));
+        }
+
+        @Override
+        public Builder matchVlan1_Qid(short vlan1_qid) {
+            return add(Criteria.matchVlan1_Qid(vlan1_qid));
+        }
+  
+        @Override
+        public Builder matchVlan1_Qid(short vlan1_qid, short mask) {
+            return add(Criteria.matchVlan1_Qid(vlan1_qid, mask));
+        }
+
+        @Override
+        public Builder matchVlan2_Tpid(short vlan2_tpid) {
+            return add(Criteria.matchVlan2_Tpid(vlan2_tpid));
+        }
+  
+        @Override
+        public Builder matchVlan2_Tpid(short vlan2_tpid, short mask) {
+            return add(Criteria.matchVlan2_Tpid(vlan2_tpid, mask));
+        }
+
+        @Override
+        public Builder matchVlan2_Qid(short vlan2_qid) {
+            return add(Criteria.matchVlan2_Qid(vlan2_qid));
+        }
+  
+        @Override
+        public Builder matchVlan2_Qid(short vlan2_qid, short mask) {
+            return add(Criteria.matchVlan2_Qid(vlan2_qid, mask));
+        }
+
+        @Override
+        public Builder matchDl_Type(short dl_type) {
+            return add(Criteria.matchDl_Type(dl_type));
+        }
+  
+        @Override
+        public Builder matchDl_Type(short dl_type, short mask) {
+            return add(Criteria.matchDl_Type(dl_type, mask));
+        }
+
+        @Override
+        public Builder matchVer_Hl_E(Byte ver_hl_e) {
+            return add(Criteria.matchVer_Hl_E(ver_hl_e));
+        }
+  
+        @Override
+        public Builder matchVer_Hl_E(Byte ver_hl_e, Byte mask) {
+            return add(Criteria.matchVer_Hl_E(ver_hl_e, mask));
+        }
+
+        @Override
+        public Builder matchTos_E(Byte tos_e) {
+            return add(Criteria.matchTos_E(tos_e));
+        }
+  
+        @Override
+        public Builder matchTos_E(Byte tos_e, Byte mask) {
+            return add(Criteria.matchTos_E(tos_e, mask));
+        }
+
+        @Override
+        public Builder matchTot_Len_E(short tot_len_e) {
+            return add(Criteria.matchTot_Len_E(tot_len_e));
+        }
+  
+        @Override
+        public Builder matchTot_Len_E(short tot_len_e, short mask) {
+            return add(Criteria.matchTot_Len_E(tot_len_e, mask));
+        }
+
+        @Override
+        public Builder matchIp_Id_E(short ip_id_e) {
+            return add(Criteria.matchIp_Id_E(ip_id_e));
+        }
+  
+        @Override
+        public Builder matchIp_Id_E(short ip_id_e, short mask) {
+            return add(Criteria.matchIp_Id_E(ip_id_e, mask));
+        }
+
+        @Override
+        public Builder matchFrag_Off_E(short frag_off_e) {
+            return add(Criteria.matchFrag_Off_E(frag_off_e));
+        }
+  
+        @Override
+        public Builder matchFrag_Off_E(short frag_off_e, short mask) {
+            return add(Criteria.matchFrag_Off_E(frag_off_e, mask));
+        }
+
+        @Override
+        public Builder matchTtl_E(Byte ttl_e) {
+            return add(Criteria.matchTtl_E(ttl_e));
+        }
+  
+        @Override
+        public Builder matchTtl_E(Byte ttl_e, Byte mask) {
+            return add(Criteria.matchTtl_E(ttl_e, mask));
+        }
+
+        @Override
+        public Builder matchIpv4_E_Type(Byte ipv4_e_type) {
+            return add(Criteria.matchIpv4_E_Type(ipv4_e_type));
+        }
+  
+        @Override
+        public Builder matchIpv4_E_Type(Byte ipv4_e_type, Byte mask) {
+            return add(Criteria.matchIpv4_E_Type(ipv4_e_type, mask));
+        }
+
+        @Override
+        public Builder matchIp_Check_E(short ip_check_e) {
+            return add(Criteria.matchIp_Check_E(ip_check_e));
+        }
+  
+        @Override
+        public Builder matchIp_Check_E(short ip_check_e, short mask) {
+            return add(Criteria.matchIp_Check_E(ip_check_e, mask));
+        }
+
+        @Override
+        public Builder matchIp_Saddr_E(int ip_saddr_e) {
+            return add(Criteria.matchIp_Saddr_E(ip_saddr_e));
+        }
+  
+        @Override
+        public Builder matchIp_Saddr_E(int ip_saddr_e, int mask) {
+            return add(Criteria.matchIp_Saddr_E(ip_saddr_e, mask));
+        }
+
+        @Override
+        public Builder matchIp_Daddr_E(int ip_daddr_e) {
+            return add(Criteria.matchIp_Daddr_E(ip_daddr_e));
+        }
+  
+        @Override
+        public Builder matchIp_Daddr_E(int ip_daddr_e, int mask) {
+            return add(Criteria.matchIp_Daddr_E(ip_daddr_e, mask));
+        }
+
+        @Override
+        public Builder matchIpv6_Ver_Tp_Flb_E(int ipv6_ver_tp_flb_e) {
+            return add(Criteria.matchIpv6_Ver_Tp_Flb_E(ipv6_ver_tp_flb_e));
+        }
+  
+        @Override
+        public Builder matchIpv6_Ver_Tp_Flb_E(int ipv6_ver_tp_flb_e, int mask) {
+            return add(Criteria.matchIpv6_Ver_Tp_Flb_E(ipv6_ver_tp_flb_e, mask));
+        }
+
+        @Override
+        public Builder matchIpv6_Plen_E(short ipv6_plen_e) {
+            return add(Criteria.matchIpv6_Plen_E(ipv6_plen_e));
+        }
+  
+        @Override
+        public Builder matchIpv6_Plen_E(short ipv6_plen_e, short mask) {
+            return add(Criteria.matchIpv6_Plen_E(ipv6_plen_e, mask));
+        }
+
+        @Override
+        public Builder matchIpv6_E_Type(Byte ipv6_e_type) {
+            return add(Criteria.matchIpv6_E_Type(ipv6_e_type));
+        }
+  
+        @Override
+        public Builder matchIpv6_E_Type(Byte ipv6_e_type, Byte mask) {
+            return add(Criteria.matchIpv6_E_Type(ipv6_e_type, mask));
+        }
+
+        @Override
+        public Builder matchIpv6_Hlmt_E(Byte ipv6_hlmt_e) {
+            return add(Criteria.matchIpv6_Hlmt_E(ipv6_hlmt_e));
+        }
+  
+        @Override
+        public Builder matchIpv6_Hlmt_E(Byte ipv6_hlmt_e, Byte mask) {
+            return add(Criteria.matchIpv6_Hlmt_E(ipv6_hlmt_e, mask));
+        }
+
+        @Override
+        public Builder matchIpv6_Src_E(Ipv6_Src_E ipv6_src_e) {
+            return add(Criteria.matchIpv6_Src_E(ipv6_src_e));
+        }
+  
+        @Override
+        public Builder matchIpv6_Src_E(Ipv6_Src_E ipv6_src_e, Ipv6_Src_E mask) {
+            return add(Criteria.matchIpv6_Src_E(ipv6_src_e, mask));
+        }
+
+        @Override
+        public Builder matchIpv6_Dst_E(Ipv6_Dst_E ipv6_dst_e) {
+            return add(Criteria.matchIpv6_Dst_E(ipv6_dst_e));
+        }
+  
+        @Override
+        public Builder matchIpv6_Dst_E(Ipv6_Dst_E ipv6_dst_e, Ipv6_Dst_E mask) {
+            return add(Criteria.matchIpv6_Dst_E(ipv6_dst_e, mask));
+        }
+
+        @Override
+        public Builder matchUdp_Source(short udp_source) {
+            return add(Criteria.matchUdp_Source(udp_source));
+        }
+  
+        @Override
+        public Builder matchUdp_Source(short udp_source, short mask) {
+            return add(Criteria.matchUdp_Source(udp_source, mask));
+        }
+
+        @Override
+        public Builder matchUdp_Dest(short udp_dest) {
+            return add(Criteria.matchUdp_Dest(udp_dest));
+        }
+  
+        @Override
+        public Builder matchUdp_Dest(short udp_dest, short mask) {
+            return add(Criteria.matchUdp_Dest(udp_dest, mask));
+        }
+
+        @Override
+        public Builder matchLen(short len) {
+            return add(Criteria.matchLen(len));
+        }
+  
+        @Override
+        public Builder matchLen(short len, short mask) {
+            return add(Criteria.matchLen(len, mask));
+        }
+
+        @Override
+        public Builder matchUdp_Check(short udp_check) {
+            return add(Criteria.matchUdp_Check(udp_check));
+        }
+  
+        @Override
+        public Builder matchUdp_Check(short udp_check, short mask) {
+            return add(Criteria.matchUdp_Check(udp_check, mask));
+        }
+
+        @Override
+        public Builder matchSrv6_Type(Byte srv6_type) {
+            return add(Criteria.matchSrv6_Type(srv6_type));
+        }
+  
+        @Override
+        public Builder matchSrv6_Type(Byte srv6_type, Byte mask) {
+            return add(Criteria.matchSrv6_Type(srv6_type, mask));
+        }
+
+        @Override
+        public Builder matchSrv6_Hdr_Ext_Len(Byte srv6_hdr_ext_len) {
+            return add(Criteria.matchSrv6_Hdr_Ext_Len(srv6_hdr_ext_len));
+        }
+  
+        @Override
+        public Builder matchSrv6_Hdr_Ext_Len(Byte srv6_hdr_ext_len, Byte mask) {
+            return add(Criteria.matchSrv6_Hdr_Ext_Len(srv6_hdr_ext_len, mask));
+        }
+
+        @Override
+        public Builder matchSrv6_Routing_Type(Byte srv6_routing_Type) {
+            return add(Criteria.matchSrv6_Routing_Type(srv6_routing_Type));
+        }
+  
+        @Override
+        public Builder matchSrv6_Routing_Type(Byte srv6_routing_Type, Byte mask) {
+            return add(Criteria.matchSrv6_Routing_Type(srv6_routing_Type, mask));
+        }
+
+        @Override
+        public Builder matchSrv6_Segments_Left(Byte srv6_segments_left) {
+            return add(Criteria.matchSrv6_Segments_Left(srv6_segments_left));
+        }
+  
+        @Override
+        public Builder matchSrv6_Segments_Left(Byte srv6_segments_left, Byte mask) {
+            return add(Criteria.matchSrv6_Segments_Left(srv6_segments_left, mask));
+        }
+
+        @Override
+        public Builder matchSrv6_Last_Enty(Byte srv6_last_enty) {
+            return add(Criteria.matchSrv6_Last_Enty(srv6_last_enty));
+        }
+  
+        @Override
+        public Builder matchSrv6_Last_Enty(Byte srv6_last_enty, Byte mask) {
+            return add(Criteria.matchSrv6_Last_Enty(srv6_last_enty, mask));
+        }
+
+        @Override
+        public Builder matchSrv6_Flags(Byte srv6_flags) {
+            return add(Criteria.matchSrv6_Flags(srv6_flags));
+        }
+  
+        @Override
+        public Builder matchSrv6_Flags(Byte srv6_flags, Byte mask) {
+            return add(Criteria.matchSrv6_Flags(srv6_flags, mask));
+        }
+
+        @Override
+        public Builder matchSrv6_Tag(short srv6_tag) {
+            return add(Criteria.matchSrv6_Tag(srv6_tag));
+        }
+  
+        @Override
+        public Builder matchSrv6_Tag(short srv6_tag, short mask) {
+            return add(Criteria.matchSrv6_Tag(srv6_tag, mask));
+        }
+
+        @Override
+        public Builder matchSrv6_Segmentlist1(Srv6_Segmentlist1 srv6_segmentlist1) {
+            return add(Criteria.matchSrv6_Segmentlist1(srv6_segmentlist1));
+        }
+  
+        @Override
+        public Builder matchSrv6_Segmentlist1(Srv6_Segmentlist1 srv6_segmentlist1, Srv6_Segmentlist1 mask) {
+            return add(Criteria.matchSrv6_Segmentlist1(srv6_segmentlist1, mask));
+        }
+
+        @Override
+        public Builder matchSrv6_Segmentlist2(Srv6_Segmentlist2 srv6_segmentlist2) {
+            return add(Criteria.matchSrv6_Segmentlist2(srv6_segmentlist2));
+        }
+  
+        @Override
+        public Builder matchSrv6_Segmentlist2(Srv6_Segmentlist2 srv6_segmentlist2, Srv6_Segmentlist2 mask) {
+            return add(Criteria.matchSrv6_Segmentlist2(srv6_segmentlist2, mask));
+        }
+
+        @Override
+        public Builder matchSrv6_Segmentlist3(Srv6_Segmentlist3 srv6_segmentlist3) {
+            return add(Criteria.matchSrv6_Segmentlist3(srv6_segmentlist3));
+        }
+  
+        @Override
+        public Builder matchSrv6_Segmentlist3(Srv6_Segmentlist3 srv6_segmentlist3, Srv6_Segmentlist3 mask) {
+            return add(Criteria.matchSrv6_Segmentlist3(srv6_segmentlist3, mask));
+        }
+
+        @Override
+        public Builder matchIpv6_Ver_Tp_Flb_I(int ipv6_ver_tp_flb_i) {
+            return add(Criteria.matchIpv6_Ver_Tp_Flb_I(ipv6_ver_tp_flb_i));
+        }
+  
+        @Override
+        public Builder matchIpv6_Ver_Tp_Flb_I(int ipv6_ver_tp_flb_i, int mask) {
+            return add(Criteria.matchIpv6_Ver_Tp_Flb_I(ipv6_ver_tp_flb_i, mask));
+        }
+
+        @Override
+        public Builder matchIpv6_Plen_I(short ipv6_plen_i) {
+            return add(Criteria.matchIpv6_Plen_I(ipv6_plen_i));
+        }
+  
+        @Override
+        public Builder matchIpv6_Plen_I(short ipv6_plen_i, short mask) {
+            return add(Criteria.matchIpv6_Plen_I(ipv6_plen_i, mask));
+        }
+
+        @Override
+        public Builder matchIpv6_I_Type(Byte ipv6_i_type) {
+            return add(Criteria.matchIpv6_I_Type(ipv6_i_type));
+        }
+  
+        @Override
+        public Builder matchIpv6_I_Type(Byte ipv6_i_type, Byte mask) {
+            return add(Criteria.matchIpv6_I_Type(ipv6_i_type, mask));
+        }
+
+        @Override
+        public Builder matchIpv6_Hlmt_I(Byte ipv6_hlmt_i) {
+            return add(Criteria.matchIpv6_Hlmt_I(ipv6_hlmt_i));
+        }
+  
+        @Override
+        public Builder matchIpv6_Hlmt_I(Byte ipv6_hlmt_i, Byte mask) {
+            return add(Criteria.matchIpv6_Hlmt_I(ipv6_hlmt_i, mask));
+        }
+
+        @Override
+        public Builder matchIpv6_Src_I(Ipv6_Src_I ipv6_src_i) {
+            return add(Criteria.matchIpv6_Src_I(ipv6_src_i));
+        }
+  
+        @Override
+        public Builder matchIpv6_Src_I(Ipv6_Src_I ipv6_src_i, Ipv6_Src_I mask) {
+            return add(Criteria.matchIpv6_Src_I(ipv6_src_i, mask));
+        }
+
+        @Override
+        public Builder matchIpv6_Dst_I(Ipv6_Dst_I ipv6_dst_i) {
+            return add(Criteria.matchIpv6_Dst_I(ipv6_dst_i));
+        }
+  
+        @Override
+        public Builder matchIpv6_Dst_I(Ipv6_Dst_I ipv6_dst_i, Ipv6_Dst_I mask) {
+            return add(Criteria.matchIpv6_Dst_I(ipv6_dst_i, mask));
+        }
+
+        @Override
         public TrafficSelector.Builder extension(ExtensionSelector extensionSelector,
                 DeviceId deviceId) {
             return add(Criteria.extension(extensionSelector, deviceId));
         }
 
         @Override
-        public TrafficSelector build() {
+        public DefaultTrafficSelector build() {
             return new DefaultTrafficSelector(selector.values(), extSelector.values(), match);
         }
     }
