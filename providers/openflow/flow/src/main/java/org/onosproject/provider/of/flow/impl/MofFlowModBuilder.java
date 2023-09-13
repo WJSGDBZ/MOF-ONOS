@@ -52,10 +52,11 @@ import org.onosproject.net.flow.TrafficSelector;
 import org.onosproject.net.flow.TrafficTreatment;
 import org.onosproject.provider.of.flow.mof.api.MofFlowMod;
 import org.onosproject.provider.of.flow.mof.impl.*;
+import org.projectfloodlight.openflow.protocol.*;
 
 public class MofFlowModBuilder {
     private static final Logger log = LoggerFactory.getLogger(MofFlowModBuilder.class);
-
+    private final XidGenerator xidGenerator = XidGenerators.global();
     private final FlowRule flowRule;
     private final TrafficSelector selector;
     private final TrafficTreatment treatment;
@@ -73,12 +74,16 @@ public class MofFlowModBuilder {
         this.deviceId = flowRule.deviceId();
     }
 
+    public long nextXid() {
+        return xidGenerator.nextXid();
+    }
+
     public MofFlowMod buildMofFlowAdd() {
 
         long cookie = flowRule().id().value();
 
         MofFlowMod fm = new MofFlowAddImpl.Builder()
-                                        .setXid(xid)
+                                        .setXid(nextXid())
                                         .setCookie(U64.of(cookie))
                                         .setBufferId(OFBufferId.NO_BUFFER)
                                         .setTreatment(treatment)

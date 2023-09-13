@@ -749,6 +749,13 @@ public final class DefaultTrafficSelector implements TrafficSelector {
         return null;
     }
 
+    public static writeValueAndMaskZero(ByteBuf bb){
+        // notice: new flow format!!!
+        Mac_DstCriterion.writeZero(bb);//value
+        Mac_DstCriterion.writeZero(bb);//mask
+        //........ go on
+    }
+
     public static void putTo(PrimitiveSink sink){
 
     }

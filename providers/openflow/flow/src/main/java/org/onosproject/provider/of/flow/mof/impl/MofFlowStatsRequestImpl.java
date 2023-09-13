@@ -24,6 +24,7 @@ import org.projectfloodlight.openflow.protocol.oxs.*;
 import org.projectfloodlight.openflow.protocol.queueprop.*;
 import org.projectfloodlight.openflow.types.*;
 import org.projectfloodlight.openflow.util.*;
+import org.onosproject.net.flow.DefaultTrafficSelector;
 import org.onosproject.net.flow.TrafficSelector;
 import org.projectfloodlight.openflow.exceptions.*;
 import org.slf4j.Logger;
@@ -418,12 +419,10 @@ public class MofFlowStatsRequestImpl implements MofFlowStatsRequest {
             if(flags == null)
                 throw new NullPointerException("Property flags must not be null");
             TrafficSelector match = null;
-            if(this.allMatch){
-                TrafficSelector match
-            }else{
-                TrafficSelector match = this.matchSet ? this.match : null;
+            if(!this.allMatch){
+                match = this.matchSet ? this.match : null;
             }
-            if(match == null)
+            if(match == null && !this.allMatch)
                 throw new NullPointerException("Property match must not be null");
             TableId tableId = this.tableIdSet ? this.tableId : DEFAULT_TABLE_ID;
             if(tableId == null)
@@ -449,48 +448,46 @@ public class MofFlowStatsRequestImpl implements MofFlowStatsRequest {
     static class Reader implements OFMessageReader<MofFlowStatsRequest> {
         @Override
         public MofFlowStatsRequest readFrom(ByteBuf bb) throws OFParseError {
-            return null;
-            // int start = bb.readerIndex();
-            // // fixed value property version == 1
-            // byte version = bb.readByte();
-            // if(version != (byte) 0x1)
-            //     throw new OFParseError("Wrong version: Expected=OFVersion.OF_10(1), got="+version);
-            // // fixed value property type == 16
-            // byte type = bb.readByte();
-            // if(type != (byte) 0x10)
-            //     throw new OFParseError("Wrong type: Expected=OFType.STATS_REQUEST(16), got="+type);
-            // int length = U16.f(bb.readShort());
-            // if(length != 56)
-            //     throw new OFParseError("Wrong length: Expected=56(56), got="+length);
-            // if(bb.readableBytes() + (bb.readerIndex() - start) < length) {
-            //     // Buffer does not have all data yet
-            //     bb.readerIndex(start);
-            //     return null;
-            // }
-            // if(logger.isTraceEnabled())
-            //     logger.trace("readFrom - length={}", length);
-            // long xid = U32.f(bb.readInt());
-            // // fixed value property statsType == 1
-            // short statsType = bb.readShort();
-            // if(statsType != (short) 0x1)
-            //     throw new OFParseError("Wrong statsType: Expected=OFStatsType.FLOW(1), got="+statsType);
-            // Set<OFStatsRequestFlags> flags = OFStatsRequestFlagsSerializerVer10.readFrom(bb);
-            // TrafficSelector match = ChannelUtilsVer10.readOFMatch(bb);
-            // TableId tableId = TableId.readByte(bb);
-            // // pad: 1 bytes
-            // bb.skipBytes(1);
-            // OFPort outPort = OFPort.read2Bytes(bb);
+            int start = bb.readerIndex();
+            // fixed value property version == 1
+            byte version = bb.readByte();
+            if(version != (byte) 0x1)
+                throw new OFParseError("Wrong version: Expected=OFVersion.OF_10(1), got="+version);
+            // fixed value property type == 16
+            byte type = bb.readByte();
+            if(type != (byte) 0x10)
+                throw new OFParseError("Wrong type: Expected=OFType.STATS_REQUEST(16), got="+type);
+            int length = U16.f(bb.readShort());
 
-            // MofFlowStatsRequestImpl flowStatsRequestVer10 = new MofFlowStatsRequestImpl(
-            //         xid,
-            //           flags,
-            //           match,
-            //           tableId,
-            //           outPort
-            //         );
-            // if(logger.isTraceEnabled())
-            //     logger.trace("readFrom - read={}", flowStatsRequestVer10);
-            // return flowStatsRequestVer10;
+            if(bb.readableBytes() + (bb.readerIndex() - start) < length) {
+                // Buffer does not have all data yet
+                bb.readerIndex(start);
+                return null;
+            }
+            if(logger.isTraceEnabled())
+                logger.trace("readFrom - length={}", length);
+            long xid = U32.f(bb.readInt());
+            // fixed value property statsType == 1
+            short statsType = bb.readShort();
+            if(statsType != (short) 0x1)
+                throw new OFParseError("Wrong statsType: Expected=OFStatsType.FLOW(1), got="+statsType);
+            Set<OFStatsRequestFlags> flags = OFStatsRequestFlagsSerializerVer10.readFrom(bb);
+            TrafficSelector match = DefaultTrafficSelector.readFrom(bb);
+            TableId tableId = TableId.readByte(bb);
+            // pad: 1 bytes
+            bb.skipBytes(1);
+            OFPort outPort = OFPort.read2Bytes(bb);
+
+            MofFlowStatsRequestImpl mflowStatsRequestVer10 = new MofFlowStatsRequestImpl(
+                      xid,
+                      flags,
+                      match,
+                      tableId,
+                      outPort
+                    );
+            if(logger.isTraceEnabled())
+                logger.trace("readFrom - read={}", mflowStatsRequestVer10);
+            return mflowStatsRequestVer10;
         }
     }
 
@@ -529,21 +526,29 @@ public class MofFlowStatsRequestImpl implements MofFlowStatsRequest {
     static class Writer implements OFMessageWriter<MofFlowStatsRequestImpl> {
         @Override
         public void write(ByteBuf bb, MofFlowStatsRequestImpl message) {
-            // // fixed value property version = 1
-            // bb.writeByte((byte) 0x1);
-            // // fixed value property type = 16
-            // bb.writeByte((byte) 0x10);
-            // // fixed value property length = 56
-            // bb.writeShort((short) 0x38);
-            // bb.writeInt(U32.t(message.xid));
-            // // fixed value property statsType = 1
-            // bb.writeShort((short) 0x1);
-            // OFStatsRequestFlagsSerializerVer10.writeTo(bb, message.flags);
-            // message.match.writeTo(bb);
-            // message.tableId.writeByte(bb);
-            // // pad: 1 bytes
-            // bb.writeZero(1);
-            // message.outPort.write2Bytes(bb);
+            int startIndex = bb.writerIndex();
+            // fixed value property version = 1
+            bb.writeByte((byte) 0x1);
+            // fixed value property type = 16
+            bb.writeByte((byte) 0x10);
+
+            // length is length of variable message, will be updated at the end
+            int lengthIndex = bb.writerIndex();
+            bb.writeShort((short)0x0);
+
+            bb.writeInt(U32.t(message.xid));
+            // fixed value property statsType = 1
+            bb.writeShort((short) 0x1);
+            OFStatsRequestFlagsSerializerVer10.writeTo(bb, message.flags);
+            message.match.writeTo(bb);
+            message.tableId.writeByte(bb);
+            // pad: 1 bytes
+            bb.writeZero(1);
+            message.outPort.write2Bytes(bb);
+
+            // update length field
+            int length = bb.writerIndex() - startIndex;
+            bb.setShort(lengthIndex, length);
         }
     }
 

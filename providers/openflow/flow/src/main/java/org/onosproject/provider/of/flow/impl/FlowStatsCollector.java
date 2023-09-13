@@ -25,6 +25,9 @@ import org.projectfloodlight.openflow.types.OFPort;
 import org.projectfloodlight.openflow.types.TableId;
 import org.slf4j.Logger;
 
+import org.onosproject.provider.of.flow.mof.api.MofFlowStatsRequest;
+import org.onosproject.provider.of.flow.mof.impl.MofFlowStatsRequestImpl;
+
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -35,6 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static org.slf4j.LoggerFactory.getLogger;
+import org.projectfloodlight.openflow.protocol.*;
 
 /**
  * Collects flow statistics for the specified switch.
@@ -177,6 +181,11 @@ class FlowStatsCollector implements SwitchDataCollector {
     }
 
     private class PollTimerTask extends TimerTask {
+        private final XidGenerator xidGenerator = XidGenerators.global();
+
+        public long nextXid() {
+            return xidGenerator.nextXid();
+        }
         @Override
         public void run() {
             // Check whether we are still waiting a previous reply
@@ -203,12 +212,19 @@ class FlowStatsCollector implements SwitchDataCollector {
                 }
 
                 log.trace("Collecting stats for {}", sw.getStringId());
-                OFFlowStatsRequest request = sw.factory().buildFlowStatsRequest()
-                        .setMatch(sw.factory().matchWildcardAll())
-                        .setTableId(TableId.ALL)
-                        .setOutPort(OFPort.NO_MASK)
-                        .build();
-                sw.sendMsg(request);
+                // OFFlowStatsRequest request = sw.factory().buildFlowStatsRequest()
+                //         .setMatch(sw.factory().matchWildcardAll())
+                //         .setTableId(TableId.ALL)
+                //         .setOutPort(OFPort.NO_MASK)
+                //         .build();
+
+                // MofFlowStatsRequest request = new MofFlowStatsRequestImpl.Builder()
+                //                                                     .setXid(nextXid())
+                //                                                     .setAllMatch()
+                //                                                     .setTableId(TableId.ALL)
+                //                                                     .setOutPort(OFPort.NO_MASK)
+                //                                                     .build();
+                // sw.sendMsg(request);
                 // Other flow stats will not be asked
                 // if we don't see first the reply of this request
                 waiting.set(WAITING_ATTEMPTS);
