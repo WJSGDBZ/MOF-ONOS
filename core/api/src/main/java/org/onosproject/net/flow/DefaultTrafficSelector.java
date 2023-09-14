@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.ArrayList;
 
 import javax.sound.sampled.AudioFileFormat.Type;
 
@@ -729,27 +730,25 @@ public final class DefaultTrafficSelector implements TrafficSelector {
       }
 
     public static DefaultTrafficSelector readFrom(ByteBuf bb) {
-        // DefaultTrafficSelector.Builder builder = DefaultTrafficSelector.builder();
-        // HashMap<Criterion.Type, Criterion.Builder> wildcard = new HashMap<>();
-        
-        // // Mask
-        // Criterion.Builder mac_dst_builder = new Mac_Dst_Criterion.Builder();
-        // if(mac_dst_builder.readMask(bb)){
-        //     wildcard.put(Criterion.Type.MAC_DST, mac_dst_builder);
-        // }
-        // //.......
-        // // Flow
-        // if(wildcard.containsKey(Criterion.Type.MAC_DST)){
-        //     mac_dst_builder = wildcard.get(Criterion.Type.MAC_DST);
-        //     mac_dst_builder.readData(bb);
-        //     builder.add(mac_dst_builder.build());
-        // }
+        DefaultTrafficSelector.Builder TrafficBuilder = DefaultTrafficSelector.builder();
+        ArrayList<Criterion.Builder> wildcard = new ArrayList<>();
+        // Mask
+        Criterion.Builder builder = new Mac_DstCriterion.Builder();
+        if(builder.readMask(bb)){
+            wildcard.add(builder);
+        }
+        //.......
 
-        // return builder.build();
-        return null;
+        // Value
+        for(Criterion.Builder CriterionBuilder : wildcard){
+            TrafficBuilder.add(CriterionBuilder.readData(bb)
+                                        .build());
+        }
+
+        return TrafficBuilder.build();
     }
 
-    public static writeValueAndMaskZero(ByteBuf bb){
+    public static void writeStatsFlowRequestAllMatch(ByteBuf bb){
         // notice: new flow format!!!
         Mac_DstCriterion.writeZero(bb);//value
         Mac_DstCriterion.writeZero(bb);//mask

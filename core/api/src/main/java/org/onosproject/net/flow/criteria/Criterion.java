@@ -401,4 +401,10 @@ public interface Criterion {
             return this.value;
         }
     }
+
+    public interface Builder {
+        boolean readMask(ByteBuf bb);
+        Builder readData(ByteBuf bb);
+        Criterion build();
+    }
 }
