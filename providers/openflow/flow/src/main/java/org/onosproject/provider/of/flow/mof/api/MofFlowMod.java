@@ -52,6 +52,9 @@ public interface MofFlowMod extends OFObject, OFMessage {
         OFType getType();
         long getXid();
         Builder setXid(long xid);
+
+        TableId getTableId();
+        Builder setTableId(TableId tableId);
         TrafficSelector getSelector();
         Match getMatch();
         Builder setMatch(Match match);

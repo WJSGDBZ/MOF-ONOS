@@ -452,6 +452,22 @@ public final class DecodeInstructionCodecHelper {
         return portNumber;
     }
 
+    private PortNumber getTableId(ObjectNode jsonNode) {
+        PortNumber portNumber;
+        JsonNode portNode = nullIsIllegal(jsonNode.get(InstructionCodec.PORT),
+                InstructionCodec.PORT + InstructionCodec.ERROR_MESSAGE);
+        if (portNode.isLong() || portNode.isInt()) {
+            portNumber = PortNumber.portNumber(portNode.asLong());
+        } else if (portNode.isTextual()) {
+            portNumber = PortNumber.fromString(portNode.textValue());
+        } else {
+            throw new IllegalArgumentException("Port value "
+                    + portNode.toString()
+                    + " is not supported");
+        }
+        return portNumber;
+    }
+
     /**
      * Returns Ethernet type.
      *
@@ -481,7 +497,7 @@ public final class DecodeInstructionCodecHelper {
 
         if (type.equals(Instruction.Type.OUTPUT.name())) {
             return Instructions.createOutput(getPortNumber(json));
-        } else if (type.equals(Instruction.Type.NOACTION.name())) {
+        }else if (type.equals(Instruction.Type.NOACTION.name())) {
             return Instructions.createNoAction();
         } else if (type.equals(Instruction.Type.TABLE.name())) {
             return Instructions.transition(nullIsIllegal(json.get(InstructionCodec.TABLE_ID),

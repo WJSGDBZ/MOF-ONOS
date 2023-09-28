@@ -212,11 +212,11 @@ class FlowStatsCollector implements SwitchDataCollector {
                 }
 
                 log.trace("Collecting stats for {}", sw.getStringId());
-                // OFFlowStatsRequest request = sw.factory().buildFlowStatsRequest()
-                //         .setMatch(sw.factory().matchWildcardAll())
-                //         .setTableId(TableId.ALL)
-                //         .setOutPort(OFPort.NO_MASK)
-                //         .build();
+                OFFlowStatsRequest request = sw.factory().buildFlowStatsRequest()
+                        .setMatch(sw.factory().matchWildcardAll())
+                        .setTableId(TableId.ALL)
+                        .setOutPort(OFPort.NO_MASK)
+                        .build();
 
                 // MofFlowStatsRequest request = new MofFlowStatsRequestImpl.Builder()
                 //                                                     .setXid(nextXid())
@@ -224,7 +224,8 @@ class FlowStatsCollector implements SwitchDataCollector {
                 //                                                     .setTableId(TableId.ALL)
                 //                                                     .setOutPort(OFPort.NO_MASK)
                 //                                                     .build();
-                // sw.sendMsg(request);
+                
+                sw.sendMsg(request);
                 // Other flow stats will not be asked
                 // if we don't see first the reply of this request
                 waiting.set(WAITING_ATTEMPTS);

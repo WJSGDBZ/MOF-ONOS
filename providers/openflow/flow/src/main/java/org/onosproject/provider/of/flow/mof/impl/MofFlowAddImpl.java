@@ -53,7 +53,7 @@ public class MofFlowAddImpl implements MofFlowMod{
         private final static OFPort DEFAULT_OUT_PORT = OFPort.ANY;
         private final static Set<OFFlowModFlags> DEFAULT_FLAGS = ImmutableSet.<OFFlowModFlags>of();
         private final static List<OFAction> DEFAULT_ACTIONS = ImmutableList.<OFAction>of();
-
+        private final static TableId DEFAULT_TABLE_ID = TableId.of(0);
     // OF message fields
     private final long xid;
     private final TrafficSelector selector;
@@ -67,6 +67,7 @@ public class MofFlowAddImpl implements MofFlowMod{
     private final Set<OFFlowModFlags> flags;
     private final TrafficTreatment treatment;
     private final List<OFAction> actions;
+    private final TableId tableId;
 
 
     protected MofFlowAddImpl(TrafficSelector selector, TrafficTreatment treatment){
@@ -83,11 +84,12 @@ public class MofFlowAddImpl implements MofFlowMod{
         this.flags = DEFAULT_FLAGS;
         this.treatment = treatment;
         this.selector = selector;
+        this.tableId = DEFAULT_TABLE_ID;
         this.match = null;
         this.actions = null;
     }
 
-    MofFlowAddImpl(long xid, TrafficSelector selector, U64 cookie, int idleTimeout, int hardTimeout, int priority, OFBufferId bufferId, OFPort outPort, Set<OFFlowModFlags> flags, TrafficTreatment treatment) {
+    MofFlowAddImpl(long xid, TrafficSelector selector, U64 cookie, int idleTimeout, int hardTimeout, int priority, OFBufferId bufferId, OFPort outPort, Set<OFFlowModFlags> flags, TrafficTreatment treatment, TableId tableId) {
         if(selector == null) {
             throw new NullPointerException("MofFlowAddImpl: property selector cannot be null");
         }
@@ -106,6 +108,9 @@ public class MofFlowAddImpl implements MofFlowMod{
         if(treatment == null) {
             throw new NullPointerException("MofFlowAddImpl: property treatment cannot be null");
         }
+        if(tableId == null) {
+            throw new NullPointerException("MofFlowAddImpl: property tableId cannot be null");
+        }
         //this.xid = U32.normalize(xid);
         this.xid = xid & 0xFFFF_FFFFL;
         this.cookie = cookie;
@@ -122,6 +127,7 @@ public class MofFlowAddImpl implements MofFlowMod{
         this.selector = selector;
         this.match = null;
         this.actions = null;
+        this.tableId = tableId;
     }
 
     public void writeTo(ByteBuf bb){
@@ -136,7 +142,7 @@ public class MofFlowAddImpl implements MofFlowMod{
         int startIndex = bb.writerIndex();
         // fixed value property version = 1
         bb.writeByte((byte) 0x1);
-        // fixed value property type = 14
+        // fixed value property type = ff
         bb.writeByte((byte) 0xff);
         // length is length of variable message, will be updated at the end
         int lengthIndex = bb.writerIndex();
@@ -148,8 +154,11 @@ public class MofFlowAddImpl implements MofFlowMod{
         //message.selector.writeTo(bb); 
 
         bb.writeLong(message.cookie.getValue());
+        //tableId;
+        message.tableId.writeByte(bb);
+        log.info("Mof add flow on tableId" + message.tableId);
         // fixed value property command = 0
-        bb.writeShort((short) 0x0);
+        bb.writeByte(0);
         bb.writeShort(U16.t(message.idleTimeout));
         bb.writeShort(U16.t(message.hardTimeout));
         bb.writeShort(U16.t(message.priority));
@@ -310,6 +319,9 @@ public class MofFlowAddImpl implements MofFlowMod{
     private boolean treatmentSet;
     private TrafficTreatment treatment;
     private boolean actionsSet;
+    private TableId tableId;
+    private boolean tableIdSet;
+
     List<OFAction> actions;
 
     @Override
@@ -333,6 +345,19 @@ public class MofFlowAddImpl implements MofFlowMod{
         this.xidSet = true;
         return this;
     }
+
+    @Override
+    public TableId getTableId() {
+        return tableId;
+    }
+
+    @Override
+    public MofFlowMod.Builder setTableId(TableId tableId) {
+        this.tableId = tableId;
+        this.tableIdSet = true;
+        return this;
+    }
+
     @Override
     public TrafficSelector getSelector() {
         return selector;
@@ -487,6 +512,8 @@ public class MofFlowAddImpl implements MofFlowMod{
         TrafficTreatment treatment = this.treatmentSet ? this.treatment : null;
         if(treatment == null)
         throw new NullPointerException("Property treatment must not be null");
+        if(tableId == null)
+        throw new NullPointerException("Property tableId must not be null");
 
         return new MofFlowAddImpl(
         xid,
@@ -498,7 +525,8 @@ public class MofFlowAddImpl implements MofFlowMod{
         bufferId,
         outPort,
         flags,
-        treatment
+        treatment,
+        tableId
         );
     }
 

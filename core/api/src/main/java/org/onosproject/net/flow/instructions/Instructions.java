@@ -75,6 +75,10 @@ public final class Instructions {
         return new OutputInstruction(number);
     }
 
+    public static GOTO_TABLEInstruction createGOTO_TABLE(final short tableId) {
+        return new GOTO_TABLEInstruction(tableId);
+    }
+
     /**
      * Creates a no action instruction.
      *
@@ -624,9 +628,9 @@ public final class Instructions {
             // raw
             bb.writeByte(0xff);
             // len
-            bb.writeShort(0x10);
+            bb.writeShort(Short.reverseBytes((short)0x10));
             // port
-            bb.writeInt((int)this.port.toLong());
+            bb.writeInt(Integer.reverseBytes((int)this.port.toLong()));
             // maxlen
             bb.writeShort(0x0);
             //pad
@@ -660,6 +664,72 @@ public final class Instructions {
             if (obj instanceof OutputInstruction) {
                 OutputInstruction that = (OutputInstruction) obj;
                 return Objects.equals(port, that.port);
+
+            }
+            return false;
+        }
+    }
+
+
+    public static final class GOTO_TABLEInstruction implements Instruction {
+        private final short tableId;
+
+        private GOTO_TABLEInstruction(short tableId) {
+            this.tableId = tableId;
+        }
+
+        public static GOTO_TABLEInstruction readFrom(ByteBuf bb){
+            byte type = bb.readByte();
+            byte raw = bb.readByte();
+            short len = bb.readShort();
+            short tableId = bb.readByte();
+            short maxlen = bb.readShort();
+            bb.skipBytes(6); //pad
+
+            return new GOTO_TABLEInstruction(tableId);
+        }
+
+        @Override
+        public void write(ByteBuf bb){
+            // fixed value property type = 0
+            bb.writeByte((byte)58);
+            // raw
+            bb.writeByte(0xff);
+            // len
+            bb.writeShort(Short.reverseBytes((short)0x8));
+            // tableId
+            bb.writeByte((byte)tableId);
+            //pad
+            bb.writeZero(3);
+        }
+
+        public short tableId() {
+            return tableId;
+        }
+
+        @Override
+        public Type type() {
+            return Type.GOTO_Table;
+        }
+
+        @Override
+        public String toString() {
+            return type().toString() + SEPARATOR + tableId;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(type().ordinal(), tableId);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj instanceof GOTO_TABLEInstruction) {
+                GOTO_TABLEInstruction that = (GOTO_TABLEInstruction) obj;
+                return tableId == that.tableId;
 
             }
             return false;
@@ -835,9 +905,29 @@ public final class Instructions {
             this.tableId = tableId;
         }
 
-        @Override
-        public void write(ByteBuf c){
+        public static TableTypeTransition readFrom(ByteBuf bb){
+            byte type = bb.readByte();
+            byte raw = bb.readByte();
+            short len = bb.readShort();
+            int tableId = bb.readByte();
+            bb.skipBytes(3); //pad
 
+            return new TableTypeTransition(tableId);
+        }
+
+        @Override
+        public void write(ByteBuf bb){
+            // type 
+            bb.writeByte((byte)58);
+            // raw
+            bb.writeByte(0xff);
+            // len
+            bb.writeShort(Short.reverseBytes((short)0x8));
+            // tableId
+            bb.writeByte(tableId.byteValue());
+            //bb.writeByte(0x01);
+            //pad
+            bb.writeZero(3);
         }
 
         @Override

@@ -61,4 +61,9 @@ public final class PiTableId extends Identifier<String> implements TableId {
             return this.identifier.compareTo(piTableId.identifier);
         }
     }
+    
+    @Override
+    public int getValue(){
+        return 0;
+    }
 }

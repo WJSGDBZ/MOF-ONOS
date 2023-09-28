@@ -324,6 +324,7 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
                     break;
                 case TABLE:
                     table = (Instructions.TableTypeTransition) instruction;
+                    current.add(instruction);
                     break;
                 case METADATA:
                     meta = (Instructions.MetadataInstruction) instruction;
@@ -369,6 +370,16 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
         @Override
         public Builder setOutput(PortNumber number) {
             return add(Instructions.createOutput(number));
+        }
+
+        @Override
+        public Builder treatOutput(PortNumber number) {
+            return add(Instructions.createOutput(number));
+        }
+
+        @Override
+        public Builder treatGOTO_TABLE(short tableId) {
+            return add(Instructions.createGOTO_TABLE(tableId));
         }
 
         @Override

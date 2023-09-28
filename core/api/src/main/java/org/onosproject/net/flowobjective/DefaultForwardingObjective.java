@@ -48,6 +48,7 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
     private final Operation op;
     private final Optional<ObjectiveContext> context;
     private final TrafficSelector meta;
+    private final int tableId;
 
     private final int id;
 
@@ -64,6 +65,7 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
         this.op = builder.op;
         this.context = Optional.ofNullable(builder.context);
         this.meta = builder.meta;
+        this.tableId = builder.tableId;
 
         this.id = Objects.hash(selector, flag, permanent,
                 timeout, appId, priority, nextId,
@@ -105,6 +107,11 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
     @Override
     public ApplicationId appId() {
         return appId;
+    }
+
+    @Override
+    public int tableId() {
+        return tableId;
     }
 
     @Override
@@ -154,7 +161,8 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
                     && Objects.equals(this.nextId, other.nextId)
                     && Objects.equals(this.treatment, other.treatment)
                     && Objects.equals(this.op, other.op)
-                    && Objects.equals(this.meta, other.meta);
+                    && Objects.equals(this.meta, other.meta)
+                    && this.tableId == other.tableId;
         }
         return false;
     }
@@ -173,6 +181,7 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
                 .add("appId", appId())
                 .add("permanent", permanent())
                 .add("timeout", timeout())
+                .add("tableId", tableId())
                 .toString();
     }
 
@@ -216,6 +225,7 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
         private Operation op;
         private ObjectiveContext context;
         private TrafficSelector meta;
+        private int tableId = 0;
 
         // Creates an empty builder
         private Builder() {
@@ -233,6 +243,7 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
             this.treatment = objective.treatment();
             this.op = objective.op();
             this.meta = objective.meta();
+            this.tableId = objective.tableId();
         }
 
         @Override
@@ -256,6 +267,12 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
         @Override
         public Builder withFlag(Flag flag) {
             this.flag = flag;
+            return this;
+        }
+
+        @Override
+        public Builder withTableId(int tableId) {
+            this.tableId = tableId;
             return this;
         }
 

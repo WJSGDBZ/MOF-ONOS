@@ -22,7 +22,6 @@ import com.google.common.hash.Hashing;
 import org.onosproject.core.ApplicationId;
 import org.onosproject.core.GroupId;
 import org.onosproject.net.DeviceId;
-
 import java.util.Objects;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
@@ -283,6 +282,12 @@ public class DefaultFlowRule implements FlowRule {
 
         @Override
         public FlowRule.Builder forTable(int tableId) {
+            this.tableId = IndexTableId.of(tableId);
+            return this;
+        }
+
+        @Override
+        public FlowRule.Builder withTable(int tableId) {
             this.tableId = IndexTableId.of(tableId);
             return this;
         }

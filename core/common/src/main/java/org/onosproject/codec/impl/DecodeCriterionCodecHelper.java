@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.onlab.packet.Ip6Address;
 import org.onlab.packet.IpPrefix;
 import org.onlab.packet.MacAddress;
+import org.onlab.packet.Mac_Dst;
 import org.onlab.packet.MplsLabel;
 import org.onlab.packet.TpPort;
 import org.onlab.packet.VlanId;
@@ -77,6 +78,7 @@ public final class DecodeCriterionCodecHelper {
         decoderMap = new HashMap<>();
 
         decoderMap.put(Criterion.Type.IN_PORT.name(), new InPortDecoder());
+        decoderMap.put(Criterion.Type.MAC_DST.name(), new Mac_DstDecoder());
         decoderMap.put(Criterion.Type.IN_PHY_PORT.name(), new InPhyPortDecoder());
         decoderMap.put(Criterion.Type.METADATA.name(), new MetadataDecoder());
         decoderMap.put(Criterion.Type.ETH_DST.name(), new EthDstDecoder());
@@ -193,6 +195,30 @@ public final class DecodeCriterionCodecHelper {
 
             return Criteria.matchInPort(port);
         }
+    }
+
+    private class Mac_DstDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            byte[] data = macAddressToByteArray(nullIsIllegal(json.get(CriterionCodec.MAC_DST),
+            CriterionCodec.MAC_DST + MISSING_MEMBER_MESSAGE).asText());
+            
+            Mac_Dst dst = Mac_Dst.valueOf(data);
+            
+            return Criteria.matchMac_Dst(dst);
+        }
+    }
+
+    public static byte[] macAddressToByteArray(String macAddress) {
+        String[] hexParts = macAddress.split("[:-]");
+        if (hexParts.length != 6) {
+        throw new IllegalArgumentException("Invalid MAC address format.");
+        }
+        byte[] bytes = new byte[6];
+        for (int i = 0; i < 6; i++) {
+        bytes[i] = (byte) Integer.parseInt(hexParts[i], 16);
+        }
+        return bytes;
     }
 
     private class InPhyPortDecoder implements CriterionDecoder {
@@ -732,6 +758,7 @@ public final class DecodeCriterionCodecHelper {
                 nullIsIllegal(json.get(CriterionCodec.TYPE), "Type not specified")
                         .asText();
 
+        log.info("parser type: " + type);
         CriterionDecoder decoder = decoderMap.get(type);
         if (decoder != null) {
             return decoder.decodeCriterion(json);

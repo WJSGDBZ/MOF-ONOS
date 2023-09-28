@@ -106,7 +106,9 @@ public interface Instruction {
         /**
          * Signifies that the packet should be truncated.
          */
-        TRUNCATE
+        TRUNCATE,
+
+        GOTO_Table
     }
 
     /**

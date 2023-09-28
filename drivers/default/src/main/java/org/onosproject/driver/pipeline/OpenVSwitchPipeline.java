@@ -282,8 +282,9 @@ public class OpenVSwitchPipeline extends DefaultSingleTablePipeline
         log.debug("Processing versatile forwarding objective");
         TrafficSelector selector = fwd.selector();
         TrafficTreatment tb = fwd.treatment();
-        FlowRule.Builder ruleBuilder = DefaultFlowRule.builder().fromApp(fwd.appId()).withPriority(fwd.priority())
+        FlowRule.Builder ruleBuilder = DefaultFlowRule.builder().withTable(fwd.tableId()).fromApp(fwd.appId()).withPriority(fwd.priority())
                 .forDevice(deviceId).withSelector(selector).withTreatment(tb).makeTemporary(TIME_OUT);
+                
         ruleBuilder.withPriority(fwd.priority());
         if (fwd.priority() == 100) {
             ruleBuilder.forTable(ENCAP_OUTPUT_TABLE);
@@ -304,6 +305,7 @@ public class OpenVSwitchPipeline extends DefaultSingleTablePipeline
         TrafficSelector selector = fwd.selector();
         TrafficTreatment tb = fwd.treatment();
         FlowRule.Builder ruleBuilder = DefaultFlowRule.builder()
+                .withTable(fwd.tableId())
                 .fromApp(fwd.appId()).withPriority(fwd.priority())
                 .forDevice(deviceId).withSelector(selector)
                 .withTreatment(tb).makeTemporary(TIME_OUT);

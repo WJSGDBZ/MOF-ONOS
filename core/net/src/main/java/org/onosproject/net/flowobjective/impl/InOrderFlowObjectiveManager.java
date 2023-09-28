@@ -342,7 +342,7 @@ public class InOrderFlowObjectiveManager extends FlowObjectiveManager {
             queueSize = filtObjQueue.get(k).size();
         } else if (obj instanceof ForwardingObjective) {
             ForwardingObjQueueKey k =
-                    new ForwardingObjQueueKey(deviceId, priority, ((ForwardingObjective) obj).selector());
+                    new ForwardingObjQueueKey(deviceId, priority, ((ForwardingObjective) obj).selector(), ((ForwardingObjective) obj).tableId());
             fwdObjQueue.put(k, obj);
             queueSize = fwdObjQueue.get(k).size();
         } else if (obj instanceof NextObjective) {
@@ -384,7 +384,7 @@ public class InOrderFlowObjectiveManager extends FlowObjectiveManager {
             remaining = filtObjQueue.get(k);
         } else if (obj instanceof ForwardingObjective) {
             ForwardingObjQueueKey k =
-                    new ForwardingObjQueueKey(deviceId, priority, ((ForwardingObjective) obj).selector());
+                    new ForwardingObjQueueKey(deviceId, priority, ((ForwardingObjective) obj).selector(), ((ForwardingObjective) obj).tableId());
             if (!Objects.equals(ObjectiveError.INSTALLATIONTIMEOUT, error)) {
                 fwdObjQueueHead.invalidate(k);
             }
@@ -443,7 +443,7 @@ public class InOrderFlowObjectiveManager extends FlowObjectiveManager {
             super.filter(deviceId, (FilteringObjective) obj);
         } else if (obj instanceof ForwardingObjective) {
             ForwardingObjQueueKey k =
-                    new ForwardingObjQueueKey(deviceId, priority, ((ForwardingObjective) obj).selector());
+                    new ForwardingObjQueueKey(deviceId, priority, ((ForwardingObjective) obj).selector(), ((ForwardingObjective) obj).tableId());
             fwdObjQueueHead.put(k, obj);
             super.forward(deviceId, (ForwardingObjective) obj);
         } else if (obj instanceof NextObjective) {

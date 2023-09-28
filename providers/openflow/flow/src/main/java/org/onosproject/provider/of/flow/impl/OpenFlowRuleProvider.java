@@ -370,9 +370,12 @@ public class OpenFlowRuleProvider extends AbstractProvider
             return;
         }
 
-        sw.sendMsg(FlowModBuilder.builder(flowRule, sw.factory(),
-                Optional.empty(), Optional.of(driverService)).buildFlowAdd());
+        MofFlowModBuilder mbuilder = new MofFlowModBuilder(flowRule,
+        Optional.empty(), Optional.of(driverService));
+        // sw.sendMsg(FlowModBuilder.builder(flowRule, sw.factory(),
+        //         Optional.empty(), Optional.of(driverService)).buildFlowAdd());
 
+        sw.sendMsg(mbuilder.buildMofFlowAdd());
         recordEvent(dpid);
     }
 
@@ -430,12 +433,15 @@ public class OpenFlowRuleProvider extends AbstractProvider
             switch (fbe.operator()) {
                 case ADD:
                     //mod = builder.buildFlowAdd();
+                    log.info("start to build mofFlowAdd packet");
                     mmod = mbuilder.buildMofFlowAdd();
                     break;
                 case REMOVE:
+                    log.info("start to build mofFlowDel packet");
                     mod = builder.buildFlowDel();
                     break;
                 case MODIFY:
+                    log.info("start to build mofFlowMod packet");
                     mod = builder.buildFlowMod();
                     break;
                 default:

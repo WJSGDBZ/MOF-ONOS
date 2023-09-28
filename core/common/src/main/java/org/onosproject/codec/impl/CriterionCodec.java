@@ -30,7 +30,8 @@ public final class CriterionCodec extends JsonCodec<Criterion> {
 
     private static final Logger log =
             LoggerFactory.getLogger(CriterionCodec.class);
-
+    
+    static final String MAC_DST = "mac_dst";
     static final String TYPE = "type";
     static final String ETH_TYPE = "ethType";
     static final String MAC = "mac";

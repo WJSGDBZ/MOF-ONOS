@@ -148,6 +148,7 @@ public class DefaultSingleTablePipeline extends AbstractHandlerBehaviour impleme
                     .forDevice(deviceId)
                     .withSelector(selector)
                     .fromApp(fwd.appId())
+                    .withTable(fwd.tableId())
                     .withPriority(fwd.priority())
                     .withTreatment(fwd.treatment());
 

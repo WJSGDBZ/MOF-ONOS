@@ -143,6 +143,10 @@ public interface TrafficTreatment {
          * @return a treatment builder
          */
         Builder setOutput(PortNumber number);
+        
+        Builder treatOutput(PortNumber number);
+        
+        Builder treatGOTO_TABLE(short tableId);
 
         /**
          * Sets the src l2 address.

@@ -680,6 +680,7 @@ public class FlowRuleManager
                             }
                             extraneousFlow(rule);
                         } else if (importExtraneousRules) { // Stores the rule, if so is indicated
+                            log.info("Detect ExtraneousRules, the curremt strategy is addOrUpdate Controller FlowRule", rule);
                             FlowRuleEvent flowRuleEvent = store.addOrUpdateFlowRule(rule);
                             if (flowRuleEvent == null) {
                                 // Mastership change can occur during this iteration

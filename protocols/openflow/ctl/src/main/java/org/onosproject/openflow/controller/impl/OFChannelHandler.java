@@ -1692,6 +1692,7 @@ class OFChannelHandler extends ChannelInboundHandlerAdapter
         log.debug("Begin dispatch OpenFlow Message");
         boolean backlogEmpty = processDispatchBacklogQueue();
         if (m.getType() == OFType.PACKET_IN) {
+            log.debug("Begin dispatch OpenFlow Message");
             Ethernet pkt = parsePacketInMessage(m);
             pushMessageToQueue(m, classifyEthernetPacket(pkt));
         } else {

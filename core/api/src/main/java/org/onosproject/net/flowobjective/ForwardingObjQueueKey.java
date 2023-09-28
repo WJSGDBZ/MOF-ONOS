@@ -28,11 +28,19 @@ public class ForwardingObjQueueKey implements ObjectiveQueueKey {
     private DeviceId deviceId;
     private int priority;
     private TrafficSelector selector;
+    private int tableId = 0;
 
     public ForwardingObjQueueKey(DeviceId deviceId, int priority, TrafficSelector selector) {
         this.deviceId = deviceId;
         this.priority = priority;
         this.selector = selector;
+    }
+
+    public ForwardingObjQueueKey(DeviceId deviceId, int priority, TrafficSelector selector, int tableId) {
+        this.deviceId = deviceId;
+        this.priority = priority;
+        this.selector = selector;
+        this.tableId = tableId;
     }
 
     @Override

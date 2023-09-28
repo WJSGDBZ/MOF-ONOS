@@ -22,9 +22,11 @@ import org.onlab.util.Identifier;
  * Table identifier representing the position of the table in the pipeline.
  */
 public final class IndexTableId extends Identifier<Integer> implements TableId {
+    private final int index;
 
     private IndexTableId(int index) {
         super(index);
+        this.index = index;
     }
 
     @Override
@@ -50,5 +52,10 @@ public final class IndexTableId extends Identifier<Integer> implements TableId {
      */
     public static IndexTableId of(int index) {
         return new IndexTableId(index);
+    }
+    
+    @Override
+    public int getValue(){
+        return index;
     }
 }

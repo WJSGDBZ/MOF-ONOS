@@ -50,4 +50,6 @@ public interface TableId {
      * @return zero if the table IDs are the same. Otherwise, return a non-zero integer
      */
     int compareTo(TableId other);
+
+    int getValue();
 }

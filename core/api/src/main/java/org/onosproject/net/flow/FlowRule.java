@@ -274,7 +274,8 @@ public interface FlowRule extends PiTranslatable {
          * @return this
          */
         Builder withTreatment(TrafficTreatment treatment);
-
+        
+        Builder withTable(int tableId);
         /**
          * Makes this rule permanent on the dataplane.
          *

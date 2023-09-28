@@ -620,19 +620,23 @@ public class ReactiveForwarding {
         // We don't support (yet) buffer IDs in the Flow Service so
         // packet out first.
         //
+        
         Ethernet inPkt = context.inPacket().parsed();
         
-
+        log.info("controller ready to install rule", appId.id());
         // If PacketOutOnly or ARP packet than forward directly to output port
         if (packetOutOnly || inPkt.getEtherType() == Ethernet.TYPE_ARP) {
+            log.info("packetOutOnly || inPkt.getEtherType() == Ethernet.TYPE_ARP");
             packetOut(context, portNumber, macMetrics);
             return;
         }
 
-        Mac_Dst mac_dst = Mac_Dst.valueOf(inPkt.getDestinationMACAddress());
         
+        Mac_Dst mac_dst = Mac_Dst.valueOf(inPkt.getDestinationMACAddress());
+        log.info("Mac_Dst", mac_dst);
         TrafficSelector selector = DefaultTrafficSelector.builder()
                                                         .matchMac_Dst(mac_dst)
+                                                        // .matchDl_Type(inPkt.getEtherType())
                                                         .build();
         // selectorBuilder.matchInPort(context.inPacket().receivedFrom().port())
         //                 .matchEthSrc(inPkt.getSourceMAC())
@@ -646,7 +650,8 @@ public class ReactiveForwarding {
         // }
 
         TrafficTreatment treatment = DefaultTrafficTreatment.builder()
-                                                            .setOutput(portNumber)
+                                                            .treatOutput(portNumber)
+                                                            //.transition(1)
                                                             .build();
 
         ForwardingObjective forwardingObjective = DefaultForwardingObjective.builder()
@@ -654,6 +659,7 @@ public class ReactiveForwarding {
                 .withTreatment(treatment)
                 .withPriority(flowPriority)
                 .withFlag(ForwardingObjective.Flag.VERSATILE)
+                .withTableId(1)
                 .fromApp(appId)
                 .makeTemporary(flowTimeout)
                 .add();

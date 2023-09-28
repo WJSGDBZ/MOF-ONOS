@@ -27,6 +27,7 @@ import org.projectfloodlight.openflow.types.IPv4Address;
 import org.projectfloodlight.openflow.types.MacAddress;
 import org.projectfloodlight.openflow.types.OFBufferId;
 import org.projectfloodlight.openflow.types.OFPort;
+import org.projectfloodlight.openflow.types.TableId;
 import org.projectfloodlight.openflow.types.U64;
 import org.projectfloodlight.openflow.types.VlanPcp;
 import org.projectfloodlight.openflow.types.VlanVid;
@@ -81,9 +82,11 @@ public class MofFlowModBuilder {
     public MofFlowMod buildMofFlowAdd() {
 
         long cookie = flowRule().id().value();
+        TableId tableId = TableId.of(flowRule().table().getValue());
 
         MofFlowMod fm = new MofFlowAddImpl.Builder()
-                                        .setXid(nextXid())
+                                        .setXid(xid)
+                                        .setTableId(tableId)
                                         .setCookie(U64.of(cookie))
                                         .setBufferId(OFBufferId.NO_BUFFER)
                                         .setTreatment(treatment)

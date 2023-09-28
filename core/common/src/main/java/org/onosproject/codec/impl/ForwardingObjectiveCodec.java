@@ -44,6 +44,7 @@ public final class ForwardingObjectiveCodec extends JsonCodec<ForwardingObjectiv
     private static final String OPERATION = "operation";
     private static final String NEXT_ID = "nextId";
     private static final String TREATMENT = "treatment";
+    private static final String TABLE_ID = "tableId";
 
     // messages to be printed out
     private static final String MISSING_MEMBER_MESSAGE =
@@ -147,6 +148,13 @@ public final class ForwardingObjectiveCodec extends JsonCodec<ForwardingObjectiv
         if (treatmentJson != null) {
             TrafficTreatment trafficTreatment = trafficTreatmentCodec.decode((ObjectNode) treatmentJson, context);
             builder.withTreatment(trafficTreatment);
+        }
+
+
+        // decode tableId
+        JsonNode tableIdJson = json.get(TABLE_ID);
+        if(tableIdJson != null){
+            builder.withTableId(tableIdJson.asInt());
         }
 
         // decode nextId

@@ -70,7 +70,7 @@ public final class OFMessageDecoder extends ByteToMessageDecoder {
             // This check avoids that from reading corrupted frames
             return;
         }
-
+        log.info("decode OFMessage");
         // Note that a single call to readFrom results in reading a single
         // OFMessage from the channel buffer, which is passed on to, and processed
         // by, the controller (in OFChannelHandler).
@@ -80,15 +80,15 @@ public final class OFMessageDecoder extends ByteToMessageDecoder {
         // The performance *may or may not* not be as good as before.
         OFMessageReader<OFMessage> reader = OFFactories.getGenericReader();
 
-        OFMessage message = processMofMessage(byteBuf);
-        if(message == null)
-            message = reader.readFrom(byteBuf);
+        // OFMessage message = processMofMessage(byteBuf);
+        // if(message == null)
+        OFMessage message = reader.readFrom(byteBuf);
 
         while (message != null) {
             out.add(message);
-            message = processMofMessage(byteBuf);
-            if(message == null)
-                message = reader.readFrom(byteBuf);
+            // message = processMofMessage(byteBuf);
+            // if(message == null)
+            message = reader.readFrom(byteBuf);
         }
     }
 

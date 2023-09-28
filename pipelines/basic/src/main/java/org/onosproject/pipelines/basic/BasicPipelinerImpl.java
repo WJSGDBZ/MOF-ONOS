@@ -69,7 +69,7 @@ public class BasicPipelinerImpl extends AbstractHandlerBehaviour implements Pipe
 
         // Simply create an equivalent FlowRule for table 0.
         final FlowRule.Builder ruleBuilder = DefaultFlowRule.builder()
-                .forTable(INGRESS_TABLE0_CONTROL_TABLE0)
+                .forTable(obj.tableId())
                 .forDevice(deviceId)
                 .withSelector(obj.selector())
                 .fromApp(obj.appId())

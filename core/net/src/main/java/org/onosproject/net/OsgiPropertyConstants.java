@@ -36,7 +36,7 @@ public final class OsgiPropertyConstants {
     public static final boolean CALCULATE_PERFORMANCE_CHECK_DEFAULT = false;
 
     public static final String ALLOW_EXTRANEOUS_RULES = "allowExtraneousRules";
-    public static final boolean ALLOW_EXTRANEOUS_RULES_DEFAULT = false;
+    public static final boolean ALLOW_EXTRANEOUS_RULES_DEFAULT = true;
 
     public static final String IMPORT_EXTRANEOUS_RULES = "importExtraneousRules";
     public static final boolean IMPORT_EXTRANEOUS_RULES_DEFAULT = false;

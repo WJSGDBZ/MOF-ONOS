@@ -93,6 +93,8 @@ public interface ForwardingObjective extends Objective {
      */
     TrafficTreatment treatment();
 
+    int tableId();
+
     /**
      * Obtain the type of this objective.
      *
@@ -130,6 +132,8 @@ public interface ForwardingObjective extends Objective {
          * @return a forwarding objective builder
          */
         Builder withSelector(TrafficSelector selector);
+
+        Builder withTableId(int tableId);
 
         /**
          * Assigns a next step to the forwarding objective.

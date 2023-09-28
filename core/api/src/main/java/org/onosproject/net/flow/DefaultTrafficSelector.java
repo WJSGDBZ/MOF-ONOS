@@ -214,6 +214,8 @@ public final class DefaultTrafficSelector implements TrafficSelector {
         }else{
             Mac_SrcCriterion.writeZero(bb);
         }
+
+        bb.writeZero(4);//pad
     
         if(match.containsKey(Criterion.Type.VLAN1_TPID)){
             match.get(Criterion.Type.VLAN1_TPID).write(bb);
@@ -244,6 +246,8 @@ public final class DefaultTrafficSelector implements TrafficSelector {
         }else{
             Dl_TypeCriterion.writeZero(bb);
         }
+
+        bb.writeZero(6);
     
         if(match.containsKey(Criterion.Type.VER_HL_E)){
             match.get(Criterion.Type.VER_HL_E).write(bb);
@@ -304,6 +308,8 @@ public final class DefaultTrafficSelector implements TrafficSelector {
         }else{
             Ip_Daddr_ECriterion.writeZero(bb);
         }
+
+        bb.writeZero(4);
     
         if(match.containsKey(Criterion.Type.IPV6_VER_TP_FLB_E)){
             match.get(Criterion.Type.IPV6_VER_TP_FLB_E).write(bb);
@@ -476,6 +482,8 @@ public final class DefaultTrafficSelector implements TrafficSelector {
         }else{
             Mac_SrcCriterion.writeZero(bb);
         }
+
+        bb.writeZero(4);
     
         if(match.containsKey(Criterion.Type.VLAN1_TPID)){
             match.get(Criterion.Type.VLAN1_TPID).writeMask(bb);
@@ -506,6 +514,8 @@ public final class DefaultTrafficSelector implements TrafficSelector {
         }else{
             Dl_TypeCriterion.writeZero(bb);
         }
+
+        bb.writeZero(6);
     
         if(match.containsKey(Criterion.Type.VER_HL_E)){
             match.get(Criterion.Type.VER_HL_E).writeMask(bb);
@@ -567,6 +577,8 @@ public final class DefaultTrafficSelector implements TrafficSelector {
             Ip_Daddr_ECriterion.writeZero(bb);
         }
     
+        bb.writeZero(4);
+
         if(match.containsKey(Criterion.Type.IPV6_VER_TP_FLB_E)){
             match.get(Criterion.Type.IPV6_VER_TP_FLB_E).writeMask(bb);
         }else{
@@ -731,18 +743,21 @@ public final class DefaultTrafficSelector implements TrafficSelector {
 
     public static DefaultTrafficSelector readFrom(ByteBuf bb) {
         DefaultTrafficSelector.Builder TrafficBuilder = DefaultTrafficSelector.builder();
-        ArrayList<Criterion.Builder> wildcard = new ArrayList<>();
+        HashMap<Criterion.Type ,Criterion.Builder> wildcard = new HashMap<>();
         // Mask
         Criterion.Builder builder = new Mac_DstCriterion.Builder();
         if(builder.readMask(bb)){
-            wildcard.add(builder);
+            wildcard.put(Criterion.Type.MAC_DST, builder);
         }
         //.......
 
         // Value
-        for(Criterion.Builder CriterionBuilder : wildcard){
-            TrafficBuilder.add(CriterionBuilder.readData(bb)
+        if(wildcard.containsKey(Criterion.Type.MAC_DST)){
+            TrafficBuilder.add(wildcard.get(Criterion.Type.MAC_DST)
+                                        .readData(bb)
                                         .build());
+        }else{
+            bb.skipBytes(Mac_Dst.LEN);
         }
 
         return TrafficBuilder.build();

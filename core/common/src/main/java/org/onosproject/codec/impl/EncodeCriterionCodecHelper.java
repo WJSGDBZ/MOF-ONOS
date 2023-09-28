@@ -88,7 +88,6 @@ public final class EncodeCriterionCodecHelper {
         this.context = context;
 
         formatMap = new EnumMap<>(Criterion.Type.class);
-
         formatMap.put(Criterion.Type.IN_PORT, new FormatInPort());
         formatMap.put(Criterion.Type.IN_PHY_PORT, new FormatInPort());
         formatMap.put(Criterion.Type.METADATA, new FormatMetadata());
