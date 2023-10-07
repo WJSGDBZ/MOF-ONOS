@@ -635,7 +635,7 @@ public class ReactiveForwarding {
         Mac_Dst mac_dst = Mac_Dst.valueOf(inPkt.getDestinationMACAddress());
         log.info("Mac_Dst", mac_dst);
         TrafficSelector selector = DefaultTrafficSelector.builder()
-                                                        .matchMac_Dst(mac_dst)
+                                                        .selectMac_Dst(mac_dst)
                                                         // .matchDl_Type(inPkt.getEtherType())
                                                         .build();
         // selectorBuilder.matchInPort(context.inPacket().receivedFrom().port())
@@ -659,7 +659,7 @@ public class ReactiveForwarding {
                 .withTreatment(treatment)
                 .withPriority(flowPriority)
                 .withFlag(ForwardingObjective.Flag.VERSATILE)
-                .withTableId(1)
+                .withTableId(0)
                 .fromApp(appId)
                 .makeTemporary(flowTimeout)
                 .add();

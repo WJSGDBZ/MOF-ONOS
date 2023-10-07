@@ -30,8 +30,7 @@ public final class CriterionCodec extends JsonCodec<Criterion> {
 
     private static final Logger log =
             LoggerFactory.getLogger(CriterionCodec.class);
-    
-    static final String MAC_DST = "mac_dst";
+
     static final String TYPE = "type";
     static final String ETH_TYPE = "ethType";
     static final String MAC = "mac";
@@ -85,10 +84,53 @@ public final class CriterionCodec extends JsonCodec<Criterion> {
     static final String PI_MATCH_LOW_VALUE = "lowValue";
     static final String EXTENSION = "extension";
 
+    static final String MAC_DST = "mac_dst";
+    static final String MAC_SRC = "mac_src";
+    static final String VLAN1_TPID = "vlan1_tpid";
+    static final String VLAN1_QID = "vlan1_qid";
+    static final String VLAN2_TPID = "vlan2_tpid";
+    static final String VLAN2_QID = "vlan2_qid";
+    static final String DL_TYPE = "dl_type";
+    static final String VER_HL_E = "ver_hl_e";
+    static final String TOS_E = "tos_e";
+    static final String TOT_LEN_E = "tot_len_e";
+    static final String IP_ID_E = "ip_id_e";
+    static final String FRAG_OFF_E = "frag_off_e";
+    static final String TTL_E = "ttl_e";
+    static final String IPV4_E_TYPE = "ipv4_e_type";
+    static final String IP_CHECK_E = "ip_check_e";
+    static final String IP_SADDR_E = "ip_saddr_e";
+    static final String IP_DADDR_E = "ip_daddr_e";
+    static final String IPV6_VER_TP_FLB_E = "ipv6_ver_tp_flb_e";
+    static final String IPV6_PLEN_E = "ipv6_plen_e";
+    static final String IPV6_E_TYPE = "ipv6_e_type";
+    static final String IPV6_HLMT_E = "ipv6_hlmt_e";
+    static final String IPV6_SRC_E = "ipv6_src_e";
+    static final String IPV6_DST_E = "ipv6_dst_e";
+    static final String UDP_SOURCE = "udp_source";
+    static final String UDP_DEST = "udp_dest";
+    static final String LEN = "len";
+    static final String UDP_CHECK = "udp_check";
+    static final String SRV6_TYPE = "srv6_type";
+    static final String SRV6_HDR_EXT_LEN = "srv6_hdr_ext_len";
+    static final String SRV6_ROUTING_TYPE = "srv6_routing_Type";
+    static final String SRV6_SEGMENTS_LEFT = "srv6_segments_left";
+    static final String SRV6_LAST_ENTY = "srv6_last_enty";
+    static final String SRV6_FLAGS = "srv6_flags";
+    static final String SRV6_TAG = "srv6_tag";
+    static final String SRV6_SEGMENTLIST3 = "srv6_segmentlist3";
+    static final String SRV6_SEGMENTLIST2 = "srv6_segmentlist2";
+    static final String SRV6_SEGMENTLIST1 = "srv6_segmentlist1";
+    static final String IPV6_VER_TP_FLB_I = "ipv6_ver_tp_flb_i";
+    static final String IPV6_PLEN_I = "ipv6_plen_i";
+    static final String IPV6_I_TYPE = "ipv6_i_type";
+    static final String IPV6_HLMT_I = "ipv6_hlmt_i";
+    static final String IPV6_SRC_I = "ipv6_src_i";
+    static final String IPV6_DST_I = "ipv6_dst_i";
+
     @Override
     public ObjectNode encode(Criterion criterion, CodecContext context) {
         EncodeCriterionCodecHelper encoder = new EncodeCriterionCodecHelper(criterion, context);
-        log.debug("CriterionCodec encode was used");
         return encoder.encode();
     }
 

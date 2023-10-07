@@ -28,8 +28,9 @@ import org.onosproject.net.PortNumber;
 import org.onosproject.net.flow.criteria.Criterion;
 import org.onosproject.net.flow.criteria.ExtensionSelector;
 import org.onosproject.net.flow.criteria.PiCriterion;
-
 import io.netty.buffer.ByteBuf;
+
+
 import java.util.Set;
 
 import org.onlab.packet.Mac_Dst;
@@ -46,6 +47,8 @@ import org.onlab.packet.Ipv6_Dst_I;
  * Abstraction of a slice of network traffic.
  */
 public interface TrafficSelector {
+
+    void writeTo(ByteBuf bb);
 
     /**
      * Returns selection criteria as an ordered list.
@@ -66,9 +69,6 @@ public interface TrafficSelector {
     /**
      * Builder of traffic selector entities.
      */
-
-    void writeTo(ByteBuf bb);
-
     interface Builder {
 
         /**
@@ -481,136 +481,135 @@ public interface TrafficSelector {
         @Beta
         Builder matchPi(PiCriterion piCriterion);
 
-        Builder matchMac_Dst(Mac_Dst mac_dst);
-        Builder matchMac_Dst(Mac_Dst mac_dst, Mac_Dst mask);
+        Builder selectMac_Dst(Mac_Dst mac_dst);
+        Builder selectMac_Dst(Mac_Dst mac_dst, Mac_Dst mask);
 
-        Builder matchMac_Src(Mac_Src mac_src);
-        Builder matchMac_Src(Mac_Src mac_src, Mac_Src mask);
+        Builder selectMac_Src(Mac_Src mac_src);
+        Builder selectMac_Src(Mac_Src mac_src, Mac_Src mask);
 
-        Builder matchVlan1_Tpid(short vlan1_tpid);
-        Builder matchVlan1_Tpid(short vlan1_tpid, short mask);
+        Builder selectVlan1_Tpid(short vlan1_tpid);
+        Builder selectVlan1_Tpid(short vlan1_tpid, short mask);
 
-        Builder matchVlan1_Qid(short vlan1_qid);
-        Builder matchVlan1_Qid(short vlan1_qid, short mask);
+        Builder selectVlan1_Qid(short vlan1_qid);
+        Builder selectVlan1_Qid(short vlan1_qid, short mask);
 
-        Builder matchVlan2_Tpid(short vlan2_tpid);
-        Builder matchVlan2_Tpid(short vlan2_tpid, short mask);
+        Builder selectVlan2_Tpid(short vlan2_tpid);
+        Builder selectVlan2_Tpid(short vlan2_tpid, short mask);
 
-        Builder matchVlan2_Qid(short vlan2_qid);
-        Builder matchVlan2_Qid(short vlan2_qid, short mask);
+        Builder selectVlan2_Qid(short vlan2_qid);
+        Builder selectVlan2_Qid(short vlan2_qid, short mask);
 
-        Builder matchDl_Type(short dl_type);
-        Builder matchDl_Type(short dl_type, short mask);
+        Builder selectDl_Type(short dl_type);
+        Builder selectDl_Type(short dl_type, short mask);
 
-        Builder matchVer_Hl_E(Byte ver_hl_e);
-        Builder matchVer_Hl_E(Byte ver_hl_e, Byte mask);
+        Builder selectVer_Hl_E(Byte ver_hl_e);
+        Builder selectVer_Hl_E(Byte ver_hl_e, Byte mask);
 
-        Builder matchTos_E(Byte tos_e);
-        Builder matchTos_E(Byte tos_e, Byte mask);
+        Builder selectTos_E(Byte tos_e);
+        Builder selectTos_E(Byte tos_e, Byte mask);
 
-        Builder matchTot_Len_E(short tot_len_e);
-        Builder matchTot_Len_E(short tot_len_e, short mask);
+        Builder selectTot_Len_E(short tot_len_e);
+        Builder selectTot_Len_E(short tot_len_e, short mask);
 
-        Builder matchIp_Id_E(short ip_id_e);
-        Builder matchIp_Id_E(short ip_id_e, short mask);
+        Builder selectIp_Id_E(short ip_id_e);
+        Builder selectIp_Id_E(short ip_id_e, short mask);
 
-        Builder matchFrag_Off_E(short frag_off_e);
-        Builder matchFrag_Off_E(short frag_off_e, short mask);
+        Builder selectFrag_Off_E(short frag_off_e);
+        Builder selectFrag_Off_E(short frag_off_e, short mask);
 
-        Builder matchTtl_E(Byte ttl_e);
-        Builder matchTtl_E(Byte ttl_e, Byte mask);
+        Builder selectTtl_E(Byte ttl_e);
+        Builder selectTtl_E(Byte ttl_e, Byte mask);
 
-        Builder matchIpv4_E_Type(Byte ipv4_e_type);
-        Builder matchIpv4_E_Type(Byte ipv4_e_type, Byte mask);
+        Builder selectIpv4_E_Type(Byte ipv4_e_type);
+        Builder selectIpv4_E_Type(Byte ipv4_e_type, Byte mask);
 
-        Builder matchIp_Check_E(short ip_check_e);
-        Builder matchIp_Check_E(short ip_check_e, short mask);
+        Builder selectIp_Check_E(short ip_check_e);
+        Builder selectIp_Check_E(short ip_check_e, short mask);
 
-        Builder matchIp_Saddr_E(int ip_saddr_e);
-        Builder matchIp_Saddr_E(int ip_saddr_e, int mask);
+        Builder selectIp_Saddr_E(int ip_saddr_e);
+        Builder selectIp_Saddr_E(int ip_saddr_e, int mask);
 
-        Builder matchIp_Daddr_E(int ip_daddr_e);
-        Builder matchIp_Daddr_E(int ip_daddr_e, int mask);
+        Builder selectIp_Daddr_E(int ip_daddr_e);
+        Builder selectIp_Daddr_E(int ip_daddr_e, int mask);
 
-        Builder matchIpv6_Ver_Tp_Flb_E(int ipv6_ver_tp_flb_e);
-        Builder matchIpv6_Ver_Tp_Flb_E(int ipv6_ver_tp_flb_e, int mask);
+        Builder selectIpv6_Ver_Tp_Flb_E(int ipv6_ver_tp_flb_e);
+        Builder selectIpv6_Ver_Tp_Flb_E(int ipv6_ver_tp_flb_e, int mask);
 
-        Builder matchIpv6_Plen_E(short ipv6_plen_e);
-        Builder matchIpv6_Plen_E(short ipv6_plen_e, short mask);
+        Builder selectIpv6_Plen_E(short ipv6_plen_e);
+        Builder selectIpv6_Plen_E(short ipv6_plen_e, short mask);
 
-        Builder matchIpv6_E_Type(Byte ipv6_e_type);
-        Builder matchIpv6_E_Type(Byte ipv6_e_type, Byte mask);
+        Builder selectIpv6_E_Type(Byte ipv6_e_type);
+        Builder selectIpv6_E_Type(Byte ipv6_e_type, Byte mask);
 
-        Builder matchIpv6_Hlmt_E(Byte ipv6_hlmt_e);
-        Builder matchIpv6_Hlmt_E(Byte ipv6_hlmt_e, Byte mask);
+        Builder selectIpv6_Hlmt_E(Byte ipv6_hlmt_e);
+        Builder selectIpv6_Hlmt_E(Byte ipv6_hlmt_e, Byte mask);
 
-        Builder matchIpv6_Src_E(Ipv6_Src_E ipv6_src_e);
-        Builder matchIpv6_Src_E(Ipv6_Src_E ipv6_src_e, Ipv6_Src_E mask);
+        Builder selectIpv6_Src_E(Ipv6_Src_E ipv6_src_e);
+        Builder selectIpv6_Src_E(Ipv6_Src_E ipv6_src_e, Ipv6_Src_E mask);
 
-        Builder matchIpv6_Dst_E(Ipv6_Dst_E ipv6_dst_e);
-        Builder matchIpv6_Dst_E(Ipv6_Dst_E ipv6_dst_e, Ipv6_Dst_E mask);
+        Builder selectIpv6_Dst_E(Ipv6_Dst_E ipv6_dst_e);
+        Builder selectIpv6_Dst_E(Ipv6_Dst_E ipv6_dst_e, Ipv6_Dst_E mask);
 
-        Builder matchUdp_Source(short udp_source);
-        Builder matchUdp_Source(short udp_source, short mask);
+        Builder selectUdp_Source(short udp_source);
+        Builder selectUdp_Source(short udp_source, short mask);
 
-        Builder matchUdp_Dest(short udp_dest);
-        Builder matchUdp_Dest(short udp_dest, short mask);
+        Builder selectUdp_Dest(short udp_dest);
+        Builder selectUdp_Dest(short udp_dest, short mask);
 
-        Builder matchLen(short len);
-        Builder matchLen(short len, short mask);
+        Builder selectLen(short len);
+        Builder selectLen(short len, short mask);
 
-        Builder matchUdp_Check(short udp_check);
-        Builder matchUdp_Check(short udp_check, short mask);
+        Builder selectUdp_Check(short udp_check);
+        Builder selectUdp_Check(short udp_check, short mask);
 
-        Builder matchSrv6_Type(Byte srv6_type);
-        Builder matchSrv6_Type(Byte srv6_type, Byte mask);
+        Builder selectSrv6_Type(Byte srv6_type);
+        Builder selectSrv6_Type(Byte srv6_type, Byte mask);
 
-        Builder matchSrv6_Hdr_Ext_Len(Byte srv6_hdr_ext_len);
-        Builder matchSrv6_Hdr_Ext_Len(Byte srv6_hdr_ext_len, Byte mask);
+        Builder selectSrv6_Hdr_Ext_Len(Byte srv6_hdr_ext_len);
+        Builder selectSrv6_Hdr_Ext_Len(Byte srv6_hdr_ext_len, Byte mask);
 
-        Builder matchSrv6_Routing_Type(Byte srv6_routing_Type);
-        Builder matchSrv6_Routing_Type(Byte srv6_routing_Type, Byte mask);
+        Builder selectSrv6_Routing_Type(Byte srv6_routing_Type);
+        Builder selectSrv6_Routing_Type(Byte srv6_routing_Type, Byte mask);
 
-        Builder matchSrv6_Segments_Left(Byte srv6_segments_left);
-        Builder matchSrv6_Segments_Left(Byte srv6_segments_left, Byte mask);
+        Builder selectSrv6_Segments_Left(Byte srv6_segments_left);
+        Builder selectSrv6_Segments_Left(Byte srv6_segments_left, Byte mask);
 
-        Builder matchSrv6_Last_Enty(Byte srv6_last_enty);
-        Builder matchSrv6_Last_Enty(Byte srv6_last_enty, Byte mask);
+        Builder selectSrv6_Last_Enty(Byte srv6_last_enty);
+        Builder selectSrv6_Last_Enty(Byte srv6_last_enty, Byte mask);
 
-        Builder matchSrv6_Flags(Byte srv6_flags);
-        Builder matchSrv6_Flags(Byte srv6_flags, Byte mask);
+        Builder selectSrv6_Flags(Byte srv6_flags);
+        Builder selectSrv6_Flags(Byte srv6_flags, Byte mask);
 
-        Builder matchSrv6_Tag(short srv6_tag);
-        Builder matchSrv6_Tag(short srv6_tag, short mask);
+        Builder selectSrv6_Tag(short srv6_tag);
+        Builder selectSrv6_Tag(short srv6_tag, short mask);
 
-        Builder matchSrv6_Segmentlist1(Srv6_Segmentlist1 srv6_segmentlist1);
-        Builder matchSrv6_Segmentlist1(Srv6_Segmentlist1 srv6_segmentlist1, Srv6_Segmentlist1 mask);
+        Builder selectSrv6_Segmentlist1(Srv6_Segmentlist1 srv6_segmentlist1);
+        Builder selectSrv6_Segmentlist1(Srv6_Segmentlist1 srv6_segmentlist1, Srv6_Segmentlist1 mask);
 
-        Builder matchSrv6_Segmentlist2(Srv6_Segmentlist2 srv6_segmentlist2);
-        Builder matchSrv6_Segmentlist2(Srv6_Segmentlist2 srv6_segmentlist2, Srv6_Segmentlist2 mask);
+        Builder selectSrv6_Segmentlist2(Srv6_Segmentlist2 srv6_segmentlist2);
+        Builder selectSrv6_Segmentlist2(Srv6_Segmentlist2 srv6_segmentlist2, Srv6_Segmentlist2 mask);
 
-        Builder matchSrv6_Segmentlist3(Srv6_Segmentlist3 srv6_segmentlist3);
-        Builder matchSrv6_Segmentlist3(Srv6_Segmentlist3 srv6_segmentlist3, Srv6_Segmentlist3 mask);
+        Builder selectSrv6_Segmentlist3(Srv6_Segmentlist3 srv6_segmentlist3);
+        Builder selectSrv6_Segmentlist3(Srv6_Segmentlist3 srv6_segmentlist3, Srv6_Segmentlist3 mask);
 
-        Builder matchIpv6_Ver_Tp_Flb_I(int ipv6_ver_tp_flb_i);
-        Builder matchIpv6_Ver_Tp_Flb_I(int ipv6_ver_tp_flb_i, int mask);
+        Builder selectIpv6_Ver_Tp_Flb_I(int ipv6_ver_tp_flb_i);
+        Builder selectIpv6_Ver_Tp_Flb_I(int ipv6_ver_tp_flb_i, int mask);
 
-        Builder matchIpv6_Plen_I(short ipv6_plen_i);
-        Builder matchIpv6_Plen_I(short ipv6_plen_i, short mask);
+        Builder selectIpv6_Plen_I(short ipv6_plen_i);
+        Builder selectIpv6_Plen_I(short ipv6_plen_i, short mask);
 
-        Builder matchIpv6_I_Type(Byte ipv6_i_type);
-        Builder matchIpv6_I_Type(Byte ipv6_i_type, Byte mask);
+        Builder selectIpv6_I_Type(Byte ipv6_i_type);
+        Builder selectIpv6_I_Type(Byte ipv6_i_type, Byte mask);
 
-        Builder matchIpv6_Hlmt_I(Byte ipv6_hlmt_i);
-        Builder matchIpv6_Hlmt_I(Byte ipv6_hlmt_i, Byte mask);
+        Builder selectIpv6_Hlmt_I(Byte ipv6_hlmt_i);
+        Builder selectIpv6_Hlmt_I(Byte ipv6_hlmt_i, Byte mask);
 
-        Builder matchIpv6_Src_I(Ipv6_Src_I ipv6_src_i);
-        Builder matchIpv6_Src_I(Ipv6_Src_I ipv6_src_i, Ipv6_Src_I mask);
+        Builder selectIpv6_Src_I(Ipv6_Src_I ipv6_src_i);
+        Builder selectIpv6_Src_I(Ipv6_Src_I ipv6_src_i, Ipv6_Src_I mask);
 
-        Builder matchIpv6_Dst_I(Ipv6_Dst_I ipv6_dst_i);
-        Builder matchIpv6_Dst_I(Ipv6_Dst_I ipv6_dst_i, Ipv6_Dst_I mask);
+        Builder selectIpv6_Dst_I(Ipv6_Dst_I ipv6_dst_i);
+        Builder selectIpv6_Dst_I(Ipv6_Dst_I ipv6_dst_i, Ipv6_Dst_I mask);
 
-  
         /**
          * Uses an extension selector.
          *
@@ -628,3 +627,4 @@ public interface TrafficSelector {
         TrafficSelector build();
     }
 }
+

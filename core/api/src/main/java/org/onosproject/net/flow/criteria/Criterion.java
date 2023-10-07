@@ -24,6 +24,12 @@ public interface Criterion {
 
     String SEPARATOR = ":";
 
+    public interface Builder {
+        boolean readMask(ByteBuf bb);
+        Builder readData(ByteBuf bb);
+        Criterion build();
+    }
+
     /**
      * Types of fields to which the selection criterion may apply.
      */
@@ -321,10 +327,9 @@ public interface Criterion {
      * @return type of criterion
      */
     Type type();
-
     void write(ByteBuf bb);
     void writeMask(ByteBuf bb);
-    
+
     /**
      * Bit definitions for IPv6 Extension Header pseudo-field.
      * From page 79 of OpenFlow 1.5.0 spec.
@@ -400,11 +405,5 @@ public interface Criterion {
         public short getValue() {
             return this.value;
         }
-    }
-
-    public interface Builder {
-        boolean readMask(ByteBuf bb);
-        Builder readData(ByteBuf bb);
-        Criterion build();
     }
 }
