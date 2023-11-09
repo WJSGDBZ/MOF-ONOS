@@ -25,7 +25,7 @@ import io.netty.buffer.ByteBuf;
 public final class PortCriterion implements Criterion {
     private final PortNumber port;
     private final Type type;
-
+    public static final int LEN = 4;
     /**
      * Constructor.
      *
@@ -86,4 +86,42 @@ public final class PortCriterion implements Criterion {
         }
         return false;
     }
+
+    public static class Builder implements Criterion.Builder {
+        private long port;
+        private long mask;
+        private boolean valid_mask;
+
+        @Override
+        public boolean readMask(ByteBuf bb){
+            mask = bb.readInt();
+            if(mask != 0){
+                valid_mask = true;
+            }
+
+            return valid_mask;
+        }
+
+        @Override
+        public Builder setValid(boolean valid){
+            valid_mask = valid;
+            return this;
+        }
+
+        @Override
+        public Builder readData(ByteBuf bb){
+            port = bb.readInt();
+            return this;
+        }
+
+        @Override
+        public PortCriterion build(){
+            if(!valid_mask){
+                throw new IllegalArgumentException("PortCriterion Mask should not be zero");
+            }
+            return new PortCriterion(PortNumber.portNumber(port), Type.IN_PORT);
+        }
+    }
+
+
 }

@@ -29,6 +29,7 @@ import org.onosproject.net.Lambda;
 import org.onosproject.net.OchSignal;
 import org.onosproject.net.OduSignalId;
 import org.onosproject.net.PortNumber;
+import org.onosproject.net.flow.DefaultTrafficSelector;
 import org.onosproject.net.flow.StatTriggerField;
 import org.onosproject.net.flow.StatTriggerFlag;
 import org.onosproject.net.flow.instructions.L0ModificationInstruction.ModOchSignalInstruction;
@@ -45,6 +46,10 @@ import org.onosproject.net.flow.instructions.L4ModificationInstruction.ModTransp
 import org.onosproject.net.meter.MeterId;
 import org.onosproject.net.pi.runtime.PiTableAction;
 
+import org.onosproject.net.flow.instructions.protocol.*;
+import org.onosproject.net.flow.criteria.*;
+
+import org.onosproject.net.flow.TrafficSelector;
 import io.netty.buffer.ByteBuf;
 import java.util.Map;
 import java.util.Objects;
@@ -62,6 +67,18 @@ public final class Instructions {
 
     // Ban construction
     private Instructions() {}
+
+    public static DeleteProtocolInstruction createDeleteProtocol(int flag) {
+        return new DeleteProtocolInstruction(flag);
+    }
+
+    public static SegRougtingInstruction createSegRougting() {
+        return new SegRougtingInstruction();
+    }
+
+    public static MoveProtocolInstruction createMoveProtocol(int src, int dst){
+        return new MoveProtocolInstruction(src, dst);
+    }
 
     /**
      * Creates an output instruction using the specified port number. This can
@@ -1185,6 +1202,746 @@ public final class Instructions {
             return type() + SEPARATOR + maxLen;
         }
     }
+
+
+    public static class DeleteProtocolInstruction implements Instruction {
+        private final int flag;
+
+        DeleteProtocolInstruction(int flag) {
+            this.flag = flag;
+        }
+
+        public static DeleteProtocolInstruction readFrom(ByteBuf bb){
+            byte type = bb.readByte();
+            byte raw = bb.readByte();
+            short len = bb.readShort();
+            int protocol_type = bb.readInt();
+            
+            return createDeleteProtocol(protocol_type);
+        }
+
+        @Override
+        public void write(ByteBuf bb){
+            // type 
+            bb.writeByte((byte)60);
+            // raw
+            bb.writeByte(0xff);
+            // len
+            bb.writeShort(Short.reverseBytes((short)8)); 
+            // flag
+            bb.writeInt(Integer.reverseBytes(flag));
+        }
+
+        @Override
+        public Type type() {
+            return Type.DELETE_PROTOCOL;
+        }
+
+        @Override
+        public String toString() {
+            return "DeleteProtocol[" + Protocol.ProtocolFormatByType(flag) + "]";
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(flag);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj instanceof DeleteProtocolInstruction) {
+                DeleteProtocolInstruction that = (DeleteProtocolInstruction) obj;
+                return Objects.equals(flag, that.flag);
+
+            }
+            return false;
+        }
+    }
+
+    public static class SegRougtingInstruction implements Instruction {
+
+        SegRougtingInstruction() {}
+
+        public static SegRougtingInstruction readFrom(ByteBuf bb){
+            byte type = bb.readByte();
+            byte raw = bb.readByte();
+            short len = bb.readShort();
+            bb.skipBytes(4);
+
+            return createSegRougting();
+        }
+
+        @Override
+        public void write(ByteBuf bb){
+            // type 
+            bb.writeByte((byte)65);
+            // raw
+            bb.writeByte(0xff);
+            // len
+            bb.writeShort(Short.reverseBytes((short)8)); 
+            // pad
+            bb.writeZero(4);
+        }
+
+        @Override
+        public Type type() {
+            return Type.SEG_ROUGTING;
+        }
+
+        @Override
+        public String toString() {
+            return "SegRougting[]";
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(type().ordinal());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj instanceof SegRougtingInstruction) {
+                return true;
+
+            }
+            return false;
+        }
+    }
+
+    public static class MoveProtocolInstruction implements Instruction {
+        private final int src_flag;
+        private final int dst_flag;
+
+        MoveProtocolInstruction(int src, int dst) {
+            this.src_flag = src;
+            this.dst_flag = dst;
+        }
+
+        public static MoveProtocolInstruction readFrom(ByteBuf bb){
+            byte type = bb.readByte();
+            byte raw = bb.readByte();
+            short len = bb.readShort();
+            int src = bb.readInt();
+            int dst = bb.readInt();
+
+            bb.skipBytes(4);
+            return createMoveProtocol(src, dst);
+        }
+
+        @Override
+        public void write(ByteBuf bb){
+            // type 
+            bb.writeByte((byte)66);
+            // raw
+            bb.writeByte(0xff);
+            // len
+            bb.writeShort(Short.reverseBytes((short)16)); 
+            // src
+            bb.writeInt(Integer.reverseBytes(src_flag));
+            // dst
+            bb.writeInt(Integer.reverseBytes(dst_flag));
+
+            bb.writeZero(4);
+        }
+
+        @Override
+        public Type type() {
+            return Type.MOVE_PROTOCOL;
+        }
+
+        @Override
+        public String toString() {
+            return "MoveProtocol [src: " + Protocol.ProtocolFormatByType(src_flag) + ", dst: " +  Protocol.ProtocolFormatByType(dst_flag) + "]";
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(src_flag, dst_flag);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj instanceof MoveProtocolInstruction) {
+                MoveProtocolInstruction that = (MoveProtocolInstruction) obj;
+                return Objects.equals(src_flag, that.src_flag) && Objects.equals(dst_flag, that.dst_flag);
+
+            }
+            return false;
+        }
+    }
+
+    public static AddProtocolInstruction createAddProtocol(int flag, Protocol protocol) {
+        checkNotNull(protocol, "protocol cannot be null");
+        return new AddProtocolInstruction(flag, protocol);
+    }
+
+    public static AddProtocolInstruction createAddProtocol(String protocol, TrafficSelector selector) {
+        int flag = Protocol.ProtocolFormatByString(protocol);
+        switch(flag){
+            case Protocol.MAC:
+                checkNotNull(selector, "selector cannot be null");
+                Mac_DstCriterion MAC_mac_dst = (Mac_DstCriterion)selector.getCriterion(Criterion.Type.MAC_DST);
+                checkNotNull(MAC_mac_dst, "Action ADD_PROTOCOL need MAC_DST field");
+                Mac_SrcCriterion MAC_mac_src = (Mac_SrcCriterion)selector.getCriterion(Criterion.Type.MAC_SRC);
+                checkNotNull(MAC_mac_src, "Action ADD_PROTOCOL need MAC_SRC field");
+                return new AddProtocolInstruction(flag, new Mac_Protocol(MAC_mac_dst, MAC_mac_src));
+            case Protocol.VLAN1:
+                checkNotNull(selector, "selector cannot be null");
+                Vlan1_TpidCriterion VLAN1_vlan1_tpid = (Vlan1_TpidCriterion)selector.getCriterion(Criterion.Type.VLAN1_TPID);
+                checkNotNull(VLAN1_vlan1_tpid, "Action ADD_PROTOCOL need VLAN1_TPID field");
+                Vlan1_QidCriterion VLAN1_vlan1_qid = (Vlan1_QidCriterion)selector.getCriterion(Criterion.Type.VLAN1_QID);
+                checkNotNull(VLAN1_vlan1_qid, "Action ADD_PROTOCOL need VLAN1_QID field");
+                return new AddProtocolInstruction(flag, new Vlan1_Protocol(VLAN1_vlan1_tpid, VLAN1_vlan1_qid));
+            case Protocol.VLAN2:
+                checkNotNull(selector, "selector cannot be null");
+                Vlan2_TpidCriterion VLAN2_vlan2_tpid = (Vlan2_TpidCriterion)selector.getCriterion(Criterion.Type.VLAN2_TPID);
+                checkNotNull(VLAN2_vlan2_tpid, "Action ADD_PROTOCOL need VLAN2_TPID field");
+                Vlan2_QidCriterion VLAN2_vlan2_qid = (Vlan2_QidCriterion)selector.getCriterion(Criterion.Type.VLAN2_QID);
+                checkNotNull(VLAN2_vlan2_qid, "Action ADD_PROTOCOL need VLAN2_QID field");
+                return new AddProtocolInstruction(flag, new Vlan2_Protocol(VLAN2_vlan2_tpid, VLAN2_vlan2_qid));
+            case Protocol.DL:
+                checkNotNull(selector, "selector cannot be null");
+                Dl_TypeCriterion DL_dl_type = (Dl_TypeCriterion)selector.getCriterion(Criterion.Type.DL_TYPE);
+                checkNotNull(DL_dl_type, "Action ADD_PROTOCOL need DL_TYPE field");
+                return new AddProtocolInstruction(flag, new Dl_Protocol(DL_dl_type));
+            case Protocol.IPV4_E:
+                checkNotNull(selector, "selector cannot be null");
+                Ver_Hl_ECriterion IPV4_E_ver_hl_e = (Ver_Hl_ECriterion)selector.getCriterion(Criterion.Type.VER_HL_E);
+                checkNotNull(IPV4_E_ver_hl_e, "Action ADD_PROTOCOL need VER_HL_E field");
+                Tos_ECriterion IPV4_E_tos_e = (Tos_ECriterion)selector.getCriterion(Criterion.Type.TOS_E);
+                checkNotNull(IPV4_E_tos_e, "Action ADD_PROTOCOL need TOS_E field");
+                Tot_Len_ECriterion IPV4_E_tot_len_e = (Tot_Len_ECriterion)selector.getCriterion(Criterion.Type.TOT_LEN_E);
+                checkNotNull(IPV4_E_tot_len_e, "Action ADD_PROTOCOL need TOT_LEN_E field");
+                Ip_Id_ECriterion IPV4_E_ip_id_e = (Ip_Id_ECriterion)selector.getCriterion(Criterion.Type.IP_ID_E);
+                checkNotNull(IPV4_E_ip_id_e, "Action ADD_PROTOCOL need IP_ID_E field");
+                Frag_Off_ECriterion IPV4_E_frag_off_e = (Frag_Off_ECriterion)selector.getCriterion(Criterion.Type.FRAG_OFF_E);
+                checkNotNull(IPV4_E_frag_off_e, "Action ADD_PROTOCOL need FRAG_OFF_E field");
+                Ttl_ECriterion IPV4_E_ttl_e = (Ttl_ECriterion)selector.getCriterion(Criterion.Type.TTL_E);
+                checkNotNull(IPV4_E_ttl_e, "Action ADD_PROTOCOL need TTL_E field");
+                Ipv4_E_TypeCriterion IPV4_E_ipv4_e_type = (Ipv4_E_TypeCriterion)selector.getCriterion(Criterion.Type.IPV4_E_TYPE);
+                checkNotNull(IPV4_E_ipv4_e_type, "Action ADD_PROTOCOL need IPV4_E_TYPE field");
+                Ip_Check_ECriterion IPV4_E_ip_check_e = (Ip_Check_ECriterion)selector.getCriterion(Criterion.Type.IP_CHECK_E);
+                checkNotNull(IPV4_E_ip_check_e, "Action ADD_PROTOCOL need IP_CHECK_E field");
+                Ip_Saddr_ECriterion IPV4_E_ip_saddr_e = (Ip_Saddr_ECriterion)selector.getCriterion(Criterion.Type.IP_SADDR_E);
+                checkNotNull(IPV4_E_ip_saddr_e, "Action ADD_PROTOCOL need IP_SADDR_E field");
+                Ip_Daddr_ECriterion IPV4_E_ip_daddr_e = (Ip_Daddr_ECriterion)selector.getCriterion(Criterion.Type.IP_DADDR_E);
+                checkNotNull(IPV4_E_ip_daddr_e, "Action ADD_PROTOCOL need IP_DADDR_E field");
+                return new AddProtocolInstruction(flag, new Ipv4_E_Protocol(IPV4_E_ver_hl_e, IPV4_E_tos_e, IPV4_E_tot_len_e, IPV4_E_ip_id_e, IPV4_E_frag_off_e, IPV4_E_ttl_e, IPV4_E_ipv4_e_type, IPV4_E_ip_check_e, IPV4_E_ip_saddr_e, IPV4_E_ip_daddr_e));
+            case Protocol.IPV6_E:
+                checkNotNull(selector, "selector cannot be null");
+                Ipv6_Ver_Tp_Flb_ECriterion IPV6_E_ipv6_ver_tp_flb_e = (Ipv6_Ver_Tp_Flb_ECriterion)selector.getCriterion(Criterion.Type.IPV6_VER_TP_FLB_E);
+                checkNotNull(IPV6_E_ipv6_ver_tp_flb_e, "Action ADD_PROTOCOL need IPV6_VER_TP_FLB_E field");
+                Ipv6_Plen_ECriterion IPV6_E_ipv6_plen_e = (Ipv6_Plen_ECriterion)selector.getCriterion(Criterion.Type.IPV6_PLEN_E);
+                checkNotNull(IPV6_E_ipv6_plen_e, "Action ADD_PROTOCOL need IPV6_PLEN_E field");
+                Ipv6_E_TypeCriterion IPV6_E_ipv6_e_type = (Ipv6_E_TypeCriterion)selector.getCriterion(Criterion.Type.IPV6_E_TYPE);
+                checkNotNull(IPV6_E_ipv6_e_type, "Action ADD_PROTOCOL need IPV6_E_TYPE field");
+                Ipv6_Hlmt_ECriterion IPV6_E_ipv6_hlmt_e = (Ipv6_Hlmt_ECriterion)selector.getCriterion(Criterion.Type.IPV6_HLMT_E);
+                checkNotNull(IPV6_E_ipv6_hlmt_e, "Action ADD_PROTOCOL need IPV6_HLMT_E field");
+                Ipv6_Src_ECriterion IPV6_E_ipv6_src_e = (Ipv6_Src_ECriterion)selector.getCriterion(Criterion.Type.IPV6_SRC_E);
+                checkNotNull(IPV6_E_ipv6_src_e, "Action ADD_PROTOCOL need IPV6_SRC_E field");
+                Ipv6_Dst_ECriterion IPV6_E_ipv6_dst_e = (Ipv6_Dst_ECriterion)selector.getCriterion(Criterion.Type.IPV6_DST_E);
+                checkNotNull(IPV6_E_ipv6_dst_e, "Action ADD_PROTOCOL need IPV6_DST_E field");
+                return new AddProtocolInstruction(flag, new Ipv6_E_Protocol(IPV6_E_ipv6_ver_tp_flb_e, IPV6_E_ipv6_plen_e, IPV6_E_ipv6_e_type, IPV6_E_ipv6_hlmt_e, IPV6_E_ipv6_src_e, IPV6_E_ipv6_dst_e));
+            case Protocol.UDP:
+                checkNotNull(selector, "selector cannot be null");
+                Udp_SourceCriterion UDP_udp_source = (Udp_SourceCriterion)selector.getCriterion(Criterion.Type.UDP_SOURCE);
+                checkNotNull(UDP_udp_source, "Action ADD_PROTOCOL need UDP_SOURCE field");
+                Udp_DestCriterion UDP_udp_dest = (Udp_DestCriterion)selector.getCriterion(Criterion.Type.UDP_DEST);
+                checkNotNull(UDP_udp_dest, "Action ADD_PROTOCOL need UDP_DEST field");
+                LenCriterion UDP_len = (LenCriterion)selector.getCriterion(Criterion.Type.LEN);
+                checkNotNull(UDP_len, "Action ADD_PROTOCOL need LEN field");
+                Udp_CheckCriterion UDP_udp_check = (Udp_CheckCriterion)selector.getCriterion(Criterion.Type.UDP_CHECK);
+                checkNotNull(UDP_udp_check, "Action ADD_PROTOCOL need UDP_CHECK field");
+                return new AddProtocolInstruction(flag, new Udp_Protocol(UDP_udp_source, UDP_udp_dest, UDP_len, UDP_udp_check));
+            case Protocol.SRV6_1:
+                checkNotNull(selector, "selector cannot be null");
+                Srv6_TypeCriterion SRV6_1_srv6_type = (Srv6_TypeCriterion)selector.getCriterion(Criterion.Type.SRV6_TYPE);
+                checkNotNull(SRV6_1_srv6_type, "Action ADD_PROTOCOL need SRV6_TYPE field");
+                Srv6_Hdr_Ext_LenCriterion SRV6_1_srv6_hdr_ext_len = (Srv6_Hdr_Ext_LenCriterion)selector.getCriterion(Criterion.Type.SRV6_HDR_EXT_LEN);
+                checkNotNull(SRV6_1_srv6_hdr_ext_len, "Action ADD_PROTOCOL need SRV6_HDR_EXT_LEN field");
+                Srv6_Routing_TypeCriterion SRV6_1_srv6_routing_Type = (Srv6_Routing_TypeCriterion)selector.getCriterion(Criterion.Type.SRV6_ROUTING_TYPE);
+                checkNotNull(SRV6_1_srv6_routing_Type, "Action ADD_PROTOCOL need SRV6_ROUTING_TYPE field");
+                Srv6_Segments_LeftCriterion SRV6_1_srv6_segments_left = (Srv6_Segments_LeftCriterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTS_LEFT);
+                checkNotNull(SRV6_1_srv6_segments_left, "Action ADD_PROTOCOL need SRV6_SEGMENTS_LEFT field");
+                Srv6_Last_EntyCriterion SRV6_1_srv6_last_enty = (Srv6_Last_EntyCriterion)selector.getCriterion(Criterion.Type.SRV6_LAST_ENTY);
+                checkNotNull(SRV6_1_srv6_last_enty, "Action ADD_PROTOCOL need SRV6_LAST_ENTY field");
+                Srv6_FlagsCriterion SRV6_1_srv6_flags = (Srv6_FlagsCriterion)selector.getCriterion(Criterion.Type.SRV6_FLAGS);
+                checkNotNull(SRV6_1_srv6_flags, "Action ADD_PROTOCOL need SRV6_FLAGS field");
+                Srv6_TagCriterion SRV6_1_srv6_tag = (Srv6_TagCriterion)selector.getCriterion(Criterion.Type.SRV6_TAG);
+                checkNotNull(SRV6_1_srv6_tag, "Action ADD_PROTOCOL need SRV6_TAG field");
+                Srv6_Segmentlist1Criterion SRV6_1_srv6_segmentlist1 = (Srv6_Segmentlist1Criterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTLIST1);
+                checkNotNull(SRV6_1_srv6_segmentlist1, "Action ADD_PROTOCOL need SRV6_SEGMENTLIST1 field");
+                return new AddProtocolInstruction(flag, new Srv6_1_Protocol(SRV6_1_srv6_type, SRV6_1_srv6_hdr_ext_len, SRV6_1_srv6_routing_Type, SRV6_1_srv6_segments_left, SRV6_1_srv6_last_enty, SRV6_1_srv6_flags, SRV6_1_srv6_tag, SRV6_1_srv6_segmentlist1));
+            case Protocol.SRV6_2:
+                checkNotNull(selector, "selector cannot be null");
+                Srv6_TypeCriterion SRV6_2_srv6_type = (Srv6_TypeCriterion)selector.getCriterion(Criterion.Type.SRV6_TYPE);
+                checkNotNull(SRV6_2_srv6_type, "Action ADD_PROTOCOL need SRV6_TYPE field");
+                Srv6_Hdr_Ext_LenCriterion SRV6_2_srv6_hdr_ext_len = (Srv6_Hdr_Ext_LenCriterion)selector.getCriterion(Criterion.Type.SRV6_HDR_EXT_LEN);
+                checkNotNull(SRV6_2_srv6_hdr_ext_len, "Action ADD_PROTOCOL need SRV6_HDR_EXT_LEN field");
+                Srv6_Routing_TypeCriterion SRV6_2_srv6_routing_Type = (Srv6_Routing_TypeCriterion)selector.getCriterion(Criterion.Type.SRV6_ROUTING_TYPE);
+                checkNotNull(SRV6_2_srv6_routing_Type, "Action ADD_PROTOCOL need SRV6_ROUTING_TYPE field");
+                Srv6_Segments_LeftCriterion SRV6_2_srv6_segments_left = (Srv6_Segments_LeftCriterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTS_LEFT);
+                checkNotNull(SRV6_2_srv6_segments_left, "Action ADD_PROTOCOL need SRV6_SEGMENTS_LEFT field");
+                Srv6_Last_EntyCriterion SRV6_2_srv6_last_enty = (Srv6_Last_EntyCriterion)selector.getCriterion(Criterion.Type.SRV6_LAST_ENTY);
+                checkNotNull(SRV6_2_srv6_last_enty, "Action ADD_PROTOCOL need SRV6_LAST_ENTY field");
+                Srv6_FlagsCriterion SRV6_2_srv6_flags = (Srv6_FlagsCriterion)selector.getCriterion(Criterion.Type.SRV6_FLAGS);
+                checkNotNull(SRV6_2_srv6_flags, "Action ADD_PROTOCOL need SRV6_FLAGS field");
+                Srv6_TagCriterion SRV6_2_srv6_tag = (Srv6_TagCriterion)selector.getCriterion(Criterion.Type.SRV6_TAG);
+                checkNotNull(SRV6_2_srv6_tag, "Action ADD_PROTOCOL need SRV6_TAG field");
+                Srv6_Segmentlist1Criterion SRV6_2_srv6_segmentlist1 = (Srv6_Segmentlist1Criterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTLIST1);
+                checkNotNull(SRV6_2_srv6_segmentlist1, "Action ADD_PROTOCOL need SRV6_SEGMENTLIST1 field");
+                Srv6_Segmentlist2Criterion SRV6_2_srv6_segmentlist2 = (Srv6_Segmentlist2Criterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTLIST2);
+                checkNotNull(SRV6_2_srv6_segmentlist2, "Action ADD_PROTOCOL need SRV6_SEGMENTLIST2 field");
+                return new AddProtocolInstruction(flag, new Srv6_2_Protocol(SRV6_2_srv6_type, SRV6_2_srv6_hdr_ext_len, SRV6_2_srv6_routing_Type, SRV6_2_srv6_segments_left, SRV6_2_srv6_last_enty, SRV6_2_srv6_flags, SRV6_2_srv6_tag, SRV6_2_srv6_segmentlist1, SRV6_2_srv6_segmentlist2));
+            case Protocol.SRV6_3:
+                checkNotNull(selector, "selector cannot be null");
+                Srv6_TypeCriterion SRV6_3_srv6_type = (Srv6_TypeCriterion)selector.getCriterion(Criterion.Type.SRV6_TYPE);
+                checkNotNull(SRV6_3_srv6_type, "Action ADD_PROTOCOL need SRV6_TYPE field");
+                Srv6_Hdr_Ext_LenCriterion SRV6_3_srv6_hdr_ext_len = (Srv6_Hdr_Ext_LenCriterion)selector.getCriterion(Criterion.Type.SRV6_HDR_EXT_LEN);
+                checkNotNull(SRV6_3_srv6_hdr_ext_len, "Action ADD_PROTOCOL need SRV6_HDR_EXT_LEN field");
+                Srv6_Routing_TypeCriterion SRV6_3_srv6_routing_Type = (Srv6_Routing_TypeCriterion)selector.getCriterion(Criterion.Type.SRV6_ROUTING_TYPE);
+                checkNotNull(SRV6_3_srv6_routing_Type, "Action ADD_PROTOCOL need SRV6_ROUTING_TYPE field");
+                Srv6_Segments_LeftCriterion SRV6_3_srv6_segments_left = (Srv6_Segments_LeftCriterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTS_LEFT);
+                checkNotNull(SRV6_3_srv6_segments_left, "Action ADD_PROTOCOL need SRV6_SEGMENTS_LEFT field");
+                Srv6_Last_EntyCriterion SRV6_3_srv6_last_enty = (Srv6_Last_EntyCriterion)selector.getCriterion(Criterion.Type.SRV6_LAST_ENTY);
+                checkNotNull(SRV6_3_srv6_last_enty, "Action ADD_PROTOCOL need SRV6_LAST_ENTY field");
+                Srv6_FlagsCriterion SRV6_3_srv6_flags = (Srv6_FlagsCriterion)selector.getCriterion(Criterion.Type.SRV6_FLAGS);
+                checkNotNull(SRV6_3_srv6_flags, "Action ADD_PROTOCOL need SRV6_FLAGS field");
+                Srv6_TagCriterion SRV6_3_srv6_tag = (Srv6_TagCriterion)selector.getCriterion(Criterion.Type.SRV6_TAG);
+                checkNotNull(SRV6_3_srv6_tag, "Action ADD_PROTOCOL need SRV6_TAG field");
+                Srv6_Segmentlist1Criterion SRV6_3_srv6_segmentlist1 = (Srv6_Segmentlist1Criterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTLIST1);
+                checkNotNull(SRV6_3_srv6_segmentlist1, "Action ADD_PROTOCOL need SRV6_SEGMENTLIST1 field");
+                Srv6_Segmentlist2Criterion SRV6_3_srv6_segmentlist2 = (Srv6_Segmentlist2Criterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTLIST2);
+                checkNotNull(SRV6_3_srv6_segmentlist2, "Action ADD_PROTOCOL need SRV6_SEGMENTLIST2 field");
+                Srv6_Segmentlist3Criterion SRV6_3_srv6_segmentlist3 = (Srv6_Segmentlist3Criterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTLIST3);
+                checkNotNull(SRV6_3_srv6_segmentlist3, "Action ADD_PROTOCOL need SRV6_SEGMENTLIST3 field");
+                return new AddProtocolInstruction(flag, new Srv6_3_Protocol(SRV6_3_srv6_type, SRV6_3_srv6_hdr_ext_len, SRV6_3_srv6_routing_Type, SRV6_3_srv6_segments_left, SRV6_3_srv6_last_enty, SRV6_3_srv6_flags, SRV6_3_srv6_tag, SRV6_3_srv6_segmentlist1, SRV6_3_srv6_segmentlist2, SRV6_3_srv6_segmentlist3));
+            case Protocol.IPV6_I:
+                checkNotNull(selector, "selector cannot be null");
+                Ipv6_Ver_Tp_Flb_ICriterion IPV6_I_ipv6_ver_tp_flb_i = (Ipv6_Ver_Tp_Flb_ICriterion)selector.getCriterion(Criterion.Type.IPV6_VER_TP_FLB_I);
+                checkNotNull(IPV6_I_ipv6_ver_tp_flb_i, "Action ADD_PROTOCOL need IPV6_VER_TP_FLB_I field");
+                Ipv6_Plen_ICriterion IPV6_I_ipv6_plen_i = (Ipv6_Plen_ICriterion)selector.getCriterion(Criterion.Type.IPV6_PLEN_I);
+                checkNotNull(IPV6_I_ipv6_plen_i, "Action ADD_PROTOCOL need IPV6_PLEN_I field");
+                Ipv6_I_TypeCriterion IPV6_I_ipv6_i_type = (Ipv6_I_TypeCriterion)selector.getCriterion(Criterion.Type.IPV6_I_TYPE);
+                checkNotNull(IPV6_I_ipv6_i_type, "Action ADD_PROTOCOL need IPV6_I_TYPE field");
+                Ipv6_Hlmt_ICriterion IPV6_I_ipv6_hlmt_i = (Ipv6_Hlmt_ICriterion)selector.getCriterion(Criterion.Type.IPV6_HLMT_I);
+                checkNotNull(IPV6_I_ipv6_hlmt_i, "Action ADD_PROTOCOL need IPV6_HLMT_I field");
+                Ipv6_Src_ICriterion IPV6_I_ipv6_src_i = (Ipv6_Src_ICriterion)selector.getCriterion(Criterion.Type.IPV6_SRC_I);
+                checkNotNull(IPV6_I_ipv6_src_i, "Action ADD_PROTOCOL need IPV6_SRC_I field");
+                Ipv6_Dst_ICriterion IPV6_I_ipv6_dst_i = (Ipv6_Dst_ICriterion)selector.getCriterion(Criterion.Type.IPV6_DST_I);
+                checkNotNull(IPV6_I_ipv6_dst_i, "Action ADD_PROTOCOL need IPV6_DST_I field");
+                return new AddProtocolInstruction(flag, new Ipv6_I_Protocol(IPV6_I_ipv6_ver_tp_flb_i, IPV6_I_ipv6_plen_i, IPV6_I_ipv6_i_type, IPV6_I_ipv6_hlmt_i, IPV6_I_ipv6_src_i, IPV6_I_ipv6_dst_i));
+            default:
+                throw new UnsupportedOperationException("Action ADD_PROTOCOL add a unsupported protocol");
+        }
+    }
+
+    public static class AddProtocolInstruction implements Instruction {
+        private final int flag;
+        private final Protocol protocol;
+
+        AddProtocolInstruction(int flag, Protocol protocol) {
+            this.flag = flag;
+            this.protocol = protocol;
+        }
+
+        public static AddProtocolInstruction readFrom(ByteBuf bb){
+            int start = bb.readerIndex();
+
+            byte type = bb.readByte();
+            byte raw = bb.readByte();
+            short len = bb.readShort();
+            int protocol_type = bb.readInt();
+            Protocol result = null;
+            switch(protocol_type){
+                case Protocol.MAC:
+                    result = Mac_Protocol.read(bb);
+                    break;
+                case Protocol.VLAN1:
+                    result = Vlan1_Protocol.read(bb);
+                    break;
+                case Protocol.VLAN2:
+                    result = Vlan2_Protocol.read(bb);
+                    break;
+                case Protocol.DL:
+                    result = Dl_Protocol.read(bb);
+                    break;
+                case Protocol.IPV4_E:
+                    result = Ipv4_E_Protocol.read(bb);
+                    break;
+                case Protocol.IPV6_E:
+                    result = Ipv6_E_Protocol.read(bb);
+                    break;
+                case Protocol.UDP:
+                    result = Udp_Protocol.read(bb);
+                    break;
+                case Protocol.SRV6_1:
+                    result = Srv6_1_Protocol.read(bb);
+                    break;
+                case Protocol.SRV6_2:
+                    result = Srv6_2_Protocol.read(bb);
+                    break;
+                case Protocol.SRV6_3:
+                    result = Srv6_3_Protocol.read(bb);
+                    break;
+                case Protocol.IPV6_I:
+                    result = Ipv6_I_Protocol.read(bb);
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Action ADD_PROTOCOL add a unsupported protocol");
+            }
+
+            int pad = 8 - ((bb.readerIndex() - start) % 8);
+            bb.skipBytes(pad); 
+
+            return createAddProtocol(protocol_type, result);
+        }
+
+        @Override
+        public void write(ByteBuf bb){
+            int start = bb.writerIndex();
+            // type 
+            bb.writeByte((byte)59);
+            // raw
+            bb.writeByte(0xff);
+            // len
+            int lengthIndex = bb.writerIndex();
+            bb.writeShort((short)0);
+            // flag
+            bb.writeInt(Integer.reverseBytes(flag));
+            // protocol
+            protocol.write(bb);
+            //pad
+            int pad = 8 - ((bb.writerIndex() - start) % 8);
+            bb.writeZero(pad);
+
+            int length = bb.writerIndex() - start;
+            bb.setShort(lengthIndex, Short.reverseBytes((short)length));
+        }
+
+        @Override
+        public Type type() {
+            return Type.ADD_PROTOCOL;
+        }
+
+        @Override
+        public String toString() {
+            return "AddProtocol[" + protocol.toString() + "]";
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(type().ordinal(), flag);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj instanceof AddProtocolInstruction) {
+                AddProtocolInstruction that = (AddProtocolInstruction) obj;
+                return Objects.equals(flag, that.flag) && Objects.equals(protocol, that.protocol);
+
+            }
+            return false;
+        }
+    }
+
+    public static ModFieldInstruction createModField(int flag, Protocol protocol) {
+        checkNotNull(protocol, "protocol cannot be null");
+
+        return new ModFieldInstruction(flag, protocol);
+
+    }
+
+    public static ModFieldInstruction createModField(String protocol, TrafficSelector selector) {
+        int flag = Protocol.ProtocolFormatByString(protocol);
+        switch(flag){
+            case Protocol.MAC:
+                checkNotNull(selector, "selector cannot be null");
+                Mac_DstCriterion MAC_mac_dst = (Mac_DstCriterion)selector.getCriterion(Criterion.Type.MAC_DST);
+                checkNotNull(MAC_mac_dst, "Action ADD_PROTOCOL need MAC_DST field");
+                Mac_SrcCriterion MAC_mac_src = (Mac_SrcCriterion)selector.getCriterion(Criterion.Type.MAC_SRC);
+                checkNotNull(MAC_mac_src, "Action ADD_PROTOCOL need MAC_SRC field");
+                return new ModFieldInstruction(flag, new Mac_Protocol(MAC_mac_dst, MAC_mac_src));
+            case Protocol.VLAN1:
+                checkNotNull(selector, "selector cannot be null");
+                Vlan1_TpidCriterion VLAN1_vlan1_tpid = (Vlan1_TpidCriterion)selector.getCriterion(Criterion.Type.VLAN1_TPID);
+                checkNotNull(VLAN1_vlan1_tpid, "Action ADD_PROTOCOL need VLAN1_TPID field");
+                Vlan1_QidCriterion VLAN1_vlan1_qid = (Vlan1_QidCriterion)selector.getCriterion(Criterion.Type.VLAN1_QID);
+                checkNotNull(VLAN1_vlan1_qid, "Action ADD_PROTOCOL need VLAN1_QID field");
+                return new ModFieldInstruction(flag, new Vlan1_Protocol(VLAN1_vlan1_tpid, VLAN1_vlan1_qid));
+            case Protocol.VLAN2:
+                checkNotNull(selector, "selector cannot be null");
+                Vlan2_TpidCriterion VLAN2_vlan2_tpid = (Vlan2_TpidCriterion)selector.getCriterion(Criterion.Type.VLAN2_TPID);
+                checkNotNull(VLAN2_vlan2_tpid, "Action ADD_PROTOCOL need VLAN2_TPID field");
+                Vlan2_QidCriterion VLAN2_vlan2_qid = (Vlan2_QidCriterion)selector.getCriterion(Criterion.Type.VLAN2_QID);
+                checkNotNull(VLAN2_vlan2_qid, "Action ADD_PROTOCOL need VLAN2_QID field");
+                return new ModFieldInstruction(flag, new Vlan2_Protocol(VLAN2_vlan2_tpid, VLAN2_vlan2_qid));
+            case Protocol.DL:
+                checkNotNull(selector, "selector cannot be null");
+                Dl_TypeCriterion DL_dl_type = (Dl_TypeCriterion)selector.getCriterion(Criterion.Type.DL_TYPE);
+                checkNotNull(DL_dl_type, "Action ADD_PROTOCOL need DL_TYPE field");
+                return new ModFieldInstruction(flag, new Dl_Protocol(DL_dl_type));
+            case Protocol.IPV4_E:
+                checkNotNull(selector, "selector cannot be null");
+                Ver_Hl_ECriterion IPV4_E_ver_hl_e = (Ver_Hl_ECriterion)selector.getCriterion(Criterion.Type.VER_HL_E);
+                checkNotNull(IPV4_E_ver_hl_e, "Action ADD_PROTOCOL need VER_HL_E field");
+                Tos_ECriterion IPV4_E_tos_e = (Tos_ECriterion)selector.getCriterion(Criterion.Type.TOS_E);
+                checkNotNull(IPV4_E_tos_e, "Action ADD_PROTOCOL need TOS_E field");
+                Tot_Len_ECriterion IPV4_E_tot_len_e = (Tot_Len_ECriterion)selector.getCriterion(Criterion.Type.TOT_LEN_E);
+                checkNotNull(IPV4_E_tot_len_e, "Action ADD_PROTOCOL need TOT_LEN_E field");
+                Ip_Id_ECriterion IPV4_E_ip_id_e = (Ip_Id_ECriterion)selector.getCriterion(Criterion.Type.IP_ID_E);
+                checkNotNull(IPV4_E_ip_id_e, "Action ADD_PROTOCOL need IP_ID_E field");
+                Frag_Off_ECriterion IPV4_E_frag_off_e = (Frag_Off_ECriterion)selector.getCriterion(Criterion.Type.FRAG_OFF_E);
+                checkNotNull(IPV4_E_frag_off_e, "Action ADD_PROTOCOL need FRAG_OFF_E field");
+                Ttl_ECriterion IPV4_E_ttl_e = (Ttl_ECriterion)selector.getCriterion(Criterion.Type.TTL_E);
+                checkNotNull(IPV4_E_ttl_e, "Action ADD_PROTOCOL need TTL_E field");
+                Ipv4_E_TypeCriterion IPV4_E_ipv4_e_type = (Ipv4_E_TypeCriterion)selector.getCriterion(Criterion.Type.IPV4_E_TYPE);
+                checkNotNull(IPV4_E_ipv4_e_type, "Action ADD_PROTOCOL need IPV4_E_TYPE field");
+                Ip_Check_ECriterion IPV4_E_ip_check_e = (Ip_Check_ECriterion)selector.getCriterion(Criterion.Type.IP_CHECK_E);
+                checkNotNull(IPV4_E_ip_check_e, "Action ADD_PROTOCOL need IP_CHECK_E field");
+                Ip_Saddr_ECriterion IPV4_E_ip_saddr_e = (Ip_Saddr_ECriterion)selector.getCriterion(Criterion.Type.IP_SADDR_E);
+                checkNotNull(IPV4_E_ip_saddr_e, "Action ADD_PROTOCOL need IP_SADDR_E field");
+                Ip_Daddr_ECriterion IPV4_E_ip_daddr_e = (Ip_Daddr_ECriterion)selector.getCriterion(Criterion.Type.IP_DADDR_E);
+                checkNotNull(IPV4_E_ip_daddr_e, "Action ADD_PROTOCOL need IP_DADDR_E field");
+                return new ModFieldInstruction(flag, new Ipv4_E_Protocol(IPV4_E_ver_hl_e, IPV4_E_tos_e, IPV4_E_tot_len_e, IPV4_E_ip_id_e, IPV4_E_frag_off_e, IPV4_E_ttl_e, IPV4_E_ipv4_e_type, IPV4_E_ip_check_e, IPV4_E_ip_saddr_e, IPV4_E_ip_daddr_e));
+            case Protocol.IPV6_E:
+                checkNotNull(selector, "selector cannot be null");
+                Ipv6_Ver_Tp_Flb_ECriterion IPV6_E_ipv6_ver_tp_flb_e = (Ipv6_Ver_Tp_Flb_ECriterion)selector.getCriterion(Criterion.Type.IPV6_VER_TP_FLB_E);
+                checkNotNull(IPV6_E_ipv6_ver_tp_flb_e, "Action ADD_PROTOCOL need IPV6_VER_TP_FLB_E field");
+                Ipv6_Plen_ECriterion IPV6_E_ipv6_plen_e = (Ipv6_Plen_ECriterion)selector.getCriterion(Criterion.Type.IPV6_PLEN_E);
+                checkNotNull(IPV6_E_ipv6_plen_e, "Action ADD_PROTOCOL need IPV6_PLEN_E field");
+                Ipv6_E_TypeCriterion IPV6_E_ipv6_e_type = (Ipv6_E_TypeCriterion)selector.getCriterion(Criterion.Type.IPV6_E_TYPE);
+                checkNotNull(IPV6_E_ipv6_e_type, "Action ADD_PROTOCOL need IPV6_E_TYPE field");
+                Ipv6_Hlmt_ECriterion IPV6_E_ipv6_hlmt_e = (Ipv6_Hlmt_ECriterion)selector.getCriterion(Criterion.Type.IPV6_HLMT_E);
+                checkNotNull(IPV6_E_ipv6_hlmt_e, "Action ADD_PROTOCOL need IPV6_HLMT_E field");
+                Ipv6_Src_ECriterion IPV6_E_ipv6_src_e = (Ipv6_Src_ECriterion)selector.getCriterion(Criterion.Type.IPV6_SRC_E);
+                checkNotNull(IPV6_E_ipv6_src_e, "Action ADD_PROTOCOL need IPV6_SRC_E field");
+                Ipv6_Dst_ECriterion IPV6_E_ipv6_dst_e = (Ipv6_Dst_ECriterion)selector.getCriterion(Criterion.Type.IPV6_DST_E);
+                checkNotNull(IPV6_E_ipv6_dst_e, "Action ADD_PROTOCOL need IPV6_DST_E field");
+                return new ModFieldInstruction(flag, new Ipv6_E_Protocol(IPV6_E_ipv6_ver_tp_flb_e, IPV6_E_ipv6_plen_e, IPV6_E_ipv6_e_type, IPV6_E_ipv6_hlmt_e, IPV6_E_ipv6_src_e, IPV6_E_ipv6_dst_e));
+            case Protocol.UDP:
+                checkNotNull(selector, "selector cannot be null");
+                Udp_SourceCriterion UDP_udp_source = (Udp_SourceCriterion)selector.getCriterion(Criterion.Type.UDP_SOURCE);
+                checkNotNull(UDP_udp_source, "Action ADD_PROTOCOL need UDP_SOURCE field");
+                Udp_DestCriterion UDP_udp_dest = (Udp_DestCriterion)selector.getCriterion(Criterion.Type.UDP_DEST);
+                checkNotNull(UDP_udp_dest, "Action ADD_PROTOCOL need UDP_DEST field");
+                LenCriterion UDP_len = (LenCriterion)selector.getCriterion(Criterion.Type.LEN);
+                checkNotNull(UDP_len, "Action ADD_PROTOCOL need LEN field");
+                Udp_CheckCriterion UDP_udp_check = (Udp_CheckCriterion)selector.getCriterion(Criterion.Type.UDP_CHECK);
+                checkNotNull(UDP_udp_check, "Action ADD_PROTOCOL need UDP_CHECK field");
+                return new ModFieldInstruction(flag, new Udp_Protocol(UDP_udp_source, UDP_udp_dest, UDP_len, UDP_udp_check));
+            case Protocol.SRV6_1:
+                checkNotNull(selector, "selector cannot be null");
+                Srv6_TypeCriterion SRV6_1_srv6_type = (Srv6_TypeCriterion)selector.getCriterion(Criterion.Type.SRV6_TYPE);
+                checkNotNull(SRV6_1_srv6_type, "Action ADD_PROTOCOL need SRV6_TYPE field");
+                Srv6_Hdr_Ext_LenCriterion SRV6_1_srv6_hdr_ext_len = (Srv6_Hdr_Ext_LenCriterion)selector.getCriterion(Criterion.Type.SRV6_HDR_EXT_LEN);
+                checkNotNull(SRV6_1_srv6_hdr_ext_len, "Action ADD_PROTOCOL need SRV6_HDR_EXT_LEN field");
+                Srv6_Routing_TypeCriterion SRV6_1_srv6_routing_Type = (Srv6_Routing_TypeCriterion)selector.getCriterion(Criterion.Type.SRV6_ROUTING_TYPE);
+                checkNotNull(SRV6_1_srv6_routing_Type, "Action ADD_PROTOCOL need SRV6_ROUTING_TYPE field");
+                Srv6_Segments_LeftCriterion SRV6_1_srv6_segments_left = (Srv6_Segments_LeftCriterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTS_LEFT);
+                checkNotNull(SRV6_1_srv6_segments_left, "Action ADD_PROTOCOL need SRV6_SEGMENTS_LEFT field");
+                Srv6_Last_EntyCriterion SRV6_1_srv6_last_enty = (Srv6_Last_EntyCriterion)selector.getCriterion(Criterion.Type.SRV6_LAST_ENTY);
+                checkNotNull(SRV6_1_srv6_last_enty, "Action ADD_PROTOCOL need SRV6_LAST_ENTY field");
+                Srv6_FlagsCriterion SRV6_1_srv6_flags = (Srv6_FlagsCriterion)selector.getCriterion(Criterion.Type.SRV6_FLAGS);
+                checkNotNull(SRV6_1_srv6_flags, "Action ADD_PROTOCOL need SRV6_FLAGS field");
+                Srv6_TagCriterion SRV6_1_srv6_tag = (Srv6_TagCriterion)selector.getCriterion(Criterion.Type.SRV6_TAG);
+                checkNotNull(SRV6_1_srv6_tag, "Action ADD_PROTOCOL need SRV6_TAG field");
+                Srv6_Segmentlist1Criterion SRV6_1_srv6_segmentlist1 = (Srv6_Segmentlist1Criterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTLIST1);
+                checkNotNull(SRV6_1_srv6_segmentlist1, "Action ADD_PROTOCOL need SRV6_SEGMENTLIST1 field");
+                return new ModFieldInstruction(flag, new Srv6_1_Protocol(SRV6_1_srv6_type, SRV6_1_srv6_hdr_ext_len, SRV6_1_srv6_routing_Type, SRV6_1_srv6_segments_left, SRV6_1_srv6_last_enty, SRV6_1_srv6_flags, SRV6_1_srv6_tag, SRV6_1_srv6_segmentlist1));
+            case Protocol.SRV6_2:
+                checkNotNull(selector, "selector cannot be null");
+                Srv6_TypeCriterion SRV6_2_srv6_type = (Srv6_TypeCriterion)selector.getCriterion(Criterion.Type.SRV6_TYPE);
+                checkNotNull(SRV6_2_srv6_type, "Action ADD_PROTOCOL need SRV6_TYPE field");
+                Srv6_Hdr_Ext_LenCriterion SRV6_2_srv6_hdr_ext_len = (Srv6_Hdr_Ext_LenCriterion)selector.getCriterion(Criterion.Type.SRV6_HDR_EXT_LEN);
+                checkNotNull(SRV6_2_srv6_hdr_ext_len, "Action ADD_PROTOCOL need SRV6_HDR_EXT_LEN field");
+                Srv6_Routing_TypeCriterion SRV6_2_srv6_routing_Type = (Srv6_Routing_TypeCriterion)selector.getCriterion(Criterion.Type.SRV6_ROUTING_TYPE);
+                checkNotNull(SRV6_2_srv6_routing_Type, "Action ADD_PROTOCOL need SRV6_ROUTING_TYPE field");
+                Srv6_Segments_LeftCriterion SRV6_2_srv6_segments_left = (Srv6_Segments_LeftCriterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTS_LEFT);
+                checkNotNull(SRV6_2_srv6_segments_left, "Action ADD_PROTOCOL need SRV6_SEGMENTS_LEFT field");
+                Srv6_Last_EntyCriterion SRV6_2_srv6_last_enty = (Srv6_Last_EntyCriterion)selector.getCriterion(Criterion.Type.SRV6_LAST_ENTY);
+                checkNotNull(SRV6_2_srv6_last_enty, "Action ADD_PROTOCOL need SRV6_LAST_ENTY field");
+                Srv6_FlagsCriterion SRV6_2_srv6_flags = (Srv6_FlagsCriterion)selector.getCriterion(Criterion.Type.SRV6_FLAGS);
+                checkNotNull(SRV6_2_srv6_flags, "Action ADD_PROTOCOL need SRV6_FLAGS field");
+                Srv6_TagCriterion SRV6_2_srv6_tag = (Srv6_TagCriterion)selector.getCriterion(Criterion.Type.SRV6_TAG);
+                checkNotNull(SRV6_2_srv6_tag, "Action ADD_PROTOCOL need SRV6_TAG field");
+                Srv6_Segmentlist1Criterion SRV6_2_srv6_segmentlist1 = (Srv6_Segmentlist1Criterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTLIST1);
+                checkNotNull(SRV6_2_srv6_segmentlist1, "Action ADD_PROTOCOL need SRV6_SEGMENTLIST1 field");
+                Srv6_Segmentlist2Criterion SRV6_2_srv6_segmentlist2 = (Srv6_Segmentlist2Criterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTLIST2);
+                checkNotNull(SRV6_2_srv6_segmentlist2, "Action ADD_PROTOCOL need SRV6_SEGMENTLIST2 field");
+                return new ModFieldInstruction(flag, new Srv6_2_Protocol(SRV6_2_srv6_type, SRV6_2_srv6_hdr_ext_len, SRV6_2_srv6_routing_Type, SRV6_2_srv6_segments_left, SRV6_2_srv6_last_enty, SRV6_2_srv6_flags, SRV6_2_srv6_tag, SRV6_2_srv6_segmentlist1, SRV6_2_srv6_segmentlist2));
+            case Protocol.SRV6_3:
+                checkNotNull(selector, "selector cannot be null");
+                Srv6_TypeCriterion SRV6_3_srv6_type = (Srv6_TypeCriterion)selector.getCriterion(Criterion.Type.SRV6_TYPE);
+                checkNotNull(SRV6_3_srv6_type, "Action ADD_PROTOCOL need SRV6_TYPE field");
+                Srv6_Hdr_Ext_LenCriterion SRV6_3_srv6_hdr_ext_len = (Srv6_Hdr_Ext_LenCriterion)selector.getCriterion(Criterion.Type.SRV6_HDR_EXT_LEN);
+                checkNotNull(SRV6_3_srv6_hdr_ext_len, "Action ADD_PROTOCOL need SRV6_HDR_EXT_LEN field");
+                Srv6_Routing_TypeCriterion SRV6_3_srv6_routing_Type = (Srv6_Routing_TypeCriterion)selector.getCriterion(Criterion.Type.SRV6_ROUTING_TYPE);
+                checkNotNull(SRV6_3_srv6_routing_Type, "Action ADD_PROTOCOL need SRV6_ROUTING_TYPE field");
+                Srv6_Segments_LeftCriterion SRV6_3_srv6_segments_left = (Srv6_Segments_LeftCriterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTS_LEFT);
+                checkNotNull(SRV6_3_srv6_segments_left, "Action ADD_PROTOCOL need SRV6_SEGMENTS_LEFT field");
+                Srv6_Last_EntyCriterion SRV6_3_srv6_last_enty = (Srv6_Last_EntyCriterion)selector.getCriterion(Criterion.Type.SRV6_LAST_ENTY);
+                checkNotNull(SRV6_3_srv6_last_enty, "Action ADD_PROTOCOL need SRV6_LAST_ENTY field");
+                Srv6_FlagsCriterion SRV6_3_srv6_flags = (Srv6_FlagsCriterion)selector.getCriterion(Criterion.Type.SRV6_FLAGS);
+                checkNotNull(SRV6_3_srv6_flags, "Action ADD_PROTOCOL need SRV6_FLAGS field");
+                Srv6_TagCriterion SRV6_3_srv6_tag = (Srv6_TagCriterion)selector.getCriterion(Criterion.Type.SRV6_TAG);
+                checkNotNull(SRV6_3_srv6_tag, "Action ADD_PROTOCOL need SRV6_TAG field");
+                Srv6_Segmentlist1Criterion SRV6_3_srv6_segmentlist1 = (Srv6_Segmentlist1Criterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTLIST1);
+                checkNotNull(SRV6_3_srv6_segmentlist1, "Action ADD_PROTOCOL need SRV6_SEGMENTLIST1 field");
+                Srv6_Segmentlist2Criterion SRV6_3_srv6_segmentlist2 = (Srv6_Segmentlist2Criterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTLIST2);
+                checkNotNull(SRV6_3_srv6_segmentlist2, "Action ADD_PROTOCOL need SRV6_SEGMENTLIST2 field");
+                Srv6_Segmentlist3Criterion SRV6_3_srv6_segmentlist3 = (Srv6_Segmentlist3Criterion)selector.getCriterion(Criterion.Type.SRV6_SEGMENTLIST3);
+                checkNotNull(SRV6_3_srv6_segmentlist3, "Action ADD_PROTOCOL need SRV6_SEGMENTLIST3 field");
+                return new ModFieldInstruction(flag, new Srv6_3_Protocol(SRV6_3_srv6_type, SRV6_3_srv6_hdr_ext_len, SRV6_3_srv6_routing_Type, SRV6_3_srv6_segments_left, SRV6_3_srv6_last_enty, SRV6_3_srv6_flags, SRV6_3_srv6_tag, SRV6_3_srv6_segmentlist1, SRV6_3_srv6_segmentlist2, SRV6_3_srv6_segmentlist3));
+            case Protocol.IPV6_I:
+                checkNotNull(selector, "selector cannot be null");
+                Ipv6_Ver_Tp_Flb_ICriterion IPV6_I_ipv6_ver_tp_flb_i = (Ipv6_Ver_Tp_Flb_ICriterion)selector.getCriterion(Criterion.Type.IPV6_VER_TP_FLB_I);
+                checkNotNull(IPV6_I_ipv6_ver_tp_flb_i, "Action ADD_PROTOCOL need IPV6_VER_TP_FLB_I field");
+                Ipv6_Plen_ICriterion IPV6_I_ipv6_plen_i = (Ipv6_Plen_ICriterion)selector.getCriterion(Criterion.Type.IPV6_PLEN_I);
+                checkNotNull(IPV6_I_ipv6_plen_i, "Action ADD_PROTOCOL need IPV6_PLEN_I field");
+                Ipv6_I_TypeCriterion IPV6_I_ipv6_i_type = (Ipv6_I_TypeCriterion)selector.getCriterion(Criterion.Type.IPV6_I_TYPE);
+                checkNotNull(IPV6_I_ipv6_i_type, "Action ADD_PROTOCOL need IPV6_I_TYPE field");
+                Ipv6_Hlmt_ICriterion IPV6_I_ipv6_hlmt_i = (Ipv6_Hlmt_ICriterion)selector.getCriterion(Criterion.Type.IPV6_HLMT_I);
+                checkNotNull(IPV6_I_ipv6_hlmt_i, "Action ADD_PROTOCOL need IPV6_HLMT_I field");
+                Ipv6_Src_ICriterion IPV6_I_ipv6_src_i = (Ipv6_Src_ICriterion)selector.getCriterion(Criterion.Type.IPV6_SRC_I);
+                checkNotNull(IPV6_I_ipv6_src_i, "Action ADD_PROTOCOL need IPV6_SRC_I field");
+                Ipv6_Dst_ICriterion IPV6_I_ipv6_dst_i = (Ipv6_Dst_ICriterion)selector.getCriterion(Criterion.Type.IPV6_DST_I);
+                checkNotNull(IPV6_I_ipv6_dst_i, "Action ADD_PROTOCOL need IPV6_DST_I field");
+                return new ModFieldInstruction(flag, new Ipv6_I_Protocol(IPV6_I_ipv6_ver_tp_flb_i, IPV6_I_ipv6_plen_i, IPV6_I_ipv6_i_type, IPV6_I_ipv6_hlmt_i, IPV6_I_ipv6_src_i, IPV6_I_ipv6_dst_i));
+            default:
+                throw new UnsupportedOperationException("Action ADD_PROTOCOL add a unsupported protocol");
+        }
+
+    }
+
+
+    public static class ModFieldInstruction implements Instruction {
+        private final int flag;
+        private final Protocol protocol;
+
+        ModFieldInstruction(int flag, Protocol protocol) {
+            this.flag = flag;
+            this.protocol = protocol;
+        }
+        
+        public static ModFieldInstruction readFrom(ByteBuf bb){
+            int start = bb.readerIndex();
+        
+            byte type = bb.readByte();
+            byte raw = bb.readByte();
+            short len = bb.readShort();
+            int protocol_type = bb.readInt();
+        
+            int protocolLength = bb.readerIndex();
+            Protocol result = null;
+            switch(protocol_type){
+                case Protocol.MAC:
+                    result = Mac_Protocol.read(bb);
+                    break;
+                case Protocol.VLAN1:
+                    result = Vlan1_Protocol.read(bb);
+                    break;
+                case Protocol.VLAN2:
+                    result = Vlan2_Protocol.read(bb);
+                    break;
+                case Protocol.DL:
+                    result = Dl_Protocol.read(bb);
+                    break;
+                case Protocol.IPV4_E:
+                    result = Ipv4_E_Protocol.read(bb);
+                    break;
+                case Protocol.IPV6_E:
+                    result = Ipv6_E_Protocol.read(bb);
+                    break;
+                case Protocol.UDP:
+                    result = Udp_Protocol.read(bb);
+                    break;
+                case Protocol.SRV6_1:
+                    result = Srv6_1_Protocol.read(bb);
+                    break;
+                case Protocol.SRV6_2:
+                    result = Srv6_2_Protocol.read(bb);
+                    break;
+                case Protocol.SRV6_3:
+                    result = Srv6_3_Protocol.read(bb);
+                    break;
+                case Protocol.IPV6_I:
+                    result = Ipv6_I_Protocol.read(bb);
+                    break;
+               default:
+                    throw new UnsupportedOperationException("Action ADD_PROTOCOL add a unsupported protocol");
+            }
+            bb.skipBytes(bb.readerIndex() - protocolLength); 
+        
+            int pad = 8 - ((bb.readerIndex() - start) % 8);
+            bb.skipBytes(pad); 
+        
+            return createModField(protocol_type, result);
+        }
+        
+        @Override
+        public void write(ByteBuf bb){
+            int start = bb.writerIndex();
+            // type 
+            bb.writeByte((byte)61);
+            // raw
+            bb.writeByte(0xff);
+            // len
+            int lengthIndex = bb.writerIndex();
+            bb.writeShort((short)0);
+            // flag
+            bb.writeInt(Integer.reverseBytes(flag));
+            // protocol
+            protocol.write(bb);
+            // mask
+            protocol.writeMask(bb);
+            //pad
+            int pad = 8 - ((bb.writerIndex() - start) % 8);
+            bb.writeZero(pad);
+        
+            int length = bb.writerIndex() - start;
+            bb.setShort(lengthIndex, Short.reverseBytes((short)length));
+        }
+        
+        @Override
+        public Type type() {
+            return Type.MOD_FIELD;
+        }
+        
+        @Override
+        public String toString() {
+            return "ModField[" + protocol.toString() + "]";
+        }
+        
+        @Override
+        public int hashCode() {
+            return Objects.hash(type().ordinal(), flag);
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj instanceof ModFieldInstruction) {
+                ModFieldInstruction that = (ModFieldInstruction) obj;
+                return Objects.equals(flag, that.flag) && Objects.equals(protocol, that.protocol);
+        
+            }
+            return false;
+        }
+
+    }
 }
-
-

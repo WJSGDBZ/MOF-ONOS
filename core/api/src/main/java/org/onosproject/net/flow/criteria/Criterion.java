@@ -27,6 +27,7 @@ public interface Criterion {
     public interface Builder {
         boolean readMask(ByteBuf bb);
         Builder readData(ByteBuf bb);
+        Builder setValid(boolean valid);
         Criterion build();
     }
 

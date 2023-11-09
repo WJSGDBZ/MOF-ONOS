@@ -31,8 +31,12 @@ public final class InstructionCodec extends JsonCodec<Instruction> {
 
     private static final Logger log = LoggerFactory.getLogger(InstructionCodec.class);
 
+
     static final String TYPE = "type";
     static final String SUBTYPE = "subtype";
+    static final String PROTOCOL = "protocol";
+    static final String SRC_PROTOCOL = "src_protocol";
+    static final String DST_PROTOCOL = "dst_protocol";
     static final String PORT = "port";
     static final String MAC = "mac";
     static final String VLAN_ID = "vlanId";

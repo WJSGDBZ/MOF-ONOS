@@ -119,6 +119,10 @@ public class OpenVSwitchPipeline extends DefaultSingleTablePipeline
             rules.stream().filter(Objects::nonNull)
                     .forEach(flowOpsBuilder::remove);
             break;
+        case REMOVESPEFIC:
+            rules.stream().filter(Objects::nonNull)
+                    .forEach(flowOpsBuilder::removeSpec);
+            break;   
         default:
             fail(fwd, ObjectiveError.UNKNOWN);
             log.warn("Unknown forwarding type {}", fwd.op());

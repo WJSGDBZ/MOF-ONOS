@@ -45,6 +45,7 @@ public class FlowRuleBatchEntry
     public enum FlowRuleOperation {
         ADD,
         REMOVE,
+        REMOVESPEFIC,
         MODIFY
     }
 

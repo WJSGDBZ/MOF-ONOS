@@ -108,7 +108,12 @@ public interface Instruction {
          */
         TRUNCATE,
 
-        GOTO_Table
+        GOTO_Table, 
+        MOD_FIELD,
+        ADD_PROTOCOL,
+        MOVE_PROTOCOL,
+        DELETE_PROTOCOL,
+        SEG_ROUGTING
     }
 
     /**
