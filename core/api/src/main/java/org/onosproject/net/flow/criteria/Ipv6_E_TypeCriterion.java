@@ -60,6 +60,10 @@ public final class Ipv6_E_TypeCriterion implements Criterion {
         return ipv6_e_type;
     }
 
+    public long value(){
+        return ipv6_e_type;
+    }
+
     @Override
     public String toString() {
         return type().toString() + SEPARATOR + CriterionParser.BasicParser(ipv6_e_type, mask, type());

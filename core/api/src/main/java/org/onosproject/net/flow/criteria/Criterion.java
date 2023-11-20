@@ -280,6 +280,22 @@ public interface Criterion {
 
         IPV6_DST_E,
 
+        TCP_SOURCE,
+
+        TCP_DEST,
+
+        SEQ,
+
+        ACK_SEQ,
+
+        OFF_BITS,
+
+        WINDOW,
+
+        TCP_CHECK,
+
+        URG_PTR,
+
         UDP_SOURCE,
 
         UDP_DEST,
@@ -319,6 +335,26 @@ public interface Criterion {
         IPV6_SRC_I,
 
         IPV6_DST_I,
+
+        VER_HL_I,
+
+        TOS_I,
+
+        TOT_LEN_I,
+
+        IP_ID_I,
+
+        FRAG_OFF_I,
+
+        TTL_I,
+
+        IPV4_I_TYPE,
+
+        IP_CHECK_I,
+
+        IP_SADDR_I,
+
+        IP_DADDR_I,
 
     }
 

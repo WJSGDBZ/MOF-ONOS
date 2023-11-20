@@ -28,6 +28,7 @@ import org.onlab.packet.TCP;
 import org.onlab.packet.TpPort;
 import org.onlab.packet.UDP;
 import org.onlab.packet.VlanId;
+import org.onosproject.net.packet.mof.MOFFlow;
 import org.onlab.util.KryoNamespace;
 import org.onlab.util.Tools;
 import org.onosproject.cfg.ComponentConfigService;
@@ -487,7 +488,8 @@ public class ReactiveForwarding {
         public void process(PacketContext context) {
             // Stop processing if the packet has been handled, since we
             // can't do any more to it.
-
+            MOFFlow mof_flow = context.inPacket().parsed_mof();
+            
             if (context.isHandled()) {
                 return;
             }

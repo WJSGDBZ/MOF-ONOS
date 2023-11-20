@@ -17,6 +17,7 @@ package org.onosproject.net.packet;
 
 import org.onosproject.net.ConnectPoint;
 import org.onlab.packet.Ethernet;
+import org.onosproject.net.packet.mof.MOFFlow;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;
@@ -33,6 +34,7 @@ public final class DefaultInboundPacket implements InboundPacket {
     private final Ethernet parsed;
     private final ByteBuffer unparsed;
     private final Optional<Long> cookie;
+    private final MOFFlow mof_flow;
 
     /**
      * Creates an immutable inbound packet.
@@ -60,6 +62,16 @@ public final class DefaultInboundPacket implements InboundPacket {
         this.parsed = parsed;
         this.unparsed = unparsed;
         this.cookie = cookie;
+        this.mof_flow = null;
+    }
+
+    public DefaultInboundPacket(ConnectPoint receivedFrom, Ethernet parsed,
+        MOFFlow mof_flow, ByteBuffer unparsed, Optional<Long> cookie) {
+        this.receivedFrom = receivedFrom;
+        this.parsed = parsed;
+        this.unparsed = unparsed;
+        this.cookie = cookie;
+        this.mof_flow = mof_flow;
     }
 
     @Override
@@ -70,6 +82,11 @@ public final class DefaultInboundPacket implements InboundPacket {
     @Override
     public Ethernet parsed() {
         return parsed;
+    }
+
+    @Override
+    public MOFFlow parsed_mof() {
+        return mof_flow;
     }
 
     @Override

@@ -20,6 +20,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.onosproject.net.packet.mof.MOFFlow;
 import org.onosproject.net.ConnectPoint;
 import org.onosproject.net.DeviceId;
 import org.onosproject.net.PortNumber;
@@ -174,10 +175,12 @@ public class OpenFlowPacketProvider extends AbstractProvider implements PacketPr
         @Override
         public void handlePacket(OpenFlowPacketContext pktCtx) {
             DeviceId id = DeviceId.deviceId(Dpid.uri(pktCtx.dpid().value()));
+            MOFFlow mof_flow = new MOFFlow(0);
+            mof_flow.parser(pktCtx.parsed().getEtherType(), pktCtx.unparsed());
 
             DefaultInboundPacket inPkt = new DefaultInboundPacket(
                     new ConnectPoint(id, PortNumber.portNumber(pktCtx.inPort())),
-                    pktCtx.parsed(), ByteBuffer.wrap(pktCtx.unparsed()),
+                    pktCtx.parsed(), mof_flow, ByteBuffer.wrap(pktCtx.unparsed()),
                     pktCtx.cookie());
 
             DefaultOutboundPacket outPkt = null;

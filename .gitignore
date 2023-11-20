@@ -21,7 +21,7 @@ bucklets/plugins/
 .watchmanconfig
 .vscode
 *.fxs
-
+.history/*
 /bin/
 lib/yang
 /tools/gui/bin

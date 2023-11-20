@@ -60,6 +60,10 @@ public final class Ipv4_E_TypeCriterion implements Criterion {
         return ipv4_e_type;
     }
 
+    public long value(){
+        return ipv4_e_type;
+    }
+
     @Override
     public String toString() {
         return type().toString() + SEPARATOR + CriterionParser.BasicParser(ipv4_e_type, mask, type());

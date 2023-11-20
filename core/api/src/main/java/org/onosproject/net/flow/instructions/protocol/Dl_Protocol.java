@@ -17,11 +17,14 @@ public class Dl_Protocol implements Protocol {
     public void write(ByteBuf bb){
         dl_type.write(bb);
 
+        bb.writeZero(54);
     }
   
     @Override
     public void writeMask(ByteBuf bb){
         dl_type.writeMask(bb);
+
+        bb.writeZero(54);
     }
   
     public static Dl_Protocol read(ByteBuf bb){

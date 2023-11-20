@@ -3,9 +3,8 @@ package org.onosproject.net.flow.criteria.parser;
 import org.onosproject.net.flow.criteria.Criterion.Type;;
 
 public final class CriterionParser {
-
-    final static String PREFIX = "0x"; 
-
+    
+    final static String PREFIX = "0x";
     //parser 1, 2, 4, 8bytes 
     public static String BasicParser(long data, long mask, Type type) {
         switch(type){
@@ -30,6 +29,14 @@ public final class CriterionParser {
         case IPV6_PLEN_E:
         case IPV6_E_TYPE:
         case IPV6_HLMT_E:
+        case TCP_SOURCE:
+        case TCP_DEST:
+        case SEQ:
+        case ACK_SEQ:
+        case OFF_BITS:
+        case WINDOW:
+        case TCP_CHECK:
+        case URG_PTR:
         case UDP_SOURCE:
         case UDP_DEST:
         case LEN:
@@ -45,6 +52,16 @@ public final class CriterionParser {
         case IPV6_PLEN_I:
         case IPV6_I_TYPE:
         case IPV6_HLMT_I:
+        case VER_HL_I:
+        case TOS_I:
+        case TOT_LEN_I:
+        case IP_ID_I:
+        case FRAG_OFF_I:
+        case TTL_I:
+        case IPV4_I_TYPE:
+        case IP_CHECK_I:
+        case IP_SADDR_I:
+        case IP_DADDR_I:
         default:
             return PREFIX + Long.toHexString(data) + "/" + Long.toHexString(mask).toUpperCase();
         }

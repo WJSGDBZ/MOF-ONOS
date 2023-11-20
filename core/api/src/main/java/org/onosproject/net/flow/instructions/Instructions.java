@@ -1451,6 +1451,25 @@ public final class Instructions {
                 Ipv6_Dst_ECriterion IPV6_E_ipv6_dst_e = (Ipv6_Dst_ECriterion)selector.getCriterion(Criterion.Type.IPV6_DST_E);
                 checkNotNull(IPV6_E_ipv6_dst_e, "Action ADD_PROTOCOL need IPV6_DST_E field");
                 return new AddProtocolInstruction(flag, new Ipv6_E_Protocol(IPV6_E_ipv6_ver_tp_flb_e, IPV6_E_ipv6_plen_e, IPV6_E_ipv6_e_type, IPV6_E_ipv6_hlmt_e, IPV6_E_ipv6_src_e, IPV6_E_ipv6_dst_e));
+            case Protocol.TCP:
+                checkNotNull(selector, "selector cannot be null");
+                Tcp_SourceCriterion TCP_tcp_source = (Tcp_SourceCriterion)selector.getCriterion(Criterion.Type.TCP_SOURCE);
+                checkNotNull(TCP_tcp_source, "Action ADD_PROTOCOL need TCP_SOURCE field");
+                Tcp_DestCriterion TCP_tcp_dest = (Tcp_DestCriterion)selector.getCriterion(Criterion.Type.TCP_DEST);
+                checkNotNull(TCP_tcp_dest, "Action ADD_PROTOCOL need TCP_DEST field");
+                SeqCriterion TCP_seq = (SeqCriterion)selector.getCriterion(Criterion.Type.SEQ);
+                checkNotNull(TCP_seq, "Action ADD_PROTOCOL need SEQ field");
+                Ack_SeqCriterion TCP_ack_seq = (Ack_SeqCriterion)selector.getCriterion(Criterion.Type.ACK_SEQ);
+                checkNotNull(TCP_ack_seq, "Action ADD_PROTOCOL need ACK_SEQ field");
+                Off_BitsCriterion TCP_off_bits = (Off_BitsCriterion)selector.getCriterion(Criterion.Type.OFF_BITS);
+                checkNotNull(TCP_off_bits, "Action ADD_PROTOCOL need OFF_BITS field");
+                WindowCriterion TCP_window = (WindowCriterion)selector.getCriterion(Criterion.Type.WINDOW);
+                checkNotNull(TCP_window, "Action ADD_PROTOCOL need WINDOW field");
+                Tcp_CheckCriterion TCP_tcp_check = (Tcp_CheckCriterion)selector.getCriterion(Criterion.Type.TCP_CHECK);
+                checkNotNull(TCP_tcp_check, "Action ADD_PROTOCOL need TCP_CHECK field");
+                Urg_PtrCriterion TCP_urg_ptr = (Urg_PtrCriterion)selector.getCriterion(Criterion.Type.URG_PTR);
+                checkNotNull(TCP_urg_ptr, "Action ADD_PROTOCOL need URG_PTR field");
+                return new AddProtocolInstruction(flag, new Tcp_Protocol(TCP_tcp_source, TCP_tcp_dest, TCP_seq, TCP_ack_seq, TCP_off_bits, TCP_window, TCP_tcp_check, TCP_urg_ptr));
             case Protocol.UDP:
                 checkNotNull(selector, "selector cannot be null");
                 Udp_SourceCriterion UDP_udp_source = (Udp_SourceCriterion)selector.getCriterion(Criterion.Type.UDP_SOURCE);
@@ -1540,6 +1559,29 @@ public final class Instructions {
                 Ipv6_Dst_ICriterion IPV6_I_ipv6_dst_i = (Ipv6_Dst_ICriterion)selector.getCriterion(Criterion.Type.IPV6_DST_I);
                 checkNotNull(IPV6_I_ipv6_dst_i, "Action ADD_PROTOCOL need IPV6_DST_I field");
                 return new AddProtocolInstruction(flag, new Ipv6_I_Protocol(IPV6_I_ipv6_ver_tp_flb_i, IPV6_I_ipv6_plen_i, IPV6_I_ipv6_i_type, IPV6_I_ipv6_hlmt_i, IPV6_I_ipv6_src_i, IPV6_I_ipv6_dst_i));
+            case Protocol.IPV4_I:
+                checkNotNull(selector, "selector cannot be null");
+                Ver_Hl_ICriterion IPV4_I_ver_hl_i = (Ver_Hl_ICriterion)selector.getCriterion(Criterion.Type.VER_HL_I);
+                checkNotNull(IPV4_I_ver_hl_i, "Action ADD_PROTOCOL need VER_HL_I field");
+                Tos_ICriterion IPV4_I_tos_i = (Tos_ICriterion)selector.getCriterion(Criterion.Type.TOS_I);
+                checkNotNull(IPV4_I_tos_i, "Action ADD_PROTOCOL need TOS_I field");
+                Tot_Len_ICriterion IPV4_I_tot_len_i = (Tot_Len_ICriterion)selector.getCriterion(Criterion.Type.TOT_LEN_I);
+                checkNotNull(IPV4_I_tot_len_i, "Action ADD_PROTOCOL need TOT_LEN_I field");
+                Ip_Id_ICriterion IPV4_I_ip_id_i = (Ip_Id_ICriterion)selector.getCriterion(Criterion.Type.IP_ID_I);
+                checkNotNull(IPV4_I_ip_id_i, "Action ADD_PROTOCOL need IP_ID_I field");
+                Frag_Off_ICriterion IPV4_I_frag_off_i = (Frag_Off_ICriterion)selector.getCriterion(Criterion.Type.FRAG_OFF_I);
+                checkNotNull(IPV4_I_frag_off_i, "Action ADD_PROTOCOL need FRAG_OFF_I field");
+                Ttl_ICriterion IPV4_I_ttl_i = (Ttl_ICriterion)selector.getCriterion(Criterion.Type.TTL_I);
+                checkNotNull(IPV4_I_ttl_i, "Action ADD_PROTOCOL need TTL_I field");
+                Ipv4_I_TypeCriterion IPV4_I_ipv4_i_type = (Ipv4_I_TypeCriterion)selector.getCriterion(Criterion.Type.IPV4_I_TYPE);
+                checkNotNull(IPV4_I_ipv4_i_type, "Action ADD_PROTOCOL need IPV4_I_TYPE field");
+                Ip_Check_ICriterion IPV4_I_ip_check_i = (Ip_Check_ICriterion)selector.getCriterion(Criterion.Type.IP_CHECK_I);
+                checkNotNull(IPV4_I_ip_check_i, "Action ADD_PROTOCOL need IP_CHECK_I field");
+                Ip_Saddr_ICriterion IPV4_I_ip_saddr_i = (Ip_Saddr_ICriterion)selector.getCriterion(Criterion.Type.IP_SADDR_I);
+                checkNotNull(IPV4_I_ip_saddr_i, "Action ADD_PROTOCOL need IP_SADDR_I field");
+                Ip_Daddr_ICriterion IPV4_I_ip_daddr_i = (Ip_Daddr_ICriterion)selector.getCriterion(Criterion.Type.IP_DADDR_I);
+                checkNotNull(IPV4_I_ip_daddr_i, "Action ADD_PROTOCOL need IP_DADDR_I field");
+                return new AddProtocolInstruction(flag, new Ipv4_I_Protocol(IPV4_I_ver_hl_i, IPV4_I_tos_i, IPV4_I_tot_len_i, IPV4_I_ip_id_i, IPV4_I_frag_off_i, IPV4_I_ttl_i, IPV4_I_ipv4_i_type, IPV4_I_ip_check_i, IPV4_I_ip_saddr_i, IPV4_I_ip_daddr_i));
             default:
                 throw new UnsupportedOperationException("Action ADD_PROTOCOL add a unsupported protocol");
         }
@@ -1581,6 +1623,9 @@ public final class Instructions {
                 case Protocol.IPV6_E:
                     result = Ipv6_E_Protocol.read(bb);
                     break;
+                case Protocol.TCP:
+                    result = Tcp_Protocol.read(bb);
+                    break;
                 case Protocol.UDP:
                     result = Udp_Protocol.read(bb);
                     break;
@@ -1595,6 +1640,9 @@ public final class Instructions {
                     break;
                 case Protocol.IPV6_I:
                     result = Ipv6_I_Protocol.read(bb);
+                    break;
+                case Protocol.IPV4_I:
+                    result = Ipv4_I_Protocol.read(bb);
                     break;
                 default:
                     throw new UnsupportedOperationException("Action ADD_PROTOCOL add a unsupported protocol");
@@ -1731,6 +1779,25 @@ public final class Instructions {
                 Ipv6_Dst_ECriterion IPV6_E_ipv6_dst_e = (Ipv6_Dst_ECriterion)selector.getCriterion(Criterion.Type.IPV6_DST_E);
                 checkNotNull(IPV6_E_ipv6_dst_e, "Action ADD_PROTOCOL need IPV6_DST_E field");
                 return new ModFieldInstruction(flag, new Ipv6_E_Protocol(IPV6_E_ipv6_ver_tp_flb_e, IPV6_E_ipv6_plen_e, IPV6_E_ipv6_e_type, IPV6_E_ipv6_hlmt_e, IPV6_E_ipv6_src_e, IPV6_E_ipv6_dst_e));
+            case Protocol.TCP:
+                checkNotNull(selector, "selector cannot be null");
+                Tcp_SourceCriterion TCP_tcp_source = (Tcp_SourceCriterion)selector.getCriterion(Criterion.Type.TCP_SOURCE);
+                checkNotNull(TCP_tcp_source, "Action ADD_PROTOCOL need TCP_SOURCE field");
+                Tcp_DestCriterion TCP_tcp_dest = (Tcp_DestCriterion)selector.getCriterion(Criterion.Type.TCP_DEST);
+                checkNotNull(TCP_tcp_dest, "Action ADD_PROTOCOL need TCP_DEST field");
+                SeqCriterion TCP_seq = (SeqCriterion)selector.getCriterion(Criterion.Type.SEQ);
+                checkNotNull(TCP_seq, "Action ADD_PROTOCOL need SEQ field");
+                Ack_SeqCriterion TCP_ack_seq = (Ack_SeqCriterion)selector.getCriterion(Criterion.Type.ACK_SEQ);
+                checkNotNull(TCP_ack_seq, "Action ADD_PROTOCOL need ACK_SEQ field");
+                Off_BitsCriterion TCP_off_bits = (Off_BitsCriterion)selector.getCriterion(Criterion.Type.OFF_BITS);
+                checkNotNull(TCP_off_bits, "Action ADD_PROTOCOL need OFF_BITS field");
+                WindowCriterion TCP_window = (WindowCriterion)selector.getCriterion(Criterion.Type.WINDOW);
+                checkNotNull(TCP_window, "Action ADD_PROTOCOL need WINDOW field");
+                Tcp_CheckCriterion TCP_tcp_check = (Tcp_CheckCriterion)selector.getCriterion(Criterion.Type.TCP_CHECK);
+                checkNotNull(TCP_tcp_check, "Action ADD_PROTOCOL need TCP_CHECK field");
+                Urg_PtrCriterion TCP_urg_ptr = (Urg_PtrCriterion)selector.getCriterion(Criterion.Type.URG_PTR);
+                checkNotNull(TCP_urg_ptr, "Action ADD_PROTOCOL need URG_PTR field");
+                return new ModFieldInstruction(flag, new Tcp_Protocol(TCP_tcp_source, TCP_tcp_dest, TCP_seq, TCP_ack_seq, TCP_off_bits, TCP_window, TCP_tcp_check, TCP_urg_ptr));
             case Protocol.UDP:
                 checkNotNull(selector, "selector cannot be null");
                 Udp_SourceCriterion UDP_udp_source = (Udp_SourceCriterion)selector.getCriterion(Criterion.Type.UDP_SOURCE);
@@ -1820,6 +1887,29 @@ public final class Instructions {
                 Ipv6_Dst_ICriterion IPV6_I_ipv6_dst_i = (Ipv6_Dst_ICriterion)selector.getCriterion(Criterion.Type.IPV6_DST_I);
                 checkNotNull(IPV6_I_ipv6_dst_i, "Action ADD_PROTOCOL need IPV6_DST_I field");
                 return new ModFieldInstruction(flag, new Ipv6_I_Protocol(IPV6_I_ipv6_ver_tp_flb_i, IPV6_I_ipv6_plen_i, IPV6_I_ipv6_i_type, IPV6_I_ipv6_hlmt_i, IPV6_I_ipv6_src_i, IPV6_I_ipv6_dst_i));
+            case Protocol.IPV4_I:
+                checkNotNull(selector, "selector cannot be null");
+                Ver_Hl_ICriterion IPV4_I_ver_hl_i = (Ver_Hl_ICriterion)selector.getCriterion(Criterion.Type.VER_HL_I);
+                checkNotNull(IPV4_I_ver_hl_i, "Action ADD_PROTOCOL need VER_HL_I field");
+                Tos_ICriterion IPV4_I_tos_i = (Tos_ICriterion)selector.getCriterion(Criterion.Type.TOS_I);
+                checkNotNull(IPV4_I_tos_i, "Action ADD_PROTOCOL need TOS_I field");
+                Tot_Len_ICriterion IPV4_I_tot_len_i = (Tot_Len_ICriterion)selector.getCriterion(Criterion.Type.TOT_LEN_I);
+                checkNotNull(IPV4_I_tot_len_i, "Action ADD_PROTOCOL need TOT_LEN_I field");
+                Ip_Id_ICriterion IPV4_I_ip_id_i = (Ip_Id_ICriterion)selector.getCriterion(Criterion.Type.IP_ID_I);
+                checkNotNull(IPV4_I_ip_id_i, "Action ADD_PROTOCOL need IP_ID_I field");
+                Frag_Off_ICriterion IPV4_I_frag_off_i = (Frag_Off_ICriterion)selector.getCriterion(Criterion.Type.FRAG_OFF_I);
+                checkNotNull(IPV4_I_frag_off_i, "Action ADD_PROTOCOL need FRAG_OFF_I field");
+                Ttl_ICriterion IPV4_I_ttl_i = (Ttl_ICriterion)selector.getCriterion(Criterion.Type.TTL_I);
+                checkNotNull(IPV4_I_ttl_i, "Action ADD_PROTOCOL need TTL_I field");
+                Ipv4_I_TypeCriterion IPV4_I_ipv4_i_type = (Ipv4_I_TypeCriterion)selector.getCriterion(Criterion.Type.IPV4_I_TYPE);
+                checkNotNull(IPV4_I_ipv4_i_type, "Action ADD_PROTOCOL need IPV4_I_TYPE field");
+                Ip_Check_ICriterion IPV4_I_ip_check_i = (Ip_Check_ICriterion)selector.getCriterion(Criterion.Type.IP_CHECK_I);
+                checkNotNull(IPV4_I_ip_check_i, "Action ADD_PROTOCOL need IP_CHECK_I field");
+                Ip_Saddr_ICriterion IPV4_I_ip_saddr_i = (Ip_Saddr_ICriterion)selector.getCriterion(Criterion.Type.IP_SADDR_I);
+                checkNotNull(IPV4_I_ip_saddr_i, "Action ADD_PROTOCOL need IP_SADDR_I field");
+                Ip_Daddr_ICriterion IPV4_I_ip_daddr_i = (Ip_Daddr_ICriterion)selector.getCriterion(Criterion.Type.IP_DADDR_I);
+                checkNotNull(IPV4_I_ip_daddr_i, "Action ADD_PROTOCOL need IP_DADDR_I field");
+                return new ModFieldInstruction(flag, new Ipv4_I_Protocol(IPV4_I_ver_hl_i, IPV4_I_tos_i, IPV4_I_tot_len_i, IPV4_I_ip_id_i, IPV4_I_frag_off_i, IPV4_I_ttl_i, IPV4_I_ipv4_i_type, IPV4_I_ip_check_i, IPV4_I_ip_saddr_i, IPV4_I_ip_daddr_i));
             default:
                 throw new UnsupportedOperationException("Action ADD_PROTOCOL add a unsupported protocol");
         }
@@ -1865,6 +1955,9 @@ public final class Instructions {
                 case Protocol.IPV6_E:
                     result = Ipv6_E_Protocol.read(bb);
                     break;
+                case Protocol.TCP:
+                    result = Tcp_Protocol.read(bb);
+                    break;
                 case Protocol.UDP:
                     result = Udp_Protocol.read(bb);
                     break;
@@ -1879,6 +1972,9 @@ public final class Instructions {
                     break;
                 case Protocol.IPV6_I:
                     result = Ipv6_I_Protocol.read(bb);
+                    break;
+                case Protocol.IPV4_I:
+                    result = Ipv4_I_Protocol.read(bb);
                     break;
                default:
                     throw new UnsupportedOperationException("Action ADD_PROTOCOL add a unsupported protocol");
@@ -1903,10 +1999,10 @@ public final class Instructions {
             bb.writeShort((short)0);
             // flag
             bb.writeInt(Integer.reverseBytes(flag));
-            // protocol
-            protocol.write(bb);
             // mask
             protocol.writeMask(bb);
+            // protocol
+            protocol.write(bb);
             //pad
             int pad = 8 - ((bb.writerIndex() - start) % 8);
             bb.writeZero(pad);

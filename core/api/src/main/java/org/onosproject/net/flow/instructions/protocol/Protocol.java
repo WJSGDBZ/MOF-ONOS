@@ -10,11 +10,13 @@ public interface Protocol {
     final int DL = 1 << 3;
     final int IPV4_E = 1 << 4;
     final int IPV6_E = 1 << 5;
-    final int UDP = 1 << 6;
-    final int SRV6_1 = 1 << 7;
-    final int SRV6_2 = 1 << 8;
-    final int SRV6_3 = 1 << 9;
-    final int IPV6_I = 1 << 10;
+    final int TCP = 1 << 6;
+    final int UDP = 1 << 7;
+    final int SRV6_1 = 1 << 8;
+    final int SRV6_2 = 1 << 9;
+    final int SRV6_3 = 1 << 10;
+    final int IPV6_I = 1 << 11;
+    final int IPV4_I = 1 << 12;
 
     public static String ProtocolFormatByType(int type) {
         switch(type){
@@ -30,6 +32,8 @@ public interface Protocol {
                 return "IPV4_E_PROTOCOL";
             case IPV6_E:
                 return "IPV6_E_PROTOCOL";
+            case TCP:
+                return "TCP_PROTOCOL";
             case UDP:
                 return "UDP_PROTOCOL";
             case SRV6_1:
@@ -40,6 +44,8 @@ public interface Protocol {
                 return "SRV6_3_PROTOCOL";
             case IPV6_I:
                 return "IPV6_I_PROTOCOL";
+            case IPV4_I:
+                return "IPV4_I_PROTOCOL";
             default:
                 return "UNKONW_PROTOCOL";
         }
@@ -59,6 +65,8 @@ public interface Protocol {
                 return IPV4_E;
             case "IPV6_E_PROTOCOL":
                 return IPV6_E;
+            case "TCP_PROTOCOL":
+                return TCP;
             case "UDP_PROTOCOL":
                 return UDP;
             case "SRV6_1_PROTOCOL":
@@ -69,6 +77,8 @@ public interface Protocol {
                 return SRV6_3;
             case "IPV6_I_PROTOCOL":
                 return IPV6_I;
+            case "IPV4_I_PROTOCOL":
+                return IPV4_I;
             default:
                 return UNKNOW;
         }

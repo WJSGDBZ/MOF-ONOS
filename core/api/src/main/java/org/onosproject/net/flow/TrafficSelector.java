@@ -553,6 +553,30 @@ public interface TrafficSelector {
         Builder selectIpv6_Dst_E(Ipv6_Dst_E ipv6_dst_e);
         Builder selectIpv6_Dst_E(Ipv6_Dst_E ipv6_dst_e, Ipv6_Dst_E mask);
 
+        Builder selectTcp_Source(long tcp_source);
+        Builder selectTcp_Source(long tcp_source, long mask);
+
+        Builder selectTcp_Dest(long tcp_dest);
+        Builder selectTcp_Dest(long tcp_dest, long mask);
+
+        Builder selectSeq(long seq);
+        Builder selectSeq(long seq, long mask);
+
+        Builder selectAck_Seq(long ack_seq);
+        Builder selectAck_Seq(long ack_seq, long mask);
+
+        Builder selectOff_Bits(long off_bits);
+        Builder selectOff_Bits(long off_bits, long mask);
+
+        Builder selectWindow(long window);
+        Builder selectWindow(long window, long mask);
+
+        Builder selectTcp_Check(long tcp_check);
+        Builder selectTcp_Check(long tcp_check, long mask);
+
+        Builder selectUrg_Ptr(long urg_ptr);
+        Builder selectUrg_Ptr(long urg_ptr, long mask);
+
         Builder selectUdp_Source(long udp_source);
         Builder selectUdp_Source(long udp_source, long mask);
 
@@ -612,6 +636,36 @@ public interface TrafficSelector {
 
         Builder selectIpv6_Dst_I(Ipv6_Dst_I ipv6_dst_i);
         Builder selectIpv6_Dst_I(Ipv6_Dst_I ipv6_dst_i, Ipv6_Dst_I mask);
+
+        Builder selectVer_Hl_I(long ver_hl_i);
+        Builder selectVer_Hl_I(long ver_hl_i, long mask);
+
+        Builder selectTos_I(long tos_i);
+        Builder selectTos_I(long tos_i, long mask);
+
+        Builder selectTot_Len_I(long tot_len_i);
+        Builder selectTot_Len_I(long tot_len_i, long mask);
+
+        Builder selectIp_Id_I(long ip_id_i);
+        Builder selectIp_Id_I(long ip_id_i, long mask);
+
+        Builder selectFrag_Off_I(long frag_off_i);
+        Builder selectFrag_Off_I(long frag_off_i, long mask);
+
+        Builder selectTtl_I(long ttl_i);
+        Builder selectTtl_I(long ttl_i, long mask);
+
+        Builder selectIpv4_I_Type(long ipv4_i_type);
+        Builder selectIpv4_I_Type(long ipv4_i_type, long mask);
+
+        Builder selectIp_Check_I(long ip_check_i);
+        Builder selectIp_Check_I(long ip_check_i, long mask);
+
+        Builder selectIp_Saddr_I(long ip_saddr_i);
+        Builder selectIp_Saddr_I(long ip_saddr_i, long mask);
+
+        Builder selectIp_Daddr_I(long ip_daddr_i);
+        Builder selectIp_Daddr_I(long ip_daddr_i, long mask);
 
         /**
          * Uses an extension selector.

@@ -535,7 +535,11 @@ public class MofFlowStatsRequestImpl implements MofFlowStatsRequest {
 
             // length is length of variable message, will be updated at the end
             int lengthIndex = bb.writerIndex();
-            bb.writeShort((short)0x0);
+            //tableId;
+            message.tableId.writeByte(bb);
+            //log.info("Mof add flow on tableId" + message.tableId);
+            // fixed value property command = 0
+            bb.writeByte(0);
 
             bb.writeInt((int)message.xid);
             // fixed value property statsType = 1

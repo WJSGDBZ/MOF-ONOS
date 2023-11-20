@@ -79,6 +79,14 @@ import org.onosproject.net.flow.criteria.Ipv6_Src_ECriterion;
 import org.onlab.packet.Ipv6_Src_E;
 import org.onosproject.net.flow.criteria.Ipv6_Dst_ECriterion;
 import org.onlab.packet.Ipv6_Dst_E;
+import org.onosproject.net.flow.criteria.Tcp_SourceCriterion;
+import org.onosproject.net.flow.criteria.Tcp_DestCriterion;
+import org.onosproject.net.flow.criteria.SeqCriterion;
+import org.onosproject.net.flow.criteria.Ack_SeqCriterion;
+import org.onosproject.net.flow.criteria.Off_BitsCriterion;
+import org.onosproject.net.flow.criteria.WindowCriterion;
+import org.onosproject.net.flow.criteria.Tcp_CheckCriterion;
+import org.onosproject.net.flow.criteria.Urg_PtrCriterion;
 import org.onosproject.net.flow.criteria.Udp_SourceCriterion;
 import org.onosproject.net.flow.criteria.Udp_DestCriterion;
 import org.onosproject.net.flow.criteria.LenCriterion;
@@ -104,6 +112,16 @@ import org.onosproject.net.flow.criteria.Ipv6_Src_ICriterion;
 import org.onlab.packet.Ipv6_Src_I;
 import org.onosproject.net.flow.criteria.Ipv6_Dst_ICriterion;
 import org.onlab.packet.Ipv6_Dst_I;
+import org.onosproject.net.flow.criteria.Ver_Hl_ICriterion;
+import org.onosproject.net.flow.criteria.Tos_ICriterion;
+import org.onosproject.net.flow.criteria.Tot_Len_ICriterion;
+import org.onosproject.net.flow.criteria.Ip_Id_ICriterion;
+import org.onosproject.net.flow.criteria.Frag_Off_ICriterion;
+import org.onosproject.net.flow.criteria.Ttl_ICriterion;
+import org.onosproject.net.flow.criteria.Ipv4_I_TypeCriterion;
+import org.onosproject.net.flow.criteria.Ip_Check_ICriterion;
+import org.onosproject.net.flow.criteria.Ip_Saddr_ICriterion;
+import org.onosproject.net.flow.criteria.Ip_Daddr_ICriterion;
 /**
  * Default traffic selector implementation.
  */
@@ -733,6 +751,86 @@ public final class DefaultTrafficSelector implements TrafficSelector {
         }
 
         @Override
+        public Builder selectTcp_Source(long tcp_source) {
+            return add(Criteria.selectTcp_Source(tcp_source));
+        }
+  
+        @Override
+        public Builder selectTcp_Source(long tcp_source, long mask) {
+            return add(Criteria.selectTcp_Source(tcp_source, mask));
+        }
+
+        @Override
+        public Builder selectTcp_Dest(long tcp_dest) {
+            return add(Criteria.selectTcp_Dest(tcp_dest));
+        }
+  
+        @Override
+        public Builder selectTcp_Dest(long tcp_dest, long mask) {
+            return add(Criteria.selectTcp_Dest(tcp_dest, mask));
+        }
+
+        @Override
+        public Builder selectSeq(long seq) {
+            return add(Criteria.selectSeq(seq));
+        }
+  
+        @Override
+        public Builder selectSeq(long seq, long mask) {
+            return add(Criteria.selectSeq(seq, mask));
+        }
+
+        @Override
+        public Builder selectAck_Seq(long ack_seq) {
+            return add(Criteria.selectAck_Seq(ack_seq));
+        }
+  
+        @Override
+        public Builder selectAck_Seq(long ack_seq, long mask) {
+            return add(Criteria.selectAck_Seq(ack_seq, mask));
+        }
+
+        @Override
+        public Builder selectOff_Bits(long off_bits) {
+            return add(Criteria.selectOff_Bits(off_bits));
+        }
+  
+        @Override
+        public Builder selectOff_Bits(long off_bits, long mask) {
+            return add(Criteria.selectOff_Bits(off_bits, mask));
+        }
+
+        @Override
+        public Builder selectWindow(long window) {
+            return add(Criteria.selectWindow(window));
+        }
+  
+        @Override
+        public Builder selectWindow(long window, long mask) {
+            return add(Criteria.selectWindow(window, mask));
+        }
+
+        @Override
+        public Builder selectTcp_Check(long tcp_check) {
+            return add(Criteria.selectTcp_Check(tcp_check));
+        }
+  
+        @Override
+        public Builder selectTcp_Check(long tcp_check, long mask) {
+            return add(Criteria.selectTcp_Check(tcp_check, mask));
+        }
+
+        @Override
+        public Builder selectUrg_Ptr(long urg_ptr) {
+            return add(Criteria.selectUrg_Ptr(urg_ptr));
+        }
+  
+        @Override
+        public Builder selectUrg_Ptr(long urg_ptr, long mask) {
+            return add(Criteria.selectUrg_Ptr(urg_ptr, mask));
+        }
+
+        @Override
         public Builder selectUdp_Source(long udp_source) {
             return add(Criteria.selectUdp_Source(udp_source));
         }
@@ -933,6 +1031,106 @@ public final class DefaultTrafficSelector implements TrafficSelector {
         }
 
         @Override
+        public Builder selectVer_Hl_I(long ver_hl_i) {
+            return add(Criteria.selectVer_Hl_I(ver_hl_i));
+        }
+  
+        @Override
+        public Builder selectVer_Hl_I(long ver_hl_i, long mask) {
+            return add(Criteria.selectVer_Hl_I(ver_hl_i, mask));
+        }
+
+        @Override
+        public Builder selectTos_I(long tos_i) {
+            return add(Criteria.selectTos_I(tos_i));
+        }
+  
+        @Override
+        public Builder selectTos_I(long tos_i, long mask) {
+            return add(Criteria.selectTos_I(tos_i, mask));
+        }
+
+        @Override
+        public Builder selectTot_Len_I(long tot_len_i) {
+            return add(Criteria.selectTot_Len_I(tot_len_i));
+        }
+  
+        @Override
+        public Builder selectTot_Len_I(long tot_len_i, long mask) {
+            return add(Criteria.selectTot_Len_I(tot_len_i, mask));
+        }
+
+        @Override
+        public Builder selectIp_Id_I(long ip_id_i) {
+            return add(Criteria.selectIp_Id_I(ip_id_i));
+        }
+  
+        @Override
+        public Builder selectIp_Id_I(long ip_id_i, long mask) {
+            return add(Criteria.selectIp_Id_I(ip_id_i, mask));
+        }
+
+        @Override
+        public Builder selectFrag_Off_I(long frag_off_i) {
+            return add(Criteria.selectFrag_Off_I(frag_off_i));
+        }
+  
+        @Override
+        public Builder selectFrag_Off_I(long frag_off_i, long mask) {
+            return add(Criteria.selectFrag_Off_I(frag_off_i, mask));
+        }
+
+        @Override
+        public Builder selectTtl_I(long ttl_i) {
+            return add(Criteria.selectTtl_I(ttl_i));
+        }
+  
+        @Override
+        public Builder selectTtl_I(long ttl_i, long mask) {
+            return add(Criteria.selectTtl_I(ttl_i, mask));
+        }
+
+        @Override
+        public Builder selectIpv4_I_Type(long ipv4_i_type) {
+            return add(Criteria.selectIpv4_I_Type(ipv4_i_type));
+        }
+  
+        @Override
+        public Builder selectIpv4_I_Type(long ipv4_i_type, long mask) {
+            return add(Criteria.selectIpv4_I_Type(ipv4_i_type, mask));
+        }
+
+        @Override
+        public Builder selectIp_Check_I(long ip_check_i) {
+            return add(Criteria.selectIp_Check_I(ip_check_i));
+        }
+  
+        @Override
+        public Builder selectIp_Check_I(long ip_check_i, long mask) {
+            return add(Criteria.selectIp_Check_I(ip_check_i, mask));
+        }
+
+        @Override
+        public Builder selectIp_Saddr_I(long ip_saddr_i) {
+            return add(Criteria.selectIp_Saddr_I(ip_saddr_i));
+        }
+  
+        @Override
+        public Builder selectIp_Saddr_I(long ip_saddr_i, long mask) {
+            return add(Criteria.selectIp_Saddr_I(ip_saddr_i, mask));
+        }
+
+        @Override
+        public Builder selectIp_Daddr_I(long ip_daddr_i) {
+            return add(Criteria.selectIp_Daddr_I(ip_daddr_i));
+        }
+  
+        @Override
+        public Builder selectIp_Daddr_I(long ip_daddr_i, long mask) {
+            return add(Criteria.selectIp_Daddr_I(ip_daddr_i, mask));
+        }
+
+        @Override
         public TrafficSelector.Builder extension(ExtensionSelector extensionSelector,
                 DeviceId deviceId) {
             return add(Criteria.extension(extensionSelector, deviceId));
@@ -1075,6 +1273,48 @@ public final class DefaultTrafficSelector implements TrafficSelector {
             builders.put(Criterion.Type.IPV6_DST_E, builder);
         }
 
+        builder = new Tcp_SourceCriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.TCP_SOURCE, builder);
+        }
+
+        builder = new Tcp_DestCriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.TCP_DEST, builder);
+        }
+
+        builder = new SeqCriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.SEQ, builder);
+        }
+
+        builder = new Ack_SeqCriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.ACK_SEQ, builder);
+        }
+
+        builder = new Off_BitsCriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.OFF_BITS, builder);
+        }
+
+        builder = new WindowCriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.WINDOW, builder);
+        }
+
+        builder = new Tcp_CheckCriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.TCP_CHECK, builder);
+        }
+
+        builder = new Urg_PtrCriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.URG_PTR, builder);
+        }
+
+        bb.skipBytes(4);
+
         builder = new Udp_SourceCriterion.Builder();
         if(builder.readMask(bb)){
             builders.put(Criterion.Type.UDP_SOURCE, builder);
@@ -1174,6 +1414,58 @@ public final class DefaultTrafficSelector implements TrafficSelector {
         if(builder.readMask(bb)){
             builders.put(Criterion.Type.IPV6_DST_I, builder);
         }
+
+        builder = new Ver_Hl_ICriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.VER_HL_I, builder);
+        }
+
+        builder = new Tos_ICriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.TOS_I, builder);
+        }
+
+        builder = new Tot_Len_ICriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.TOT_LEN_I, builder);
+        }
+
+        builder = new Ip_Id_ICriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.IP_ID_I, builder);
+        }
+
+        builder = new Frag_Off_ICriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.FRAG_OFF_I, builder);
+        }
+
+        builder = new Ttl_ICriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.TTL_I, builder);
+        }
+
+        builder = new Ipv4_I_TypeCriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.IPV4_I_TYPE, builder);
+        }
+
+        builder = new Ip_Check_ICriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.IP_CHECK_I, builder);
+        }
+
+        builder = new Ip_Saddr_ICriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.IP_SADDR_I, builder);
+        }
+
+        builder = new Ip_Daddr_ICriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.IP_DADDR_I, builder);
+        }
+
+        bb.skipBytes(4);
 
         if(builders.containsKey(Criterion.Type.IN_PORT)){
             trafficSelector.add(builders.get(Criterion.Type.IN_PORT)
@@ -1374,6 +1666,72 @@ public final class DefaultTrafficSelector implements TrafficSelector {
             bb.skipBytes(Ipv6_Dst_ECriterion.LEN);
         }
 
+        if(builders.containsKey(Criterion.Type.TCP_SOURCE)){
+            trafficSelector.add(builders.get(Criterion.Type.TCP_SOURCE)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Tcp_SourceCriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.TCP_DEST)){
+            trafficSelector.add(builders.get(Criterion.Type.TCP_DEST)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Tcp_DestCriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.SEQ)){
+            trafficSelector.add(builders.get(Criterion.Type.SEQ)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(SeqCriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.ACK_SEQ)){
+            trafficSelector.add(builders.get(Criterion.Type.ACK_SEQ)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Ack_SeqCriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.OFF_BITS)){
+            trafficSelector.add(builders.get(Criterion.Type.OFF_BITS)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Off_BitsCriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.WINDOW)){
+            trafficSelector.add(builders.get(Criterion.Type.WINDOW)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(WindowCriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.TCP_CHECK)){
+            trafficSelector.add(builders.get(Criterion.Type.TCP_CHECK)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Tcp_CheckCriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.URG_PTR)){
+            trafficSelector.add(builders.get(Criterion.Type.URG_PTR)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Urg_PtrCriterion.LEN);
+        }
+
+        bb.skipBytes(4);
+
         if(builders.containsKey(Criterion.Type.UDP_SOURCE)){
             trafficSelector.add(builders.get(Criterion.Type.UDP_SOURCE)
                                         .readData(bb)
@@ -1534,16 +1892,98 @@ public final class DefaultTrafficSelector implements TrafficSelector {
             bb.skipBytes(Ipv6_Dst_ICriterion.LEN);
         }
 
+        if(builders.containsKey(Criterion.Type.VER_HL_I)){
+            trafficSelector.add(builders.get(Criterion.Type.VER_HL_I)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Ver_Hl_ICriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.TOS_I)){
+            trafficSelector.add(builders.get(Criterion.Type.TOS_I)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Tos_ICriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.TOT_LEN_I)){
+            trafficSelector.add(builders.get(Criterion.Type.TOT_LEN_I)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Tot_Len_ICriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.IP_ID_I)){
+            trafficSelector.add(builders.get(Criterion.Type.IP_ID_I)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Ip_Id_ICriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.FRAG_OFF_I)){
+            trafficSelector.add(builders.get(Criterion.Type.FRAG_OFF_I)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Frag_Off_ICriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.TTL_I)){
+            trafficSelector.add(builders.get(Criterion.Type.TTL_I)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Ttl_ICriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.IPV4_I_TYPE)){
+            trafficSelector.add(builders.get(Criterion.Type.IPV4_I_TYPE)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Ipv4_I_TypeCriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.IP_CHECK_I)){
+            trafficSelector.add(builders.get(Criterion.Type.IP_CHECK_I)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Ip_Check_ICriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.IP_SADDR_I)){
+            trafficSelector.add(builders.get(Criterion.Type.IP_SADDR_I)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Ip_Saddr_ICriterion.LEN);
+        }
+
+        if(builders.containsKey(Criterion.Type.IP_DADDR_I)){
+            trafficSelector.add(builders.get(Criterion.Type.IP_DADDR_I)
+                                        .readData(bb)
+                                        .build());
+        }else{
+            bb.skipBytes(Ip_Daddr_ICriterion.LEN);
+        }
+
+        bb.skipBytes(4);
+
         return trafficSelector.build();
     }
 
     public static void writeStatsFlowRequestAllMatch(ByteBuf bb){
 
         bb.writeZero(8);
-        bb.writeZero(200);
+        bb.writeZero(224);
     
         bb.writeZero(8);
-        bb.writeZero(200);
+        bb.writeZero(224);
 
     }
     @Override
@@ -1700,6 +2140,56 @@ public final class DefaultTrafficSelector implements TrafficSelector {
             Ipv6_Dst_ECriterion.writeZero(bb);
         }
 
+        if(match.containsKey(Criterion.Type.TCP_SOURCE)){
+            match.get(Criterion.Type.TCP_SOURCE).write(bb);
+        }else{
+            Tcp_SourceCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.TCP_DEST)){
+            match.get(Criterion.Type.TCP_DEST).write(bb);
+        }else{
+            Tcp_DestCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.SEQ)){
+            match.get(Criterion.Type.SEQ).write(bb);
+        }else{
+            SeqCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.ACK_SEQ)){
+            match.get(Criterion.Type.ACK_SEQ).write(bb);
+        }else{
+            Ack_SeqCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.OFF_BITS)){
+            match.get(Criterion.Type.OFF_BITS).write(bb);
+        }else{
+            Off_BitsCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.WINDOW)){
+            match.get(Criterion.Type.WINDOW).write(bb);
+        }else{
+            WindowCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.TCP_CHECK)){
+            match.get(Criterion.Type.TCP_CHECK).write(bb);
+        }else{
+            Tcp_CheckCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.URG_PTR)){
+            match.get(Criterion.Type.URG_PTR).write(bb);
+        }else{
+            Urg_PtrCriterion.writeZero(bb);
+        }
+
+        bb.writeZero(4);
+
         if(match.containsKey(Criterion.Type.UDP_SOURCE)){
             match.get(Criterion.Type.UDP_SOURCE).write(bb);
         }else{
@@ -1819,6 +2309,68 @@ public final class DefaultTrafficSelector implements TrafficSelector {
         }else{
             Ipv6_Dst_ICriterion.writeZero(bb);
         }
+
+        if(match.containsKey(Criterion.Type.VER_HL_I)){
+            match.get(Criterion.Type.VER_HL_I).write(bb);
+        }else{
+            Ver_Hl_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.TOS_I)){
+            match.get(Criterion.Type.TOS_I).write(bb);
+        }else{
+            Tos_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.TOT_LEN_I)){
+            match.get(Criterion.Type.TOT_LEN_I).write(bb);
+        }else{
+            Tot_Len_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.IP_ID_I)){
+            match.get(Criterion.Type.IP_ID_I).write(bb);
+        }else{
+            Ip_Id_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.FRAG_OFF_I)){
+            match.get(Criterion.Type.FRAG_OFF_I).write(bb);
+        }else{
+            Frag_Off_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.TTL_I)){
+            match.get(Criterion.Type.TTL_I).write(bb);
+        }else{
+            Ttl_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.IPV4_I_TYPE)){
+            match.get(Criterion.Type.IPV4_I_TYPE).write(bb);
+        }else{
+            Ipv4_I_TypeCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.IP_CHECK_I)){
+            match.get(Criterion.Type.IP_CHECK_I).write(bb);
+        }else{
+            Ip_Check_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.IP_SADDR_I)){
+            match.get(Criterion.Type.IP_SADDR_I).write(bb);
+        }else{
+            Ip_Saddr_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.IP_DADDR_I)){
+            match.get(Criterion.Type.IP_DADDR_I).write(bb);
+        }else{
+            Ip_Daddr_ICriterion.writeZero(bb);
+        }
+
+        bb.writeZero(4);
 
         // flow_mask
         // pad_before inport
@@ -1968,6 +2520,56 @@ public final class DefaultTrafficSelector implements TrafficSelector {
             Ipv6_Dst_ECriterion.writeZero(bb);
         }
 
+        if(match.containsKey(Criterion.Type.TCP_SOURCE)){
+            match.get(Criterion.Type.TCP_SOURCE).writeMask(bb);
+        }else{
+            Tcp_SourceCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.TCP_DEST)){
+            match.get(Criterion.Type.TCP_DEST).writeMask(bb);
+        }else{
+            Tcp_DestCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.SEQ)){
+            match.get(Criterion.Type.SEQ).writeMask(bb);
+        }else{
+            SeqCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.ACK_SEQ)){
+            match.get(Criterion.Type.ACK_SEQ).writeMask(bb);
+        }else{
+            Ack_SeqCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.OFF_BITS)){
+            match.get(Criterion.Type.OFF_BITS).writeMask(bb);
+        }else{
+            Off_BitsCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.WINDOW)){
+            match.get(Criterion.Type.WINDOW).writeMask(bb);
+        }else{
+            WindowCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.TCP_CHECK)){
+            match.get(Criterion.Type.TCP_CHECK).writeMask(bb);
+        }else{
+            Tcp_CheckCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.URG_PTR)){
+            match.get(Criterion.Type.URG_PTR).writeMask(bb);
+        }else{
+            Urg_PtrCriterion.writeZero(bb);
+        }
+
+        bb.writeZero(4);
+
         if(match.containsKey(Criterion.Type.UDP_SOURCE)){
             match.get(Criterion.Type.UDP_SOURCE).writeMask(bb);
         }else{
@@ -2087,6 +2689,68 @@ public final class DefaultTrafficSelector implements TrafficSelector {
         }else{
             Ipv6_Dst_ICriterion.writeZero(bb);
         }
+
+        if(match.containsKey(Criterion.Type.VER_HL_I)){
+            match.get(Criterion.Type.VER_HL_I).writeMask(bb);
+        }else{
+            Ver_Hl_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.TOS_I)){
+            match.get(Criterion.Type.TOS_I).writeMask(bb);
+        }else{
+            Tos_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.TOT_LEN_I)){
+            match.get(Criterion.Type.TOT_LEN_I).writeMask(bb);
+        }else{
+            Tot_Len_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.IP_ID_I)){
+            match.get(Criterion.Type.IP_ID_I).writeMask(bb);
+        }else{
+            Ip_Id_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.FRAG_OFF_I)){
+            match.get(Criterion.Type.FRAG_OFF_I).writeMask(bb);
+        }else{
+            Frag_Off_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.TTL_I)){
+            match.get(Criterion.Type.TTL_I).writeMask(bb);
+        }else{
+            Ttl_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.IPV4_I_TYPE)){
+            match.get(Criterion.Type.IPV4_I_TYPE).writeMask(bb);
+        }else{
+            Ipv4_I_TypeCriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.IP_CHECK_I)){
+            match.get(Criterion.Type.IP_CHECK_I).writeMask(bb);
+        }else{
+            Ip_Check_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.IP_SADDR_I)){
+            match.get(Criterion.Type.IP_SADDR_I).writeMask(bb);
+        }else{
+            Ip_Saddr_ICriterion.writeZero(bb);
+        }
+
+        if(match.containsKey(Criterion.Type.IP_DADDR_I)){
+            match.get(Criterion.Type.IP_DADDR_I).writeMask(bb);
+        }else{
+            Ip_Daddr_ICriterion.writeZero(bb);
+        }
+
+        bb.writeZero(4);
 
         // tun pad
         bb.writeZero(2056);

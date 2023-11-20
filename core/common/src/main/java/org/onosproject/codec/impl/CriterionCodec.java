@@ -107,6 +107,14 @@ public final class CriterionCodec extends JsonCodec<Criterion> {
     static final String IPV6_HLMT_E = "ipv6_hlmt_e";
     static final String IPV6_SRC_E = "ipv6_src_e";
     static final String IPV6_DST_E = "ipv6_dst_e";
+    static final String TCP_SOURCE = "tcp_source";
+    static final String TCP_DEST = "tcp_dest";
+    static final String SEQ = "seq";
+    static final String ACK_SEQ = "ack_seq";
+    static final String OFF_BITS = "off_bits";
+    static final String WINDOW = "window";
+    static final String TCP_CHECK = "tcp_check";
+    static final String URG_PTR = "urg_ptr";
     static final String UDP_SOURCE = "udp_source";
     static final String UDP_DEST = "udp_dest";
     static final String LEN = "len";
@@ -127,6 +135,16 @@ public final class CriterionCodec extends JsonCodec<Criterion> {
     static final String IPV6_HLMT_I = "ipv6_hlmt_i";
     static final String IPV6_SRC_I = "ipv6_src_i";
     static final String IPV6_DST_I = "ipv6_dst_i";
+    static final String VER_HL_I = "ver_hl_i";
+    static final String TOS_I = "tos_i";
+    static final String TOT_LEN_I = "tot_len_i";
+    static final String IP_ID_I = "ip_id_i";
+    static final String FRAG_OFF_I = "frag_off_i";
+    static final String TTL_I = "ttl_i";
+    static final String IPV4_I_TYPE = "ipv4_i_type";
+    static final String IP_CHECK_I = "ip_check_i";
+    static final String IP_SADDR_I = "ip_saddr_i";
+    static final String IP_DADDR_I = "ip_daddr_i";
 
     @Override
     public ObjectNode encode(Criterion criterion, CodecContext context) {

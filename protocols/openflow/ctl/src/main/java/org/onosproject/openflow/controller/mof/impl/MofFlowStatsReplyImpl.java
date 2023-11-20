@@ -293,6 +293,23 @@ public class MofFlowStatsReplyImpl implements MofFlowStatsReply {
             if (statsType != (short) 0x1)
                 throw new OFParseError("Wrong statsType: Expected=OFStatsType.FLOW(1), got=" + statsType);
             Set<OFStatsReplyFlags> flags = OFStatsReplyFlagsSerializerVer10.readFrom(bb);
+            // public static <T> List<T> readList(ByteBuf bb, int length, OFMessageReader<T> reader) throws OFParseError {
+            //     int end = bb.readerIndex() + length;
+            //     Builder<T> builder = ImmutableList.<T>builder();
+            //     if(logger.isTraceEnabled())
+            //         logger.trace("readList(length={}, reader={})", length, reader.getClass());
+            //     while(bb.readerIndex() < end) {
+            //         T read = reader.readFrom(bb);
+            //         if(logger.isTraceEnabled())
+            //             logger.trace("readList: read={}, left={}", read, end - bb.readerIndex());
+            //         builder.add(read);
+            //     }
+            //     if(bb.readerIndex() != end) {
+            //         throw new IllegalStateException("Overread length: length="+length + " overread by "+ (bb.readerIndex() - end) + " reader: "+reader);
+            //     }
+            //     return builder.build();
+            // }
+            logger.info("ready to parser " + (length - (bb.readerIndex() - start)) + "bytes");
             List<MofFlowStatsEntry> entries = ChannelUtils.readList(bb, length - (bb.readerIndex() - start),
                                                 MofFlowStatsEntryVer10.READER);
 

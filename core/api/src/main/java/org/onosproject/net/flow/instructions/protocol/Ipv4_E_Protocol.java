@@ -16,16 +16,19 @@ import org.onosproject.net.flow.criteria.Ip_Saddr_ECriterion;
 import org.onosproject.net.flow.criteria.Ip_Daddr_ECriterion;
 
 public class Ipv4_E_Protocol implements Protocol {
-    Ver_Hl_ECriterion ver_hl_e;
+    public Ver_Hl_ECriterion ver_hl_e;
     Tos_ECriterion tos_e;
     Tot_Len_ECriterion tot_len_e;
     Ip_Id_ECriterion ip_id_e;
     Frag_Off_ECriterion frag_off_e;
     Ttl_ECriterion ttl_e;
-    Ipv4_E_TypeCriterion ipv4_e_type;
+    public Ipv4_E_TypeCriterion ipv4_e_type;
     Ip_Check_ECriterion ip_check_e;
     Ip_Saddr_ECriterion ip_saddr_e;
     Ip_Daddr_ECriterion ip_daddr_e;
+
+    public static int LEN = Ver_Hl_ECriterion.LEN + Tos_ECriterion.LEN + Tot_Len_ECriterion.LEN + Ip_Id_ECriterion.LEN
+    + Frag_Off_ECriterion.LEN + Ttl_ECriterion.LEN + Ipv4_E_TypeCriterion.LEN + Ip_Check_ECriterion.LEN + Ip_Saddr_ECriterion.LEN + Ip_Daddr_ECriterion.LEN;
 
     public Ipv4_E_Protocol(Ver_Hl_ECriterion ver_hl_e, Tos_ECriterion tos_e, Tot_Len_ECriterion tot_len_e, Ip_Id_ECriterion ip_id_e, Frag_Off_ECriterion frag_off_e, Ttl_ECriterion ttl_e, Ipv4_E_TypeCriterion ipv4_e_type, Ip_Check_ECriterion ip_check_e, Ip_Saddr_ECriterion ip_saddr_e, Ip_Daddr_ECriterion ip_daddr_e){
         this.ver_hl_e = ver_hl_e;
@@ -39,6 +42,7 @@ public class Ipv4_E_Protocol implements Protocol {
         this.ip_saddr_e = ip_saddr_e;
         this.ip_daddr_e = ip_daddr_e;
     }
+
 
     @Override
     public void write(ByteBuf bb){

@@ -20,13 +20,16 @@ public class Mac_Protocol implements Protocol {
     public void write(ByteBuf bb){
         mac_dst.write(bb);
         mac_src.write(bb);
-
+        
+        bb.writeZero(44);
     }
   
     @Override
     public void writeMask(ByteBuf bb){
         mac_dst.writeMask(bb);
         mac_src.writeMask(bb);
+
+        bb.writeZero(44);
     }
   
     public static Mac_Protocol read(ByteBuf bb){

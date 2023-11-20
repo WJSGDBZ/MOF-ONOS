@@ -824,6 +824,70 @@ public final class Criteria {
         return new Ipv6_Dst_ECriterion(ipv6_dst_e, mask);
     }
 
+    public static Criterion selectTcp_Source(long tcp_source) {
+        return new Tcp_SourceCriterion(tcp_source);
+    }
+  
+    public static Criterion selectTcp_Source(long tcp_source, long mask) {
+        return new Tcp_SourceCriterion(tcp_source, mask);
+    }
+
+    public static Criterion selectTcp_Dest(long tcp_dest) {
+        return new Tcp_DestCriterion(tcp_dest);
+    }
+  
+    public static Criterion selectTcp_Dest(long tcp_dest, long mask) {
+        return new Tcp_DestCriterion(tcp_dest, mask);
+    }
+
+    public static Criterion selectSeq(long seq) {
+        return new SeqCriterion(seq);
+    }
+  
+    public static Criterion selectSeq(long seq, long mask) {
+        return new SeqCriterion(seq, mask);
+    }
+
+    public static Criterion selectAck_Seq(long ack_seq) {
+        return new Ack_SeqCriterion(ack_seq);
+    }
+  
+    public static Criterion selectAck_Seq(long ack_seq, long mask) {
+        return new Ack_SeqCriterion(ack_seq, mask);
+    }
+
+    public static Criterion selectOff_Bits(long off_bits) {
+        return new Off_BitsCriterion(off_bits);
+    }
+  
+    public static Criterion selectOff_Bits(long off_bits, long mask) {
+        return new Off_BitsCriterion(off_bits, mask);
+    }
+
+    public static Criterion selectWindow(long window) {
+        return new WindowCriterion(window);
+    }
+  
+    public static Criterion selectWindow(long window, long mask) {
+        return new WindowCriterion(window, mask);
+    }
+
+    public static Criterion selectTcp_Check(long tcp_check) {
+        return new Tcp_CheckCriterion(tcp_check);
+    }
+  
+    public static Criterion selectTcp_Check(long tcp_check, long mask) {
+        return new Tcp_CheckCriterion(tcp_check, mask);
+    }
+
+    public static Criterion selectUrg_Ptr(long urg_ptr) {
+        return new Urg_PtrCriterion(urg_ptr);
+    }
+  
+    public static Criterion selectUrg_Ptr(long urg_ptr, long mask) {
+        return new Urg_PtrCriterion(urg_ptr, mask);
+    }
+
     public static Criterion selectUdp_Source(long udp_source) {
         return new Udp_SourceCriterion(udp_source);
     }
@@ -982,6 +1046,86 @@ public final class Criteria {
   
     public static Criterion selectIpv6_Dst_I(Ipv6_Dst_I ipv6_dst_i, Ipv6_Dst_I mask) {
         return new Ipv6_Dst_ICriterion(ipv6_dst_i, mask);
+    }
+
+    public static Criterion selectVer_Hl_I(long ver_hl_i) {
+        return new Ver_Hl_ICriterion(ver_hl_i);
+    }
+  
+    public static Criterion selectVer_Hl_I(long ver_hl_i, long mask) {
+        return new Ver_Hl_ICriterion(ver_hl_i, mask);
+    }
+
+    public static Criterion selectTos_I(long tos_i) {
+        return new Tos_ICriterion(tos_i);
+    }
+  
+    public static Criterion selectTos_I(long tos_i, long mask) {
+        return new Tos_ICriterion(tos_i, mask);
+    }
+
+    public static Criterion selectTot_Len_I(long tot_len_i) {
+        return new Tot_Len_ICriterion(tot_len_i);
+    }
+  
+    public static Criterion selectTot_Len_I(long tot_len_i, long mask) {
+        return new Tot_Len_ICriterion(tot_len_i, mask);
+    }
+
+    public static Criterion selectIp_Id_I(long ip_id_i) {
+        return new Ip_Id_ICriterion(ip_id_i);
+    }
+  
+    public static Criterion selectIp_Id_I(long ip_id_i, long mask) {
+        return new Ip_Id_ICriterion(ip_id_i, mask);
+    }
+
+    public static Criterion selectFrag_Off_I(long frag_off_i) {
+        return new Frag_Off_ICriterion(frag_off_i);
+    }
+  
+    public static Criterion selectFrag_Off_I(long frag_off_i, long mask) {
+        return new Frag_Off_ICriterion(frag_off_i, mask);
+    }
+
+    public static Criterion selectTtl_I(long ttl_i) {
+        return new Ttl_ICriterion(ttl_i);
+    }
+  
+    public static Criterion selectTtl_I(long ttl_i, long mask) {
+        return new Ttl_ICriterion(ttl_i, mask);
+    }
+
+    public static Criterion selectIpv4_I_Type(long ipv4_i_type) {
+        return new Ipv4_I_TypeCriterion(ipv4_i_type);
+    }
+  
+    public static Criterion selectIpv4_I_Type(long ipv4_i_type, long mask) {
+        return new Ipv4_I_TypeCriterion(ipv4_i_type, mask);
+    }
+
+    public static Criterion selectIp_Check_I(long ip_check_i) {
+        return new Ip_Check_ICriterion(ip_check_i);
+    }
+  
+    public static Criterion selectIp_Check_I(long ip_check_i, long mask) {
+        return new Ip_Check_ICriterion(ip_check_i, mask);
+    }
+
+    public static Criterion selectIp_Saddr_I(long ip_saIp_Saddr_Ir_i) {
+        return new Ip_Saddr_ICriterion(ip_saIp_Saddr_Ir_i);
+    }
+  
+    public static Criterion selectIp_Saddr_I(long ip_saIp_Saddr_Ir_i, long mask) {
+        return new Ip_Saddr_ICriterion(ip_saIp_Saddr_Ir_i, mask);
+    }
+
+    public static Criterion selectIp_Daddr_I(long ip_daIp_Daddr_Ir_i) {
+        return new Ip_Daddr_ICriterion(ip_daIp_Daddr_Ir_i);
+    }
+  
+    public static Criterion selectIp_Daddr_I(long ip_daIp_Daddr_Ir_i, long mask) {
+        return new Ip_Daddr_ICriterion(ip_daIp_Daddr_Ir_i, mask);
     }
 
 

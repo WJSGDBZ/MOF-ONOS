@@ -156,7 +156,7 @@ public class MofFlowAddImpl implements MofFlowMod{
         bb.writeLong(message.cookie.getValue());
         //tableId;
         message.tableId.writeByte(bb);
-        log.info("Mof add flow on tableId" + message.tableId);
+        //log.info("Mof add flow on tableId" + message.tableId);
         // fixed value property command = 0
         bb.writeByte(0);
         bb.writeShort(U16.t(message.idleTimeout));

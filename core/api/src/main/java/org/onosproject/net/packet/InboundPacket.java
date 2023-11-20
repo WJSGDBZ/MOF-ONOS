@@ -16,6 +16,7 @@
 package org.onosproject.net.packet;
 
 import org.onosproject.net.ConnectPoint;
+import org.onosproject.net.packet.mof.MOFFlow;
 import org.onlab.packet.Ethernet;
 
 import java.nio.ByteBuffer;
@@ -40,6 +41,8 @@ public interface InboundPacket {
      * frame or one for which there is no parser
      */
     Ethernet parsed();
+
+    MOFFlow parsed_mof(); 
 
     /**
      * Unparsed packet data.

@@ -70,6 +70,10 @@ public final class Mac_DstCriterion implements Criterion {
         return mac_dst;
     }
 
+    public Mac_Dst mask(){
+        return mask;
+    }
+
     @Override
     public String toString() {
         return type().toString() + SEPARATOR + CriterionParser.ComplexParser(mac_dst.toBytes(), mask.toBytes(), type());

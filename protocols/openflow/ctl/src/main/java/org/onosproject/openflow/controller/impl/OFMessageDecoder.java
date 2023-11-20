@@ -80,15 +80,15 @@ public final class OFMessageDecoder extends ByteToMessageDecoder {
         // The performance *may or may not* not be as good as before.
         OFMessageReader<OFMessage> reader = OFFactories.getGenericReader();
 
-        // OFMessage message = processMofMessage(byteBuf);
-        // if(message == null)
-        OFMessage message = reader.readFrom(byteBuf);
+        OFMessage message = processMofMessage(byteBuf);
+        if(message == null)
+            message = reader.readFrom(byteBuf);
 
         while (message != null) {
             out.add(message);
-            // message = processMofMessage(byteBuf);
-            // if(message == null)
-            message = reader.readFrom(byteBuf);
+            message = processMofMessage(byteBuf);
+            if(message == null)
+                message = reader.readFrom(byteBuf);
         }
     }
 

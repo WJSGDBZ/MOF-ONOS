@@ -12,7 +12,6 @@ import org.onosproject.net.flow.criteria.parser.*;
 
 public final class Ver_Hl_ECriterion implements Criterion {
 
-
     private final long ver_hl_e;
   	private final long mask;
 
@@ -51,11 +50,14 @@ public final class Ver_Hl_ECriterion implements Criterion {
         return Type.VER_HL_E;
     }
 
-    /**
-     * Gets the Ethernet frame type to match.
-     *
-     * @return the Ethernet frame type to match (16 bits unsigned integer)
-     */
+    public long value() {
+        return ver_hl_e;
+    }
+
+    public long mask() {
+        return mask;
+    }
+
     public long ver_hl_e() {
         return ver_hl_e;
     }

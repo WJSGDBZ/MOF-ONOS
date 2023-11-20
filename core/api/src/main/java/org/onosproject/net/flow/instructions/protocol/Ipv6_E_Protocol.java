@@ -12,12 +12,14 @@ import org.onosproject.net.flow.criteria.Ipv6_Src_ECriterion;
 import org.onosproject.net.flow.criteria.Ipv6_Dst_ECriterion;
 
 public class Ipv6_E_Protocol implements Protocol {
-    Ipv6_Ver_Tp_Flb_ECriterion ipv6_ver_tp_flb_e;
+    public Ipv6_Ver_Tp_Flb_ECriterion ipv6_ver_tp_flb_e;
     Ipv6_Plen_ECriterion ipv6_plen_e;
-    Ipv6_E_TypeCriterion ipv6_e_type;
+    public Ipv6_E_TypeCriterion ipv6_e_type;
     Ipv6_Hlmt_ECriterion ipv6_hlmt_e;
     Ipv6_Src_ECriterion ipv6_src_e;
     Ipv6_Dst_ECriterion ipv6_dst_e;
+    public static int LEN = Ipv6_Ver_Tp_Flb_ECriterion.LEN + Ipv6_Plen_ECriterion.LEN + Ipv6_E_TypeCriterion.LEN + Ipv6_Hlmt_ECriterion.LEN
+                    + Ipv6_Src_ECriterion.LEN + Ipv6_Dst_ECriterion.LEN;
 
     public Ipv6_E_Protocol(Ipv6_Ver_Tp_Flb_ECriterion ipv6_ver_tp_flb_e, Ipv6_Plen_ECriterion ipv6_plen_e, Ipv6_E_TypeCriterion ipv6_e_type, Ipv6_Hlmt_ECriterion ipv6_hlmt_e, Ipv6_Src_ECriterion ipv6_src_e, Ipv6_Dst_ECriterion ipv6_dst_e){
         this.ipv6_ver_tp_flb_e = ipv6_ver_tp_flb_e;

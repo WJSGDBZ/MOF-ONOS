@@ -16,3 +16,12 @@ osgi_jar_with_tests(
     visibility = ["//visibility:public"],
     deps = COMPILE_DEPS,
 )
+
+java_library(
+    name = "protocol",
+    srcs = glob(["org/onosproject/net/flow/instructions/protocol/*.java"]),
+    deps = [
+        # 其他依赖...
+    ],
+)
+

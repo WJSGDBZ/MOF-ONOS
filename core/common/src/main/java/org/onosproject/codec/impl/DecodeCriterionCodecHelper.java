@@ -78,6 +78,14 @@ import org.onosproject.net.flow.criteria.Ipv6_E_TypeCriterion;
 import org.onosproject.net.flow.criteria.Ipv6_Hlmt_ECriterion;
 import org.onosproject.net.flow.criteria.Ipv6_Src_ECriterion;
 import org.onosproject.net.flow.criteria.Ipv6_Dst_ECriterion;
+import org.onosproject.net.flow.criteria.Tcp_SourceCriterion;
+import org.onosproject.net.flow.criteria.Tcp_DestCriterion;
+import org.onosproject.net.flow.criteria.SeqCriterion;
+import org.onosproject.net.flow.criteria.Ack_SeqCriterion;
+import org.onosproject.net.flow.criteria.Off_BitsCriterion;
+import org.onosproject.net.flow.criteria.WindowCriterion;
+import org.onosproject.net.flow.criteria.Tcp_CheckCriterion;
+import org.onosproject.net.flow.criteria.Urg_PtrCriterion;
 import org.onosproject.net.flow.criteria.Udp_SourceCriterion;
 import org.onosproject.net.flow.criteria.Udp_DestCriterion;
 import org.onosproject.net.flow.criteria.LenCriterion;
@@ -98,6 +106,16 @@ import org.onosproject.net.flow.criteria.Ipv6_I_TypeCriterion;
 import org.onosproject.net.flow.criteria.Ipv6_Hlmt_ICriterion;
 import org.onosproject.net.flow.criteria.Ipv6_Src_ICriterion;
 import org.onosproject.net.flow.criteria.Ipv6_Dst_ICriterion;
+import org.onosproject.net.flow.criteria.Ver_Hl_ICriterion;
+import org.onosproject.net.flow.criteria.Tos_ICriterion;
+import org.onosproject.net.flow.criteria.Tot_Len_ICriterion;
+import org.onosproject.net.flow.criteria.Ip_Id_ICriterion;
+import org.onosproject.net.flow.criteria.Frag_Off_ICriterion;
+import org.onosproject.net.flow.criteria.Ttl_ICriterion;
+import org.onosproject.net.flow.criteria.Ipv4_I_TypeCriterion;
+import org.onosproject.net.flow.criteria.Ip_Check_ICriterion;
+import org.onosproject.net.flow.criteria.Ip_Saddr_ICriterion;
+import org.onosproject.net.flow.criteria.Ip_Daddr_ICriterion;
 import org.onlab.packet.Mac_Dst;
 import org.onlab.packet.Mac_Src;
 import org.onlab.packet.Ipv6_Src_E;
@@ -158,6 +176,14 @@ public final class DecodeCriterionCodecHelper {
     decoderMap.put(Criterion.Type.IPV6_HLMT_E.name(), new Ipv6_Hlmt_EDecoder());
     decoderMap.put(Criterion.Type.IPV6_SRC_E.name(), new Ipv6_Src_EDecoder());
     decoderMap.put(Criterion.Type.IPV6_DST_E.name(), new Ipv6_Dst_EDecoder());
+    decoderMap.put(Criterion.Type.TCP_SOURCE.name(), new Tcp_SourceDecoder());
+    decoderMap.put(Criterion.Type.TCP_DEST.name(), new Tcp_DestDecoder());
+    decoderMap.put(Criterion.Type.SEQ.name(), new SeqDecoder());
+    decoderMap.put(Criterion.Type.ACK_SEQ.name(), new Ack_SeqDecoder());
+    decoderMap.put(Criterion.Type.OFF_BITS.name(), new Off_BitsDecoder());
+    decoderMap.put(Criterion.Type.WINDOW.name(), new WindowDecoder());
+    decoderMap.put(Criterion.Type.TCP_CHECK.name(), new Tcp_CheckDecoder());
+    decoderMap.put(Criterion.Type.URG_PTR.name(), new Urg_PtrDecoder());
     decoderMap.put(Criterion.Type.UDP_SOURCE.name(), new Udp_SourceDecoder());
     decoderMap.put(Criterion.Type.UDP_DEST.name(), new Udp_DestDecoder());
     decoderMap.put(Criterion.Type.LEN.name(), new LenDecoder());
@@ -178,6 +204,16 @@ public final class DecodeCriterionCodecHelper {
     decoderMap.put(Criterion.Type.IPV6_HLMT_I.name(), new Ipv6_Hlmt_IDecoder());
     decoderMap.put(Criterion.Type.IPV6_SRC_I.name(), new Ipv6_Src_IDecoder());
     decoderMap.put(Criterion.Type.IPV6_DST_I.name(), new Ipv6_Dst_IDecoder());
+    decoderMap.put(Criterion.Type.VER_HL_I.name(), new Ver_Hl_IDecoder());
+    decoderMap.put(Criterion.Type.TOS_I.name(), new Tos_IDecoder());
+    decoderMap.put(Criterion.Type.TOT_LEN_I.name(), new Tot_Len_IDecoder());
+    decoderMap.put(Criterion.Type.IP_ID_I.name(), new Ip_Id_IDecoder());
+    decoderMap.put(Criterion.Type.FRAG_OFF_I.name(), new Frag_Off_IDecoder());
+    decoderMap.put(Criterion.Type.TTL_I.name(), new Ttl_IDecoder());
+    decoderMap.put(Criterion.Type.IPV4_I_TYPE.name(), new Ipv4_I_TypeDecoder());
+    decoderMap.put(Criterion.Type.IP_CHECK_I.name(), new Ip_Check_IDecoder());
+    decoderMap.put(Criterion.Type.IP_SADDR_I.name(), new Ip_Saddr_IDecoder());
+    decoderMap.put(Criterion.Type.IP_DADDR_I.name(), new Ip_Daddr_IDecoder());
     }
 
     private class EthTypeDecoder implements CriterionDecoder {
@@ -1458,6 +1494,254 @@ public final class DecodeCriterionCodecHelper {
         }
     }
 
+    private class Tcp_SourceDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.TCP_SOURCE),
+                                        CriterionCodec.TCP_SOURCE + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectTcp_Source(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectTcp_Source(data);
+            }
+        }
+    }
+
+    private class Tcp_DestDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.TCP_DEST),
+                                        CriterionCodec.TCP_DEST + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectTcp_Dest(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectTcp_Dest(data);
+            }
+        }
+    }
+
+    private class SeqDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.SEQ),
+                                        CriterionCodec.SEQ + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectSeq(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectSeq(data);
+            }
+        }
+    }
+
+    private class Ack_SeqDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.ACK_SEQ),
+                                        CriterionCodec.ACK_SEQ + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectAck_Seq(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectAck_Seq(data);
+            }
+        }
+    }
+
+    private class Off_BitsDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.OFF_BITS),
+                                        CriterionCodec.OFF_BITS + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectOff_Bits(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectOff_Bits(data);
+            }
+        }
+    }
+
+    private class WindowDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.WINDOW),
+                                        CriterionCodec.WINDOW + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectWindow(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectWindow(data);
+            }
+        }
+    }
+
+    private class Tcp_CheckDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.TCP_CHECK),
+                                        CriterionCodec.TCP_CHECK + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectTcp_Check(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectTcp_Check(data);
+            }
+        }
+    }
+
+    private class Urg_PtrDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.URG_PTR),
+                                        CriterionCodec.URG_PTR + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectUrg_Ptr(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectUrg_Ptr(data);
+            }
+        }
+    }
+
     private class Udp_SourceDecoder implements CriterionDecoder {
         @Override
         public Criterion decodeCriterion(ObjectNode json) {
@@ -2014,6 +2298,316 @@ public final class DecodeCriterionCodecHelper {
                 byte[] data = HexStringToByteArray(str);
 
                 return Criteria.selectIpv6_Dst_I(Ipv6_Dst_I.valueOf(data));
+            }
+        }
+    }
+
+    private class Ver_Hl_IDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.VER_HL_I),
+                                        CriterionCodec.VER_HL_I + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectVer_Hl_I(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectVer_Hl_I(data);
+            }
+        }
+    }
+
+    private class Tos_IDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.TOS_I),
+                                        CriterionCodec.TOS_I + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectTos_I(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectTos_I(data);
+            }
+        }
+    }
+
+    private class Tot_Len_IDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.TOT_LEN_I),
+                                        CriterionCodec.TOT_LEN_I + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectTot_Len_I(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectTot_Len_I(data);
+            }
+        }
+    }
+
+    private class Ip_Id_IDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.IP_ID_I),
+                                        CriterionCodec.IP_ID_I + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectIp_Id_I(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectIp_Id_I(data);
+            }
+        }
+    }
+
+    private class Frag_Off_IDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.FRAG_OFF_I),
+                                        CriterionCodec.FRAG_OFF_I + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectFrag_Off_I(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectFrag_Off_I(data);
+            }
+        }
+    }
+
+    private class Ttl_IDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.TTL_I),
+                                        CriterionCodec.TTL_I + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectTtl_I(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectTtl_I(data);
+            }
+        }
+    }
+
+    private class Ipv4_I_TypeDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.IPV4_I_TYPE),
+                                        CriterionCodec.IPV4_I_TYPE + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectIpv4_I_Type(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectIpv4_I_Type(data);
+            }
+        }
+    }
+
+    private class Ip_Check_IDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.IP_CHECK_I),
+                                        CriterionCodec.IP_CHECK_I + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectIp_Check_I(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectIp_Check_I(data);
+            }
+        }
+    }
+
+    private class Ip_Saddr_IDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.IP_SADDR_I),
+                                        CriterionCodec.IP_SADDR_I + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectIp_Saddr_I(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectIp_Saddr_I(data);
+            }
+        }
+    }
+
+    private class Ip_Daddr_IDecoder implements CriterionDecoder {
+        @Override
+        public Criterion decodeCriterion(ObjectNode json) {
+            JsonNode Node = nullIsIllegal(json.get(CriterionCodec.IP_DADDR_I),
+                                        CriterionCodec.IP_DADDR_I + MISSING_MEMBER_MESSAGE);
+            
+            String str = Node.textValue();
+            if(str.contains("/")){
+                String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                long data = Long.parseLong(parts[0], 16);
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
+                long mask = Long.parseLong(parts[1], 16);
+
+                return Criteria.selectIp_Daddr_I(data, mask);
+            }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
+                long data =  Long.parseLong(str, 16);
+                return Criteria.selectIp_Daddr_I(data);
             }
         }
     }
