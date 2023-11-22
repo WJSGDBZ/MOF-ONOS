@@ -55,6 +55,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class DefaultTrafficTreatment implements TrafficTreatment {
     private final Logger log = getLogger(DefaultTrafficTreatment.class);
+    private static Logger log_static = getLogger(DefaultTrafficTreatment.class);
     private final List<Instruction> immediate;
     private final List<Instruction> deferred;
     private final List<Instruction> all;
@@ -125,15 +126,46 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
     public static DefaultTrafficTreatment readFrom(ByteBuf bb, int length) {
         int end = bb.readerIndex() + length;
         DefaultTrafficTreatment.Builder builder = DefaultTrafficTreatment.builder();
-
-        while (bb.readerIndex() < end) {
+        while (end - bb.readerIndex() > 0) {
             int start = bb.readerIndex();
             byte type = bb.readByte();
             bb.readerIndex(start);
+            log_static.info("ready to read " + (end - bb.readerIndex()) + "bytes");
 
             switch (type){
-            case 0x0:
-                builder.add(OutputInstruction.readFrom(bb));
+            case 0:
+                OutputInstruction out = OutputInstruction.readFrom(bb);
+                builder.add(out);
+                log_static.info("read OutputInstruction " + out + " " + (end - bb.readerIndex()) + " bytes to read");
+                break;
+            case 58:
+                TableTypeTransition table = TableTypeTransition.readFrom(bb);
+                builder.add(table);
+                log_static.info("read TableTypeTransition " + table + " " + (end - bb.readerIndex()) + " bytes to read");
+                break;
+            case 59:
+                AddProtocolInstruction add = AddProtocolInstruction.readFrom(bb);
+                builder.add(add);
+                log_static.info("read AddProtocolInstruction " + add + " " + (end - bb.readerIndex()) + " bytes to read");
+                break;
+            case 60:
+                DeleteProtocolInstruction delete = DeleteProtocolInstruction.readFrom(bb);
+                builder.add(delete);
+                log_static.info("read DeleteProtocolInstruction " + delete + " " + (end - bb.readerIndex()) + " bytes to read");
+                break;
+            case 61:
+                ModFieldInstruction mod = ModFieldInstruction.readFrom(bb);
+                builder.add(mod);
+                log_static.info("read ModFieldInstruction " + mod + " " + (end - bb.readerIndex()) + " bytes to read");
+                break;
+            case 65:
+                builder.add(SegRougtingInstruction.readFrom(bb));
+                log_static.info("read SegRougtingInstruction " + (end - bb.readerIndex()) + " bytes to read");
+                break;
+            case 66:
+                MoveProtocolInstruction move = MoveProtocolInstruction.readFrom(bb);
+                builder.add(move);
+                log_static.info("read MoveProtocolInstruction " + move+ " "  + (end - bb.readerIndex()) + " bytes to read");
                 break;
             default:
                 throw new IllegalStateException("ModFlowStateReply Action type {" + type + "} not support now!!!");

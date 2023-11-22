@@ -445,8 +445,10 @@ public final class DefaultOFSwitch implements OFSwitch {
                 processPortMod(portMod);
                 break;
             case FLOW_MOD:
-                OFFlowMod flowMod = (OFFlowMod) msg;
-                processFlowMod(flowMod);
+                log.debug("processControllerCommand: {} not yet supported for {}",
+                            msg.getType(), msg);
+                // OFFlowMod flowMod = (OFFlowMod) msg;
+                // processFlowMod(flowMod);
                 break;
             case GROUP_MOD:
                 OFGroupMod groupMod = (OFGroupMod) msg;

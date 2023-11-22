@@ -10,45 +10,45 @@ import java.util.Arrays;
 
 import org.onosproject.net.flow.criteria.parser.*;
 
-public final class Dl_TypeCriterion implements Criterion {
+public final class SeqCriterion implements Criterion {
 
 
-    private final long dl_type;
+    private final long seq;
   	private final long mask;
 
-    public static final int LEN = 2;
+    public static final int LEN = 4;
 
-    Dl_TypeCriterion(long dl_type) {
-        this(dl_type, 0xFFFF);
+    SeqCriterion(long seq) {
+        this(seq, 0xFFFFFFFF);
     }
 
     /**
      * Constructor.
      *
-     * @param dl_type the Ethernet frame type to match
+     * @param seq the Ethernet frame type to match
      */
-    Dl_TypeCriterion(long dl_type, long mask) {
-        this.dl_type = dl_type;
+    SeqCriterion(long seq, long mask) {
+        this.seq = seq;
       	this.mask = mask;
     }
 
   	@Override
     public void write(ByteBuf bb){
-        bb.writeShort((short)dl_type);
+        bb.writeInt((int)seq);
     }
 
     @Override
     public void writeMask(ByteBuf bb){
-        bb.writeShort((short)mask);
+        bb.writeInt((int)mask);
     }
 
     public static void writeZero(ByteBuf bb){
-        bb.writeZero(2);
+        bb.writeZero(4);
     }
 
     @Override
     public Type type() {
-        return Type.DL_TYPE;
+        return Type.SEQ;
     }
 
     /**
@@ -56,18 +56,18 @@ public final class Dl_TypeCriterion implements Criterion {
      *
      * @return the Ethernet frame type to match (16 bits unsigned integer)
      */
-    public long dl_type() {
-        return dl_type;
+    public long seq() {
+        return seq;
     }
 
     @Override
     public String toString() {
-        return type().toString() + SEPARATOR + CriterionParser.BasicParser(dl_type, mask, type());
+        return type().toString() + SEPARATOR + CriterionParser.BasicParser(seq, mask, type());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type().ordinal(), dl_type);
+        return Objects.hash(type().ordinal(), seq);
     }
 
     @Override
@@ -75,21 +75,21 @@ public final class Dl_TypeCriterion implements Criterion {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof Dl_TypeCriterion) {
-            Dl_TypeCriterion that = (Dl_TypeCriterion) obj;
-            return dl_type == that.dl_type && mask == that.mask;
+        if (obj instanceof SeqCriterion) {
+            SeqCriterion that = (SeqCriterion) obj;
+            return seq == that.seq && mask == that.mask;
         }
         return false;
     }
 
     public static class Builder implements Criterion.Builder {
-        private long dl_type;
+        private long seq;
         private long mask;
         private boolean valid_mask;
 
         @Override
         public boolean readMask(ByteBuf bb){
-            mask = bb.readShort() & 0xFFFF;
+            mask = bb.readInt();
             if(mask != 0){
                 valid_mask = true;
             }
@@ -100,24 +100,21 @@ public final class Dl_TypeCriterion implements Criterion {
         @Override
         public Builder setValid(boolean valid){
             valid_mask = valid;
-            if(valid){
-                this.mask = 0xFFFF;
-            }
             return this;
         }
 
         @Override
         public Builder readData(ByteBuf bb){
-            dl_type = bb.readShort() & 0xFFFF;
+            seq = bb.readInt();
             return this;
         }
 
         @Override
-        public Dl_TypeCriterion build(){
+        public SeqCriterion build(){
             if(!valid_mask){
-                throw new IllegalArgumentException("Dl_TypeCriterion Mask should not be zero");
+                throw new IllegalArgumentException("SeqCriterion Mask should not be zero");
             }
-            return new Dl_TypeCriterion(dl_type, mask);
+            return new SeqCriterion(seq, mask);
         }
     }
 }

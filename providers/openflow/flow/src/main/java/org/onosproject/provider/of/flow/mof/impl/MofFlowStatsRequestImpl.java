@@ -548,6 +548,7 @@ public class MofFlowStatsRequestImpl implements MofFlowStatsRequest {
 
             DefaultTrafficSelector.writeStatsFlowRequestAllMatch(bb);
             
+            logger.info("Mof request on tableId" + message.tableId);
             message.tableId.writeByte(bb);
             // pad: 1 bytes
             bb.writeZero(1);

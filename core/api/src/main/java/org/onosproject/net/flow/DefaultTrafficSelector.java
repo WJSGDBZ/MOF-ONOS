@@ -1184,9 +1184,9 @@ public final class DefaultTrafficSelector implements TrafficSelector {
             builders.put(Criterion.Type.VLAN2_QID, builder);
         }
 
-        builder = new Dl_TypeCriterion.Builder();
-        if(builder.readMask(bb)){
-            builders.put(Criterion.Type.DL_TYPE, builder);
+        Dl_TypeCriterion.Builder dl_builder = new Dl_TypeCriterion.Builder();
+        if(dl_builder.readMask(bb)){
+            builders.put(Criterion.Type.DL_TYPE, dl_builder);
         }
 
         bb.skipBytes(6);
@@ -1980,10 +1980,10 @@ public final class DefaultTrafficSelector implements TrafficSelector {
     public static void writeStatsFlowRequestAllMatch(ByteBuf bb){
 
         bb.writeZero(8);
-        bb.writeZero(224);
+        bb.writeZero(248);
     
         bb.writeZero(8);
-        bb.writeZero(224);
+        bb.writeZero(248);
 
     }
     @Override

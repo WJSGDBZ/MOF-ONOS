@@ -10,31 +10,31 @@ import java.util.Arrays;
 
 import org.onosproject.net.flow.criteria.parser.*;
 
-public final class Dl_TypeCriterion implements Criterion {
+public final class Frag_Off_ICriterion implements Criterion {
 
 
-    private final long dl_type;
+    private final long frag_off_i;
   	private final long mask;
 
     public static final int LEN = 2;
 
-    Dl_TypeCriterion(long dl_type) {
-        this(dl_type, 0xFFFF);
+    Frag_Off_ICriterion(long frag_off_i) {
+        this(frag_off_i, 0xFFFF);
     }
 
     /**
      * Constructor.
      *
-     * @param dl_type the Ethernet frame type to match
+     * @param frag_off_i the Ethernet frame type to match
      */
-    Dl_TypeCriterion(long dl_type, long mask) {
-        this.dl_type = dl_type;
+    Frag_Off_ICriterion(long frag_off_i, long mask) {
+        this.frag_off_i = frag_off_i;
       	this.mask = mask;
     }
 
   	@Override
     public void write(ByteBuf bb){
-        bb.writeShort((short)dl_type);
+        bb.writeShort((short)frag_off_i);
     }
 
     @Override
@@ -48,7 +48,7 @@ public final class Dl_TypeCriterion implements Criterion {
 
     @Override
     public Type type() {
-        return Type.DL_TYPE;
+        return Type.FRAG_OFF_I;
     }
 
     /**
@@ -56,18 +56,18 @@ public final class Dl_TypeCriterion implements Criterion {
      *
      * @return the Ethernet frame type to match (16 bits unsigned integer)
      */
-    public long dl_type() {
-        return dl_type;
+    public long frag_off_i() {
+        return frag_off_i;
     }
 
     @Override
     public String toString() {
-        return type().toString() + SEPARATOR + CriterionParser.BasicParser(dl_type, mask, type());
+        return type().toString() + SEPARATOR + CriterionParser.BasicParser(frag_off_i, mask, type());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type().ordinal(), dl_type);
+        return Objects.hash(type().ordinal(), frag_off_i);
     }
 
     @Override
@@ -75,21 +75,21 @@ public final class Dl_TypeCriterion implements Criterion {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof Dl_TypeCriterion) {
-            Dl_TypeCriterion that = (Dl_TypeCriterion) obj;
-            return dl_type == that.dl_type && mask == that.mask;
+        if (obj instanceof Frag_Off_ICriterion) {
+            Frag_Off_ICriterion that = (Frag_Off_ICriterion) obj;
+            return frag_off_i == that.frag_off_i && mask == that.mask;
         }
         return false;
     }
 
     public static class Builder implements Criterion.Builder {
-        private long dl_type;
+        private long frag_off_i;
         private long mask;
         private boolean valid_mask;
 
         @Override
         public boolean readMask(ByteBuf bb){
-            mask = bb.readShort() & 0xFFFF;
+            mask = bb.readShort();
             if(mask != 0){
                 valid_mask = true;
             }
@@ -100,24 +100,21 @@ public final class Dl_TypeCriterion implements Criterion {
         @Override
         public Builder setValid(boolean valid){
             valid_mask = valid;
-            if(valid){
-                this.mask = 0xFFFF;
-            }
             return this;
         }
 
         @Override
         public Builder readData(ByteBuf bb){
-            dl_type = bb.readShort() & 0xFFFF;
+            frag_off_i = bb.readShort();
             return this;
         }
 
         @Override
-        public Dl_TypeCriterion build(){
+        public Frag_Off_ICriterion build(){
             if(!valid_mask){
-                throw new IllegalArgumentException("Dl_TypeCriterion Mask should not be zero");
+                throw new IllegalArgumentException("Frag_Off_ICriterion Mask should not be zero");
             }
-            return new Dl_TypeCriterion(dl_type, mask);
+            return new Frag_Off_ICriterion(frag_off_i, mask);
         }
     }
 }

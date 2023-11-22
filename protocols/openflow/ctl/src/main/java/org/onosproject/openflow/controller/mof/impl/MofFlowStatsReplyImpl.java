@@ -267,7 +267,7 @@ public class MofFlowStatsReplyImpl implements MofFlowStatsReply {
 
     public final static Reader READER = new Reader();
 
-    static class Reader implements OFMessageReader<MofFlowStatsReply> {
+    public static class Reader implements OFMessageReader<MofFlowStatsReply> {
         @Override
         public MofFlowStatsReply readFrom(ByteBuf bb) throws OFParseError {
             logger.info("MofFlowStatsReply ready to read!!!");
@@ -283,6 +283,7 @@ public class MofFlowStatsReplyImpl implements MofFlowStatsReply {
             if (bb.readableBytes() + (bb.readerIndex() - start) < length) {
                 // Buffer does not have all data yet
                 bb.readerIndex(start);
+                logger.info("Buffer does not have all data yet");
                 return null;
             }
             if (logger.isTraceEnabled())

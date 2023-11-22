@@ -35,13 +35,11 @@ public class MofMessageImpl {
     public static class Reader implements OFMessageReader<OFMessage> {
         @Override
         public OFMessage readFrom(ByteBuf bb) throws OFParseError {
-            if (bb.readableBytes() < MINIMUM_LENGTH)
-                return null;
             int start = bb.readerIndex();
             // fixed value property version == 1
             byte version = bb.readByte();
             if (version != (byte) 0x1)
-                return null;
+                throw new OFParseError("only support openflow 1.0 now");
 
             byte type = bb.readByte();
             bb.readerIndex(start);

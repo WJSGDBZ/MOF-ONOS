@@ -25,7 +25,7 @@ import io.netty.buffer.ByteBuf;
 public final class PortCriterion implements Criterion {
     private final PortNumber port;
     private final Type type;
-    public static final int LEN = 4;
+    public static final int LEN = 2;
     /**
      * Constructor.
      *
@@ -94,7 +94,7 @@ public final class PortCriterion implements Criterion {
 
         @Override
         public boolean readMask(ByteBuf bb){
-            mask = bb.readInt();
+            mask = bb.readShort();
             if(mask != 0){
                 valid_mask = true;
             }
@@ -110,7 +110,7 @@ public final class PortCriterion implements Criterion {
 
         @Override
         public Builder readData(ByteBuf bb){
-            port = bb.readInt();
+            port = bb.readShort();
             return this;
         }
 

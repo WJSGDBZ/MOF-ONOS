@@ -121,6 +121,11 @@ public final class Mac_DstCriterion implements Criterion {
         @Override
         public Builder setValid(boolean valid){
             valid_mask = valid;
+            if(valid){
+                byte[] ALL = new byte[LEN];
+                Arrays.fill(ALL, (byte) 0xFF);
+                this.mask = Mac_Dst.valueOf(ALL);
+            }
             return this;
         }
 

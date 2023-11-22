@@ -631,7 +631,8 @@ public final class Instructions {
             byte type = bb.readByte();
             byte raw = bb.readByte();
             short len = bb.readShort();
-            int port = bb.readInt();
+            // int port = Short.reverseBytes(bb.readShort());
+            int port = Integer.reverseBytes(bb.readInt());
             short maxlen = bb.readShort();
             bb.skipBytes(6); //pad
 
@@ -1215,7 +1216,7 @@ public final class Instructions {
             byte type = bb.readByte();
             byte raw = bb.readByte();
             short len = bb.readShort();
-            int protocol_type = bb.readInt();
+            int protocol_type = Integer.reverseBytes(bb.readInt());
             
             return createDeleteProtocol(protocol_type);
         }
@@ -1327,8 +1328,8 @@ public final class Instructions {
             byte type = bb.readByte();
             byte raw = bb.readByte();
             short len = bb.readShort();
-            int src = bb.readInt();
-            int dst = bb.readInt();
+            int src = Integer.reverseBytes(bb.readInt());
+            int dst = Integer.reverseBytes(bb.readInt());
 
             bb.skipBytes(4);
             return createMoveProtocol(src, dst);
@@ -1602,7 +1603,7 @@ public final class Instructions {
             byte type = bb.readByte();
             byte raw = bb.readByte();
             short len = bb.readShort();
-            int protocol_type = bb.readInt();
+            int protocol_type = Integer.reverseBytes(bb.readInt());
             Protocol result = null;
             switch(protocol_type){
                 case Protocol.MAC:
@@ -1645,9 +1646,10 @@ public final class Instructions {
                     result = Ipv4_I_Protocol.read(bb);
                     break;
                 default:
-                    throw new UnsupportedOperationException("Action ADD_PROTOCOL add a unsupported protocol");
+                    throw new UnsupportedOperationException("Action ADD_PROTOCOL add a unsupported protocol " + protocol_type);
             }
 
+            // int pad = (8 - ((bb.readerIndex() - start) % 8)) % 8;
             int pad = 8 - ((bb.readerIndex() - start) % 8);
             bb.skipBytes(pad); 
 
@@ -1932,13 +1934,13 @@ public final class Instructions {
             byte type = bb.readByte();
             byte raw = bb.readByte();
             short len = bb.readShort();
-            int protocol_type = bb.readInt();
+            int protocol_type = Integer.reverseBytes(bb.readInt());
         
             int protocolLength = bb.readerIndex();
             Protocol result = null;
             switch(protocol_type){
                 case Protocol.MAC:
-                    result = Mac_Protocol.read(bb);
+                    result = Mac_Protocol.readWithMask(bb);
                     break;
                 case Protocol.VLAN1:
                     result = Vlan1_Protocol.read(bb);
@@ -1947,7 +1949,7 @@ public final class Instructions {
                     result = Vlan2_Protocol.read(bb);
                     break;
                 case Protocol.DL:
-                    result = Dl_Protocol.read(bb);
+                    result = Dl_Protocol.readWithMask(bb);
                     break;
                 case Protocol.IPV4_E:
                     result = Ipv4_E_Protocol.read(bb);
@@ -1977,10 +1979,10 @@ public final class Instructions {
                     result = Ipv4_I_Protocol.read(bb);
                     break;
                default:
-                    throw new UnsupportedOperationException("Action ADD_PROTOCOL add a unsupported protocol");
+                    throw new UnsupportedOperationException("Action Mod_Field add a unsupported protocol" + protocol_type);
             }
-            bb.skipBytes(bb.readerIndex() - protocolLength); 
         
+            // int pad = (8 - ((bb.readerIndex() - start) % 8)) % 8;
             int pad = 8 - ((bb.readerIndex() - start) % 8);
             bb.skipBytes(pad); 
         

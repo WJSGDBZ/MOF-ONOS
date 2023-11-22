@@ -370,10 +370,8 @@ public class OpenFlowRuleProvider extends AbstractProvider
             return;
         }
 
-        MofFlowModBuilder mbuilder = new MofFlowModBuilder(flowRule,
-        Optional.empty(), Optional.of(driverService));
-        // sw.sendMsg(FlowModBuilder.builder(flowRule, sw.factory(),
-        //         Optional.empty(), Optional.of(driverService)).buildFlowAdd());
+        MofFlowModBuilder mbuilder = new MofFlowModBuilder(flowRule, Optional.empty(), 
+                                                    Optional.of(driverService));
 
         sw.sendMsg(mbuilder.buildMofFlowAdd());
         recordEvent(dpid);
@@ -394,8 +392,10 @@ public class OpenFlowRuleProvider extends AbstractProvider
             return;
         }
 
-        sw.sendMsg(FlowModBuilder.builder(flowRule, sw.factory(),
-                                          Optional.empty(), Optional.of(driverService)).buildFlowDel());
+        MofFlowModBuilder mbuilder = new MofFlowModBuilder(flowRule,
+        Optional.empty(), Optional.of(driverService));
+
+        sw.sendMsg(mbuilder.buildMofFlowDelSpec());
 
         recordEvent(dpid);
     }
@@ -424,11 +424,8 @@ public class OpenFlowRuleProvider extends AbstractProvider
         for (FlowRuleBatchEntry fbe : batch.getOperations()) {
             MofFlowModBuilder mbuilder = new MofFlowModBuilder(fbe.target(),
                             Optional.of(batch.id()), Optional.of(driverService));
-            FlowModBuilder builder =
-                    FlowModBuilder.builder(fbe.target(), sw.factory(),
-                            Optional.of(batch.id()), Optional.of(driverService));
                             
-            OFFlowMod mod = null;
+            // OFFlowMod mod = null;
             MofFlowMod mmod = null;
             switch (fbe.operator()) {
                 case ADD:

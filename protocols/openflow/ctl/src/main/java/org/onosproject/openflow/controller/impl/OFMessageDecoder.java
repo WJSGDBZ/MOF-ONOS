@@ -40,6 +40,7 @@ public final class OFMessageDecoder extends ByteToMessageDecoder {
 
     private static final Logger log = getLogger(OFMessageDecoder.class);
     final static int MINIMUM_LENGTH = 8;
+    final static int STATS_REPLY_MINIMUM_LENGTH = 12;
 
     public static OFMessageDecoder getInstance() {
         // not Sharable
@@ -48,14 +49,57 @@ public final class OFMessageDecoder extends ByteToMessageDecoder {
 
     private OFMessageDecoder() {}
 
-    private OFMessage processMofMessage(ByteBuf bb) throws Exception {
+    private OFMessage processMofMessage(ByteBuf bb, OFMessageReader<OFMessage> reader) throws Exception {
+        OFMessage message = null;
         if(!bb.isReadable())
             return null; // Do Nothing;
 
         if(bb.readableBytes() < MINIMUM_LENGTH)
             return null; 
-        
-        OFMessage message = MofMessageImpl.READER.readFrom(bb);
+
+        int start = bb.readerIndex();
+        // fixed value property version == 1
+        byte version = bb.readByte();
+        if (version != (byte) 0x1){
+            bb.readerIndex(start);
+            return reader.readFrom(bb);
+            //throw new OFParseError("only support openflow 1.0 now is openflow 1." + (version-1));
+        }
+            
+
+        byte type = bb.readByte();
+        // bb.readerIndex(start);
+        switch (type) {
+            case (byte)253:
+                log.info("receive MOF_STATS_REPLY message!");
+                if (bb.readableBytes() < STATS_REPLY_MINIMUM_LENGTH){
+                    bb.readerIndex(start);
+                    return null;
+                }
+                    
+                int length = bb.readShort() & 0xFFFF;
+                if (length < STATS_REPLY_MINIMUM_LENGTH)
+                    throw new OFParseError("Wrong length: Expected to be >= " + STATS_REPLY_MINIMUM_LENGTH + ", was: " + length);
+
+                bb.readInt();
+
+                short statsType = bb.readShort();
+                bb.readerIndex(start);
+                switch (statsType) {
+                    case (short) 0x1:
+                        // discriminator value OFStatsType.FLOW=1 for class OFFlowStatsReplyVer10
+                        log.info("receive MOF_FLOW_STATS_REPLY message!");
+                        message = MofFlowStatsReplyImpl.READER.readFrom(bb);
+                        break;
+                    default:
+                        message = reader.readFrom(bb);
+                }
+                break;
+            default:
+                bb.readerIndex(start);
+                //log.info("receive message type = {}, in turn to normal message", type);
+                message = reader.readFrom(bb);
+        }
 
         return message;
     }
@@ -80,15 +124,15 @@ public final class OFMessageDecoder extends ByteToMessageDecoder {
         // The performance *may or may not* not be as good as before.
         OFMessageReader<OFMessage> reader = OFFactories.getGenericReader();
 
-        OFMessage message = processMofMessage(byteBuf);
-        if(message == null)
-            message = reader.readFrom(byteBuf);
+        OFMessage message = processMofMessage(byteBuf, reader);
+        // if(message == null)
+        //     message = reader.readFrom(byteBuf);
 
         while (message != null) {
             out.add(message);
-            message = processMofMessage(byteBuf);
-            if(message == null)
-                message = reader.readFrom(byteBuf);
+            message = processMofMessage(byteBuf, reader);
+            // if(message == null)
+            //     message = reader.readFrom(byteBuf);
         }
     }
 

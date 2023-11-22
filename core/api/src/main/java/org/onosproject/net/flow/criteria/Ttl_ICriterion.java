@@ -10,45 +10,45 @@ import java.util.Arrays;
 
 import org.onosproject.net.flow.criteria.parser.*;
 
-public final class Dl_TypeCriterion implements Criterion {
+public final class Ttl_ICriterion implements Criterion {
 
 
-    private final long dl_type;
+    private final long ttl_i;
   	private final long mask;
 
-    public static final int LEN = 2;
+    public static final int LEN = 1;
 
-    Dl_TypeCriterion(long dl_type) {
-        this(dl_type, 0xFFFF);
+    Ttl_ICriterion(long ttl_i) {
+        this(ttl_i, 0xFF);
     }
 
     /**
      * Constructor.
      *
-     * @param dl_type the Ethernet frame type to match
+     * @param ttl_i the Ethernet frame type to match
      */
-    Dl_TypeCriterion(long dl_type, long mask) {
-        this.dl_type = dl_type;
+    Ttl_ICriterion(long ttl_i, long mask) {
+        this.ttl_i = ttl_i;
       	this.mask = mask;
     }
 
   	@Override
     public void write(ByteBuf bb){
-        bb.writeShort((short)dl_type);
+        bb.writeByte((byte)ttl_i);
     }
 
     @Override
     public void writeMask(ByteBuf bb){
-        bb.writeShort((short)mask);
+        bb.writeByte((byte)mask);
     }
 
     public static void writeZero(ByteBuf bb){
-        bb.writeZero(2);
+        bb.writeZero(1);
     }
 
     @Override
     public Type type() {
-        return Type.DL_TYPE;
+        return Type.TTL_I;
     }
 
     /**
@@ -56,18 +56,18 @@ public final class Dl_TypeCriterion implements Criterion {
      *
      * @return the Ethernet frame type to match (16 bits unsigned integer)
      */
-    public long dl_type() {
-        return dl_type;
+    public long ttl_i() {
+        return ttl_i;
     }
 
     @Override
     public String toString() {
-        return type().toString() + SEPARATOR + CriterionParser.BasicParser(dl_type, mask, type());
+        return type().toString() + SEPARATOR + CriterionParser.BasicParser(ttl_i, mask, type());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type().ordinal(), dl_type);
+        return Objects.hash(type().ordinal(), ttl_i);
     }
 
     @Override
@@ -75,21 +75,21 @@ public final class Dl_TypeCriterion implements Criterion {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof Dl_TypeCriterion) {
-            Dl_TypeCriterion that = (Dl_TypeCriterion) obj;
-            return dl_type == that.dl_type && mask == that.mask;
+        if (obj instanceof Ttl_ICriterion) {
+            Ttl_ICriterion that = (Ttl_ICriterion) obj;
+            return ttl_i == that.ttl_i && mask == that.mask;
         }
         return false;
     }
 
     public static class Builder implements Criterion.Builder {
-        private long dl_type;
+        private long ttl_i;
         private long mask;
         private boolean valid_mask;
 
         @Override
         public boolean readMask(ByteBuf bb){
-            mask = bb.readShort() & 0xFFFF;
+            mask = bb.readByte();
             if(mask != 0){
                 valid_mask = true;
             }
@@ -100,24 +100,21 @@ public final class Dl_TypeCriterion implements Criterion {
         @Override
         public Builder setValid(boolean valid){
             valid_mask = valid;
-            if(valid){
-                this.mask = 0xFFFF;
-            }
             return this;
         }
 
         @Override
         public Builder readData(ByteBuf bb){
-            dl_type = bb.readShort() & 0xFFFF;
+            ttl_i = bb.readByte();
             return this;
         }
 
         @Override
-        public Dl_TypeCriterion build(){
+        public Ttl_ICriterion build(){
             if(!valid_mask){
-                throw new IllegalArgumentException("Dl_TypeCriterion Mask should not be zero");
+                throw new IllegalArgumentException("Ttl_ICriterion Mask should not be zero");
             }
-            return new Dl_TypeCriterion(dl_type, mask);
+            return new Ttl_ICriterion(ttl_i, mask);
         }
     }
 }

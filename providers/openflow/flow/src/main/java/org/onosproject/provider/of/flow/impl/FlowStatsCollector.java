@@ -73,7 +73,7 @@ class FlowStatsCollector implements SwitchDataCollector {
     // Defines whether the collector is in pause or not for high load
     private final AtomicBoolean paused = new AtomicBoolean();
     // Defines whether the collector is in waiting or not for a previous stats reply
-    private static final int WAITING_ATTEMPTS = 5;
+    private static final int WAITING_ATTEMPTS = 20;
     private final AtomicInteger waiting = new AtomicInteger(0);
 
     private int pollInterval;

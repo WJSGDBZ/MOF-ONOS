@@ -693,7 +693,7 @@ public class MofFlowStatsEntryVer10 implements MofFlowStatsEntry {
         public MofFlowStatsEntry readFrom(ByteBuf bb) throws OFParseError {
             int start = bb.readerIndex();
             DefaultTrafficSelector match = DefaultTrafficSelector.readFrom(bb); //Match/Mask
-
+            //logger.info("read DefaultTrafficSelector: " + match);
             int length = U16.f(bb.readShort());
             if (length < MINIMUM_LENGTH)
                 throw new OFParseError("Wrong length: Expected to be >= " + MINIMUM_LENGTH + ", was: " + length);
@@ -719,6 +719,7 @@ public class MofFlowStatsEntryVer10 implements MofFlowStatsEntry {
             U64 packetCount = U64.ofRaw(bb.readLong());
             U64 byteCount = U64.ofRaw(bb.readLong());
 
+            logger.info("ready to parser action " + (length - (bb.readerIndex() - start)) + "bytes");
             DefaultTrafficTreatment actions = DefaultTrafficTreatment.readFrom(bb, length - (bb.readerIndex() - start)); //Action
 
             MofFlowStatsEntryVer10 flowStatsEntryVer10 = new MofFlowStatsEntryVer10(

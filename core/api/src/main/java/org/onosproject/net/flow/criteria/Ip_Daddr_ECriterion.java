@@ -89,7 +89,7 @@ public final class Ip_Daddr_ECriterion implements Criterion {
 
         @Override
         public boolean readMask(ByteBuf bb){
-            mask = bb.readInt();
+            mask = bb.readInt() & 0xFFFFFFFF;
             if(mask != 0){
                 valid_mask = true;
             }
@@ -105,7 +105,7 @@ public final class Ip_Daddr_ECriterion implements Criterion {
 
         @Override
         public Builder readData(ByteBuf bb){
-            ip_daddr_e = bb.readInt();
+            ip_daddr_e = bb.readInt() & 0xFFFFFFFF;
             return this;
         }
 

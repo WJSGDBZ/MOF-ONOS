@@ -27,7 +27,7 @@ public final class OsgiPropertyConstants {
     public static final String ADAPTIVE_FLOW_SAMPLING = "adaptiveFlowSampling";
     public static final String POLL_STATS_PERIODICALLY = "pollStatsPeriodically";
 
-    public static final int POLL_FREQUENCY_DEFAULT = 5;
+    public static final int POLL_FREQUENCY_DEFAULT = 20;
     public static final boolean ADAPTIVE_FLOW_SAMPLING_DEFAULT = false;
     public static final boolean POLL_STATS_PERIODICALLY_DEFAULT = true;
 

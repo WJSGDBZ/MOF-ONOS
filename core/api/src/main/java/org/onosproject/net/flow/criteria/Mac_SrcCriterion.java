@@ -117,6 +117,11 @@ public final class Mac_SrcCriterion implements Criterion {
         @Override
         public Builder setValid(boolean valid){
             valid_mask = valid;
+            if(valid){
+                byte[] ALL = new byte[LEN];
+                Arrays.fill(ALL, (byte) 0xFF);
+                this.mask = Mac_Src.valueOf(ALL);
+            }
             return this;
         }
 

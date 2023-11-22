@@ -36,14 +36,29 @@ public class Mac_Protocol implements Protocol {
         Mac_DstCriterion mac_dst = new Mac_DstCriterion.Builder()
                                                 .setValid(true)
                                                 .readData(bb)
-                                                .build();
+                                                .build();                                      
 
         Mac_SrcCriterion mac_src = new Mac_SrcCriterion.Builder()
                                                 .setValid(true)
                                                 .readData(bb)
                                                 .build();
 
+        bb.skipBytes(44);
         return new Mac_Protocol(mac_dst, mac_src);
+    }
+
+    public static Mac_Protocol readWithMask(ByteBuf bb){
+        Mac_DstCriterion.Builder b1 = new Mac_DstCriterion.Builder();
+        Mac_SrcCriterion.Builder b2 = new Mac_SrcCriterion.Builder();
+        b1.readMask(bb);
+        b2.readMask(bb);
+        bb.skipBytes(44);
+
+        b1.readData(bb);
+        b2.readData(bb);
+        bb.skipBytes(44);
+
+        return new Mac_Protocol(b1.build(), b2.build());
     }
 
     @Override

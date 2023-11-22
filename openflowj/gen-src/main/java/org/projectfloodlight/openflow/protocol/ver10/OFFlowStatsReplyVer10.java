@@ -303,7 +303,7 @@ class OFFlowStatsReplyVer10 implements OFFlowStatsReply {
             List<OFFlowStatsEntry> entries = ChannelUtils.readList(bb, length - (bb.readerIndex() - start), OFFlowStatsEntryVer10.READER);
 
             OFFlowStatsReplyVer10 flowStatsReplyVer10 = new OFFlowStatsReplyVer10(
-                    xid,
+                        xid,
                       flags,
                       entries
                     );
