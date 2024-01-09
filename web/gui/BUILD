@@ -112,7 +112,7 @@ genrule(
           " export BABEL_DISABLE_CACHE=1 &&" +  # turn off babel cache
           ' if [[ ! -z $${HTTP_PROXY-} ]]; then NPM_ARGS="--proxy $$HTTP_PROXY --without-ssl --insecure"; else NPM_ARGS=""; fi &&' +
           " NPM=$$ROOT/$(location @nodejs//:npm) &&" +
-	  " $$NPM config set registry https://registry.npm.taobao.org &&" +
+	   #" $$NPM config set registry https://registry.npmmirror.com &&" +
           " mkdir -p tools/gui &&" +
           " cd tools/gui &&" +
           " jar xf ../../$(location //tools/gui:tools-gui-gulp) &&" +
@@ -145,7 +145,7 @@ genrule(
           " INSTALL_FILES=($(locations :_onos-gui-npm-install)) &&" +  # An array of filenames - sorted by time created
           ' if [[ ! -z $${HTTP_PROXY-} ]]; then NPM_ARGS="--proxy $$HTTP_PROXY --without-ssl --insecure"; else NPM_ARGS=""; fi &&' +
           " NPM=$(location @nodejs//:npm) &&" +
-	  " $$ROOT/$$NPM config set registry https://registry.npm.taobao.org &&" +
+	   #" $$ROOT/$$NPM config set registry https://registry.npmmirror.com &&" +
           " (mkdir -p web/gui && cd web/gui && jar xf ../../$(location :_web_app_all)) &&" +
           " mkdir -p tools/gui && cd tools/gui &&" +
           " jar xf $$ROOT/$${INSTALL_FILES[0]} &&" +

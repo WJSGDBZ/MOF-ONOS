@@ -7,7 +7,8 @@ import org.onosproject.net.flow.criteria.Criterion;
 import org.onosproject.net.flow.criteria.Dl_TypeCriterion;
 
 public class Dl_Protocol implements Protocol {
-    Dl_TypeCriterion dl_type;
+    public Dl_TypeCriterion dl_type;
+    public static int LEN = Dl_TypeCriterion.LEN;
 
     public Dl_Protocol(Dl_TypeCriterion dl_type){
         this.dl_type = dl_type;
@@ -16,14 +17,12 @@ public class Dl_Protocol implements Protocol {
     @Override
     public void write(ByteBuf bb){
         dl_type.write(bb);
-
         bb.writeZero(54);
     }
   
     @Override
     public void writeMask(ByteBuf bb){
         dl_type.writeMask(bb);
-
         bb.writeZero(54);
     }
   
@@ -32,19 +31,9 @@ public class Dl_Protocol implements Protocol {
                                                 .setValid(true)
                                                 .readData(bb)
                                                 .build();
-        
+
         bb.skipBytes(54);
         return new Dl_Protocol(dl_type);
-    }
-
-    public static Dl_Protocol readWithMask(ByteBuf bb){
-        Dl_TypeCriterion.Builder b1 = new Dl_TypeCriterion.Builder();
-        b1.readMask(bb);
-        bb.skipBytes(54);
-
-        b1.readData(bb);   
-        bb.skipBytes(54);
-        return new Dl_Protocol(b1.build());
     }
 
     @Override
@@ -68,5 +57,15 @@ public class Dl_Protocol implements Protocol {
         }
         return false;
     }
+    public static Dl_Protocol readWithMask(ByteBuf bb){
+        Dl_TypeCriterion.Builder b1 = new Dl_TypeCriterion.Builder();
+        b1.readMask(bb);
+        bb.skipBytes(54);
 
+        b1.readData(bb);
+        bb.skipBytes(54);
+
+        return new Dl_Protocol(b1.build());
+    }
+  
 }

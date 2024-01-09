@@ -16,16 +16,17 @@ import org.onosproject.net.flow.criteria.Srv6_Segmentlist2Criterion;
 import org.onosproject.net.flow.criteria.Srv6_Segmentlist3Criterion;
 
 public class Srv6_3_Protocol implements Protocol {
-    Srv6_TypeCriterion srv6_type;
-    Srv6_Hdr_Ext_LenCriterion srv6_hdr_ext_len;
-    Srv6_Routing_TypeCriterion srv6_routing_Type;
-    Srv6_Segments_LeftCriterion srv6_segments_left;
-    Srv6_Last_EntyCriterion srv6_last_enty;
-    Srv6_FlagsCriterion srv6_flags;
-    Srv6_TagCriterion srv6_tag;
-    Srv6_Segmentlist1Criterion srv6_segmentlist1;
-    Srv6_Segmentlist2Criterion srv6_segmentlist2;
-    Srv6_Segmentlist3Criterion srv6_segmentlist3;
+    public Srv6_TypeCriterion srv6_type;
+    public Srv6_Hdr_Ext_LenCriterion srv6_hdr_ext_len;
+    public Srv6_Routing_TypeCriterion srv6_routing_Type;
+    public Srv6_Segments_LeftCriterion srv6_segments_left;
+    public Srv6_Last_EntyCriterion srv6_last_enty;
+    public Srv6_FlagsCriterion srv6_flags;
+    public Srv6_TagCriterion srv6_tag;
+    public Srv6_Segmentlist1Criterion srv6_segmentlist1;
+    public Srv6_Segmentlist2Criterion srv6_segmentlist2;
+    public Srv6_Segmentlist3Criterion srv6_segmentlist3;
+    public static int LEN = Srv6_TypeCriterion.LEN + Srv6_Hdr_Ext_LenCriterion.LEN + Srv6_Routing_TypeCriterion.LEN + Srv6_Segments_LeftCriterion.LEN + Srv6_Last_EntyCriterion.LEN + Srv6_FlagsCriterion.LEN + Srv6_TagCriterion.LEN + Srv6_Segmentlist1Criterion.LEN + Srv6_Segmentlist2Criterion.LEN + Srv6_Segmentlist3Criterion.LEN;
 
     public Srv6_3_Protocol(Srv6_TypeCriterion srv6_type, Srv6_Hdr_Ext_LenCriterion srv6_hdr_ext_len, Srv6_Routing_TypeCriterion srv6_routing_Type, Srv6_Segments_LeftCriterion srv6_segments_left, Srv6_Last_EntyCriterion srv6_last_enty, Srv6_FlagsCriterion srv6_flags, Srv6_TagCriterion srv6_tag, Srv6_Segmentlist1Criterion srv6_segmentlist1, Srv6_Segmentlist2Criterion srv6_segmentlist2, Srv6_Segmentlist3Criterion srv6_segmentlist3){
         this.srv6_type = srv6_type;
@@ -52,7 +53,7 @@ public class Srv6_3_Protocol implements Protocol {
         srv6_segmentlist1.write(bb);
         srv6_segmentlist2.write(bb);
         srv6_segmentlist3.write(bb);
-
+        
     }
   
     @Override
@@ -67,6 +68,7 @@ public class Srv6_3_Protocol implements Protocol {
         srv6_segmentlist1.writeMask(bb);
         srv6_segmentlist2.writeMask(bb);
         srv6_segmentlist3.writeMask(bb);
+        
     }
   
     public static Srv6_3_Protocol read(ByteBuf bb){
@@ -120,6 +122,7 @@ public class Srv6_3_Protocol implements Protocol {
                                                 .readData(bb)
                                                 .build();
 
+        
         return new Srv6_3_Protocol(srv6_type, srv6_hdr_ext_len, srv6_routing_Type, srv6_segments_left, srv6_last_enty, srv6_flags, srv6_tag, srv6_segmentlist1, srv6_segmentlist2, srv6_segmentlist3);
     }
 
@@ -144,5 +147,42 @@ public class Srv6_3_Protocol implements Protocol {
         }
         return false;
     }
+    public static Srv6_3_Protocol readWithMask(ByteBuf bb){
+        Srv6_TypeCriterion.Builder b1 = new Srv6_TypeCriterion.Builder();
+        Srv6_Hdr_Ext_LenCriterion.Builder b2 = new Srv6_Hdr_Ext_LenCriterion.Builder();
+        Srv6_Routing_TypeCriterion.Builder b3 = new Srv6_Routing_TypeCriterion.Builder();
+        Srv6_Segments_LeftCriterion.Builder b4 = new Srv6_Segments_LeftCriterion.Builder();
+        Srv6_Last_EntyCriterion.Builder b5 = new Srv6_Last_EntyCriterion.Builder();
+        Srv6_FlagsCriterion.Builder b6 = new Srv6_FlagsCriterion.Builder();
+        Srv6_TagCriterion.Builder b7 = new Srv6_TagCriterion.Builder();
+        Srv6_Segmentlist1Criterion.Builder b8 = new Srv6_Segmentlist1Criterion.Builder();
+        Srv6_Segmentlist2Criterion.Builder b9 = new Srv6_Segmentlist2Criterion.Builder();
+        Srv6_Segmentlist3Criterion.Builder b10 = new Srv6_Segmentlist3Criterion.Builder();
+        b1.readMask(bb);
+        b2.readMask(bb);
+        b3.readMask(bb);
+        b4.readMask(bb);
+        b5.readMask(bb);
+        b6.readMask(bb);
+        b7.readMask(bb);
+        b8.readMask(bb);
+        b9.readMask(bb);
+        b10.readMask(bb);
+        
 
+        b1.readData(bb);
+        b2.readData(bb);
+        b3.readData(bb);
+        b4.readData(bb);
+        b5.readData(bb);
+        b6.readData(bb);
+        b7.readData(bb);
+        b8.readData(bb);
+        b9.readData(bb);
+        b10.readData(bb);
+        
+
+        return new Srv6_3_Protocol(b1.build(), b2.build(), b3.build(), b4.build(), b5.build(), b6.build(), b7.build(), b8.build(), b9.build(), b10.build());
+    }
+  
 }

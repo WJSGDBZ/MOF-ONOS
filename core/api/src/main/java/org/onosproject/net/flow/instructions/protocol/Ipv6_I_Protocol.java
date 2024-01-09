@@ -12,12 +12,13 @@ import org.onosproject.net.flow.criteria.Ipv6_Src_ICriterion;
 import org.onosproject.net.flow.criteria.Ipv6_Dst_ICriterion;
 
 public class Ipv6_I_Protocol implements Protocol {
-    Ipv6_Ver_Tp_Flb_ICriterion ipv6_ver_tp_flb_i;
-    Ipv6_Plen_ICriterion ipv6_plen_i;
-    Ipv6_I_TypeCriterion ipv6_i_type;
-    Ipv6_Hlmt_ICriterion ipv6_hlmt_i;
-    Ipv6_Src_ICriterion ipv6_src_i;
-    Ipv6_Dst_ICriterion ipv6_dst_i;
+    public Ipv6_Ver_Tp_Flb_ICriterion ipv6_ver_tp_flb_i;
+    public Ipv6_Plen_ICriterion ipv6_plen_i;
+    public Ipv6_I_TypeCriterion ipv6_i_type;
+    public Ipv6_Hlmt_ICriterion ipv6_hlmt_i;
+    public Ipv6_Src_ICriterion ipv6_src_i;
+    public Ipv6_Dst_ICriterion ipv6_dst_i;
+    public static int LEN = Ipv6_Ver_Tp_Flb_ICriterion.LEN + Ipv6_Plen_ICriterion.LEN + Ipv6_I_TypeCriterion.LEN + Ipv6_Hlmt_ICriterion.LEN + Ipv6_Src_ICriterion.LEN + Ipv6_Dst_ICriterion.LEN;
 
     public Ipv6_I_Protocol(Ipv6_Ver_Tp_Flb_ICriterion ipv6_ver_tp_flb_i, Ipv6_Plen_ICriterion ipv6_plen_i, Ipv6_I_TypeCriterion ipv6_i_type, Ipv6_Hlmt_ICriterion ipv6_hlmt_i, Ipv6_Src_ICriterion ipv6_src_i, Ipv6_Dst_ICriterion ipv6_dst_i){
         this.ipv6_ver_tp_flb_i = ipv6_ver_tp_flb_i;
@@ -36,7 +37,7 @@ public class Ipv6_I_Protocol implements Protocol {
         ipv6_hlmt_i.write(bb);
         ipv6_src_i.write(bb);
         ipv6_dst_i.write(bb);
-
+        bb.writeZero(16);
     }
   
     @Override
@@ -47,6 +48,7 @@ public class Ipv6_I_Protocol implements Protocol {
         ipv6_hlmt_i.writeMask(bb);
         ipv6_src_i.writeMask(bb);
         ipv6_dst_i.writeMask(bb);
+        bb.writeZero(16);
     }
   
     public static Ipv6_I_Protocol read(ByteBuf bb){
@@ -80,6 +82,7 @@ public class Ipv6_I_Protocol implements Protocol {
                                                 .readData(bb)
                                                 .build();
 
+        bb.skipBytes(16);
         return new Ipv6_I_Protocol(ipv6_ver_tp_flb_i, ipv6_plen_i, ipv6_i_type, ipv6_hlmt_i, ipv6_src_i, ipv6_dst_i);
     }
 
@@ -104,5 +107,30 @@ public class Ipv6_I_Protocol implements Protocol {
         }
         return false;
     }
+    public static Ipv6_I_Protocol readWithMask(ByteBuf bb){
+        Ipv6_Ver_Tp_Flb_ICriterion.Builder b1 = new Ipv6_Ver_Tp_Flb_ICriterion.Builder();
+        Ipv6_Plen_ICriterion.Builder b2 = new Ipv6_Plen_ICriterion.Builder();
+        Ipv6_I_TypeCriterion.Builder b3 = new Ipv6_I_TypeCriterion.Builder();
+        Ipv6_Hlmt_ICriterion.Builder b4 = new Ipv6_Hlmt_ICriterion.Builder();
+        Ipv6_Src_ICriterion.Builder b5 = new Ipv6_Src_ICriterion.Builder();
+        Ipv6_Dst_ICriterion.Builder b6 = new Ipv6_Dst_ICriterion.Builder();
+        b1.readMask(bb);
+        b2.readMask(bb);
+        b3.readMask(bb);
+        b4.readMask(bb);
+        b5.readMask(bb);
+        b6.readMask(bb);
+        bb.skipBytes(16);
 
+        b1.readData(bb);
+        b2.readData(bb);
+        b3.readData(bb);
+        b4.readData(bb);
+        b5.readData(bb);
+        b6.readData(bb);
+        bb.skipBytes(16);
+
+        return new Ipv6_I_Protocol(b1.build(), b2.build(), b3.build(), b4.build(), b5.build(), b6.build());
+    }
+  
 }

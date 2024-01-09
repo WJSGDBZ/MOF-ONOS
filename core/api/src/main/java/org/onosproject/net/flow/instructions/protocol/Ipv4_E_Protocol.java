@@ -17,18 +17,16 @@ import org.onosproject.net.flow.criteria.Ip_Daddr_ECriterion;
 
 public class Ipv4_E_Protocol implements Protocol {
     public Ver_Hl_ECriterion ver_hl_e;
-    Tos_ECriterion tos_e;
-    Tot_Len_ECriterion tot_len_e;
-    Ip_Id_ECriterion ip_id_e;
-    Frag_Off_ECriterion frag_off_e;
-    Ttl_ECriterion ttl_e;
+    public Tos_ECriterion tos_e;
+    public Tot_Len_ECriterion tot_len_e;
+    public Ip_Id_ECriterion ip_id_e;
+    public Frag_Off_ECriterion frag_off_e;
+    public Ttl_ECriterion ttl_e;
     public Ipv4_E_TypeCriterion ipv4_e_type;
-    Ip_Check_ECriterion ip_check_e;
-    Ip_Saddr_ECriterion ip_saddr_e;
-    Ip_Daddr_ECriterion ip_daddr_e;
-
-    public static int LEN = Ver_Hl_ECriterion.LEN + Tos_ECriterion.LEN + Tot_Len_ECriterion.LEN + Ip_Id_ECriterion.LEN
-    + Frag_Off_ECriterion.LEN + Ttl_ECriterion.LEN + Ipv4_E_TypeCriterion.LEN + Ip_Check_ECriterion.LEN + Ip_Saddr_ECriterion.LEN + Ip_Daddr_ECriterion.LEN;
+    public Ip_Check_ECriterion ip_check_e;
+    public Ip_Saddr_ECriterion ip_saddr_e;
+    public Ip_Daddr_ECriterion ip_daddr_e;
+    public static int LEN = Ver_Hl_ECriterion.LEN + Tos_ECriterion.LEN + Tot_Len_ECriterion.LEN + Ip_Id_ECriterion.LEN + Frag_Off_ECriterion.LEN + Ttl_ECriterion.LEN + Ipv4_E_TypeCriterion.LEN + Ip_Check_ECriterion.LEN + Ip_Saddr_ECriterion.LEN + Ip_Daddr_ECriterion.LEN;
 
     public Ipv4_E_Protocol(Ver_Hl_ECriterion ver_hl_e, Tos_ECriterion tos_e, Tot_Len_ECriterion tot_len_e, Ip_Id_ECriterion ip_id_e, Frag_Off_ECriterion frag_off_e, Ttl_ECriterion ttl_e, Ipv4_E_TypeCriterion ipv4_e_type, Ip_Check_ECriterion ip_check_e, Ip_Saddr_ECriterion ip_saddr_e, Ip_Daddr_ECriterion ip_daddr_e){
         this.ver_hl_e = ver_hl_e;
@@ -43,7 +41,6 @@ public class Ipv4_E_Protocol implements Protocol {
         this.ip_daddr_e = ip_daddr_e;
     }
 
-
     @Override
     public void write(ByteBuf bb){
         ver_hl_e.write(bb);
@@ -56,7 +53,7 @@ public class Ipv4_E_Protocol implements Protocol {
         ip_check_e.write(bb);
         ip_saddr_e.write(bb);
         ip_daddr_e.write(bb);
-
+        bb.writeZero(36);
     }
   
     @Override
@@ -71,6 +68,7 @@ public class Ipv4_E_Protocol implements Protocol {
         ip_check_e.writeMask(bb);
         ip_saddr_e.writeMask(bb);
         ip_daddr_e.writeMask(bb);
+        bb.writeZero(36);
     }
   
     public static Ipv4_E_Protocol read(ByteBuf bb){
@@ -124,6 +122,7 @@ public class Ipv4_E_Protocol implements Protocol {
                                                 .readData(bb)
                                                 .build();
 
+        bb.skipBytes(36);
         return new Ipv4_E_Protocol(ver_hl_e, tos_e, tot_len_e, ip_id_e, frag_off_e, ttl_e, ipv4_e_type, ip_check_e, ip_saddr_e, ip_daddr_e);
     }
 
@@ -148,5 +147,42 @@ public class Ipv4_E_Protocol implements Protocol {
         }
         return false;
     }
+    public static Ipv4_E_Protocol readWithMask(ByteBuf bb){
+        Ver_Hl_ECriterion.Builder b1 = new Ver_Hl_ECriterion.Builder();
+        Tos_ECriterion.Builder b2 = new Tos_ECriterion.Builder();
+        Tot_Len_ECriterion.Builder b3 = new Tot_Len_ECriterion.Builder();
+        Ip_Id_ECriterion.Builder b4 = new Ip_Id_ECriterion.Builder();
+        Frag_Off_ECriterion.Builder b5 = new Frag_Off_ECriterion.Builder();
+        Ttl_ECriterion.Builder b6 = new Ttl_ECriterion.Builder();
+        Ipv4_E_TypeCriterion.Builder b7 = new Ipv4_E_TypeCriterion.Builder();
+        Ip_Check_ECriterion.Builder b8 = new Ip_Check_ECriterion.Builder();
+        Ip_Saddr_ECriterion.Builder b9 = new Ip_Saddr_ECriterion.Builder();
+        Ip_Daddr_ECriterion.Builder b10 = new Ip_Daddr_ECriterion.Builder();
+        b1.readMask(bb);
+        b2.readMask(bb);
+        b3.readMask(bb);
+        b4.readMask(bb);
+        b5.readMask(bb);
+        b6.readMask(bb);
+        b7.readMask(bb);
+        b8.readMask(bb);
+        b9.readMask(bb);
+        b10.readMask(bb);
+        bb.skipBytes(36);
 
+        b1.readData(bb);
+        b2.readData(bb);
+        b3.readData(bb);
+        b4.readData(bb);
+        b5.readData(bb);
+        b6.readData(bb);
+        b7.readData(bb);
+        b8.readData(bb);
+        b9.readData(bb);
+        b10.readData(bb);
+        bb.skipBytes(36);
+
+        return new Ipv4_E_Protocol(b1.build(), b2.build(), b3.build(), b4.build(), b5.build(), b6.build(), b7.build(), b8.build(), b9.build(), b10.build());
+    }
+  
 }

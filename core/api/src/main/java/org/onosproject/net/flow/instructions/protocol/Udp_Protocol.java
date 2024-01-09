@@ -10,10 +10,11 @@ import org.onosproject.net.flow.criteria.LenCriterion;
 import org.onosproject.net.flow.criteria.Udp_CheckCriterion;
 
 public class Udp_Protocol implements Protocol {
-    Udp_SourceCriterion udp_source;
-    Udp_DestCriterion udp_dest;
-    LenCriterion len;
-    Udp_CheckCriterion udp_check;
+    public Udp_SourceCriterion udp_source;
+    public Udp_DestCriterion udp_dest;
+    public LenCriterion len;
+    public Udp_CheckCriterion udp_check;
+    public static int LEN = Udp_SourceCriterion.LEN + Udp_DestCriterion.LEN + LenCriterion.LEN + Udp_CheckCriterion.LEN;
 
     public Udp_Protocol(Udp_SourceCriterion udp_source, Udp_DestCriterion udp_dest, LenCriterion len, Udp_CheckCriterion udp_check){
         this.udp_source = udp_source;
@@ -28,7 +29,7 @@ public class Udp_Protocol implements Protocol {
         udp_dest.write(bb);
         len.write(bb);
         udp_check.write(bb);
-
+        bb.writeZero(48);
     }
   
     @Override
@@ -37,6 +38,7 @@ public class Udp_Protocol implements Protocol {
         udp_dest.writeMask(bb);
         len.writeMask(bb);
         udp_check.writeMask(bb);
+        bb.writeZero(48);
     }
   
     public static Udp_Protocol read(ByteBuf bb){
@@ -60,6 +62,7 @@ public class Udp_Protocol implements Protocol {
                                                 .readData(bb)
                                                 .build();
 
+        bb.skipBytes(48);
         return new Udp_Protocol(udp_source, udp_dest, len, udp_check);
     }
 
@@ -84,5 +87,24 @@ public class Udp_Protocol implements Protocol {
         }
         return false;
     }
+    public static Udp_Protocol readWithMask(ByteBuf bb){
+        Udp_SourceCriterion.Builder b1 = new Udp_SourceCriterion.Builder();
+        Udp_DestCriterion.Builder b2 = new Udp_DestCriterion.Builder();
+        LenCriterion.Builder b3 = new LenCriterion.Builder();
+        Udp_CheckCriterion.Builder b4 = new Udp_CheckCriterion.Builder();
+        b1.readMask(bb);
+        b2.readMask(bb);
+        b3.readMask(bb);
+        b4.readMask(bb);
+        bb.skipBytes(48);
 
+        b1.readData(bb);
+        b2.readData(bb);
+        b3.readData(bb);
+        b4.readData(bb);
+        bb.skipBytes(48);
+
+        return new Udp_Protocol(b1.build(), b2.build(), b3.build(), b4.build());
+    }
+  
 }

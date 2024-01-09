@@ -8,8 +8,9 @@ import org.onosproject.net.flow.criteria.Vlan1_TpidCriterion;
 import org.onosproject.net.flow.criteria.Vlan1_QidCriterion;
 
 public class Vlan1_Protocol implements Protocol {
-    Vlan1_TpidCriterion vlan1_tpid;
-    Vlan1_QidCriterion vlan1_qid;
+    public Vlan1_TpidCriterion vlan1_tpid;
+    public Vlan1_QidCriterion vlan1_qid;
+    public static int LEN = Vlan1_TpidCriterion.LEN + Vlan1_QidCriterion.LEN;
 
     public Vlan1_Protocol(Vlan1_TpidCriterion vlan1_tpid, Vlan1_QidCriterion vlan1_qid){
         this.vlan1_tpid = vlan1_tpid;
@@ -20,13 +21,14 @@ public class Vlan1_Protocol implements Protocol {
     public void write(ByteBuf bb){
         vlan1_tpid.write(bb);
         vlan1_qid.write(bb);
-
+        bb.writeZero(52);
     }
   
     @Override
     public void writeMask(ByteBuf bb){
         vlan1_tpid.writeMask(bb);
         vlan1_qid.writeMask(bb);
+        bb.writeZero(52);
     }
   
     public static Vlan1_Protocol read(ByteBuf bb){
@@ -40,6 +42,7 @@ public class Vlan1_Protocol implements Protocol {
                                                 .readData(bb)
                                                 .build();
 
+        bb.skipBytes(52);
         return new Vlan1_Protocol(vlan1_tpid, vlan1_qid);
     }
 
@@ -64,5 +67,18 @@ public class Vlan1_Protocol implements Protocol {
         }
         return false;
     }
+    public static Vlan1_Protocol readWithMask(ByteBuf bb){
+        Vlan1_TpidCriterion.Builder b1 = new Vlan1_TpidCriterion.Builder();
+        Vlan1_QidCriterion.Builder b2 = new Vlan1_QidCriterion.Builder();
+        b1.readMask(bb);
+        b2.readMask(bb);
+        bb.skipBytes(52);
 
+        b1.readData(bb);
+        b2.readData(bb);
+        bb.skipBytes(52);
+
+        return new Vlan1_Protocol(b1.build(), b2.build());
+    }
+  
 }

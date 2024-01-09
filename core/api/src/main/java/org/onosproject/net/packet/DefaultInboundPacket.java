@@ -17,7 +17,7 @@ package org.onosproject.net.packet;
 
 import org.onosproject.net.ConnectPoint;
 import org.onlab.packet.Ethernet;
-import org.onosproject.net.packet.mof.MOFFlow;
+import org.onosproject.net.packet.mof.*;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;

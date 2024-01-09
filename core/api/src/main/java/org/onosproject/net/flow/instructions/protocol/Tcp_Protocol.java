@@ -14,14 +14,15 @@ import org.onosproject.net.flow.criteria.Tcp_CheckCriterion;
 import org.onosproject.net.flow.criteria.Urg_PtrCriterion;
 
 public class Tcp_Protocol implements Protocol {
-    Tcp_SourceCriterion tcp_source;
-    Tcp_DestCriterion tcp_dest;
-    SeqCriterion seq;
-    Ack_SeqCriterion ack_seq;
-    Off_BitsCriterion off_bits;
-    WindowCriterion window;
-    Tcp_CheckCriterion tcp_check;
-    Urg_PtrCriterion urg_ptr;
+    public Tcp_SourceCriterion tcp_source;
+    public Tcp_DestCriterion tcp_dest;
+    public SeqCriterion seq;
+    public Ack_SeqCriterion ack_seq;
+    public Off_BitsCriterion off_bits;
+    public WindowCriterion window;
+    public Tcp_CheckCriterion tcp_check;
+    public Urg_PtrCriterion urg_ptr;
+    public static int LEN = Tcp_SourceCriterion.LEN + Tcp_DestCriterion.LEN + SeqCriterion.LEN + Ack_SeqCriterion.LEN + Off_BitsCriterion.LEN + WindowCriterion.LEN + Tcp_CheckCriterion.LEN + Urg_PtrCriterion.LEN;
 
     public Tcp_Protocol(Tcp_SourceCriterion tcp_source, Tcp_DestCriterion tcp_dest, SeqCriterion seq, Ack_SeqCriterion ack_seq, Off_BitsCriterion off_bits, WindowCriterion window, Tcp_CheckCriterion tcp_check, Urg_PtrCriterion urg_ptr){
         this.tcp_source = tcp_source;
@@ -44,7 +45,7 @@ public class Tcp_Protocol implements Protocol {
         window.write(bb);
         tcp_check.write(bb);
         urg_ptr.write(bb);
-
+        bb.writeZero(36);
     }
   
     @Override
@@ -57,6 +58,7 @@ public class Tcp_Protocol implements Protocol {
         window.writeMask(bb);
         tcp_check.writeMask(bb);
         urg_ptr.writeMask(bb);
+        bb.writeZero(36);
     }
   
     public static Tcp_Protocol read(ByteBuf bb){
@@ -100,6 +102,7 @@ public class Tcp_Protocol implements Protocol {
                                                 .readData(bb)
                                                 .build();
 
+        bb.skipBytes(36);
         return new Tcp_Protocol(tcp_source, tcp_dest, seq, ack_seq, off_bits, window, tcp_check, urg_ptr);
     }
 
@@ -124,5 +127,36 @@ public class Tcp_Protocol implements Protocol {
         }
         return false;
     }
+    public static Tcp_Protocol readWithMask(ByteBuf bb){
+        Tcp_SourceCriterion.Builder b1 = new Tcp_SourceCriterion.Builder();
+        Tcp_DestCriterion.Builder b2 = new Tcp_DestCriterion.Builder();
+        SeqCriterion.Builder b3 = new SeqCriterion.Builder();
+        Ack_SeqCriterion.Builder b4 = new Ack_SeqCriterion.Builder();
+        Off_BitsCriterion.Builder b5 = new Off_BitsCriterion.Builder();
+        WindowCriterion.Builder b6 = new WindowCriterion.Builder();
+        Tcp_CheckCriterion.Builder b7 = new Tcp_CheckCriterion.Builder();
+        Urg_PtrCriterion.Builder b8 = new Urg_PtrCriterion.Builder();
+        b1.readMask(bb);
+        b2.readMask(bb);
+        b3.readMask(bb);
+        b4.readMask(bb);
+        b5.readMask(bb);
+        b6.readMask(bb);
+        b7.readMask(bb);
+        b8.readMask(bb);
+        bb.skipBytes(36);
 
+        b1.readData(bb);
+        b2.readData(bb);
+        b3.readData(bb);
+        b4.readData(bb);
+        b5.readData(bb);
+        b6.readData(bb);
+        b7.readData(bb);
+        b8.readData(bb);
+        bb.skipBytes(36);
+
+        return new Tcp_Protocol(b1.build(), b2.build(), b3.build(), b4.build(), b5.build(), b6.build(), b7.build(), b8.build());
+    }
+  
 }

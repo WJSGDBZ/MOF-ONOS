@@ -36,7 +36,7 @@ RUN apt-get update && apt-get install -y ${BUILD_DEPS}
 
 # Install Bazelisk, which will download the version of bazel specified in
 # .bazelversion
-RUN curl -L -o bazelisk https://github.com/bazelbuild/bazelisk/releases/download/v1.11.0/bazelisk-linux-amd64
+RUN curl -L -o bazelisk https://github.com/bazelbuild/bazelisk/releases/download/v1.19.0/bazelisk-linux-amd64
 RUN chmod +x bazelisk && mv bazelisk /usr/bin
 
 # Build-stage environment variables

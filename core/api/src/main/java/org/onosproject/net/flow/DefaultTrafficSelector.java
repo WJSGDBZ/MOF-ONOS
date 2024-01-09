@@ -1184,9 +1184,9 @@ public final class DefaultTrafficSelector implements TrafficSelector {
             builders.put(Criterion.Type.VLAN2_QID, builder);
         }
 
-        Dl_TypeCriterion.Builder dl_builder = new Dl_TypeCriterion.Builder();
-        if(dl_builder.readMask(bb)){
-            builders.put(Criterion.Type.DL_TYPE, dl_builder);
+        builder = new Dl_TypeCriterion.Builder();
+        if(builder.readMask(bb)){
+            builders.put(Criterion.Type.DL_TYPE, builder);
         }
 
         bb.skipBytes(6);
