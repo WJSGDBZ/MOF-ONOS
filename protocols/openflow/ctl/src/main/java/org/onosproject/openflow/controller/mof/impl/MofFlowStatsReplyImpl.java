@@ -270,7 +270,7 @@ public class MofFlowStatsReplyImpl implements MofFlowStatsReply {
     public static class Reader implements OFMessageReader<MofFlowStatsReply> {
         @Override
         public MofFlowStatsReply readFrom(ByteBuf bb) throws OFParseError {
-            logger.info("MofFlowStatsReply ready to read!!!");
+            //logger.info("MofFlowStatsReply ready to read!!!");
             int start = bb.readerIndex();
             // fixed value property version == 1
             byte version = bb.readByte();
@@ -310,7 +310,7 @@ public class MofFlowStatsReplyImpl implements MofFlowStatsReply {
             //     }
             //     return builder.build();
             // }
-            logger.info("ready to parser " + (length - (bb.readerIndex() - start)) + "bytes");
+            //logger.info("ready to parser " + (length - (bb.readerIndex() - start)) + "bytes");
             List<MofFlowStatsEntry> entries = ChannelUtils.readList(bb, length - (bb.readerIndex() - start),
                                                 MofFlowStatsEntryVer10.READER);
 
@@ -318,7 +318,7 @@ public class MofFlowStatsReplyImpl implements MofFlowStatsReply {
                                                                                   flags,
                                                                                   entries);
 
-            logger.info(flowStatsReplyVer10.toString());
+            // logger.info(flowStatsReplyVer10.toString());
             if (logger.isTraceEnabled())
                 logger.trace("readFrom - read={}", flowStatsReplyVer10);
 

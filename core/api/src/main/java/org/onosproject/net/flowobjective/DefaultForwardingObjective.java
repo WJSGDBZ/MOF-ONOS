@@ -49,6 +49,7 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
     private final Optional<ObjectiveContext> context;
     private final TrafficSelector meta;
     private final int tableId;
+    private final long flowId;
 
         private static int MAX_TABLEID = 255;
 
@@ -68,6 +69,7 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
         this.context = Optional.ofNullable(builder.context);
         this.meta = builder.meta;
         this.tableId = builder.tableId;
+        this.flowId = builder.flowId;
 
         this.id = Objects.hash(selector, flag, permanent,
                 timeout, appId, priority, nextId,
@@ -114,6 +116,12 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
     @Override
     public int tableId() {
         return tableId;
+    }
+
+
+    @Override
+    public long flowId() {
+        return flowId;
     }
 
     @Override
@@ -164,7 +172,8 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
                     && Objects.equals(this.treatment, other.treatment)
                     && Objects.equals(this.op, other.op)
                     && Objects.equals(this.meta, other.meta)
-                    && this.tableId == other.tableId;
+                    && this.tableId == other.tableId
+                    && this.flowId == other.flowId;
         }
         return false;
     }
@@ -184,6 +193,7 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
                 .add("permanent", permanent())
                 .add("timeout", timeout())
                 .add("tableId", tableId())
+                .add("flowId", flowId())
                 .toString();
     }
 
@@ -228,6 +238,7 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
         private ObjectiveContext context;
         private TrafficSelector meta;
         private int tableId = 0;
+        private long flowId = 0;
 
         // Creates an empty builder
         private Builder() {
@@ -246,6 +257,7 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
             this.op = objective.op();
             this.meta = objective.meta();
             this.tableId = objective.tableId();
+            this.flowId = objective.flowId();
         }
 
         @Override
@@ -275,6 +287,12 @@ public final class DefaultForwardingObjective implements ForwardingObjective {
         @Override
         public Builder withTableId(int tableId) {
             this.tableId = tableId;
+            return this;
+        }
+
+        @Override
+        public Builder withFlowId(long flowId) {
+            this.flowId = flowId;
             return this;
         }
 

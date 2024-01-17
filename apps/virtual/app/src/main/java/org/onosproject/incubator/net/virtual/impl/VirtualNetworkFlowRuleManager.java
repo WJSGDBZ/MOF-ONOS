@@ -213,6 +213,7 @@ public class VirtualNetworkFlowRuleManager
 
     @Override
     public void apply(FlowRuleOperations ops) {
+        log.info("apply ops");
         operationsService.execute(new FlowOperationsProcessor(ops));
     }
 
@@ -259,7 +260,7 @@ public class VirtualNetworkFlowRuleManager
 
         private void process(Set<FlowRuleOperation> ops) {
             Multimap<DeviceId, FlowRuleBatchEntry> perDeviceBatches = ArrayListMultimap.create();
-
+            log.info("process ops");
             for (FlowRuleOperation op : ops) {
                 perDeviceBatches.put(op.rule().deviceId(),
                                      new FlowRuleBatchEntry(mapOperationType(op.type()), op.rule()));
@@ -532,9 +533,9 @@ public class VirtualNetworkFlowRuleManager
                                     case REMOVE:
                                         post(new FlowRuleEvent(RULE_REMOVE_REQUESTED, op.target()));
                                         break;
-                                    case REMOVESPEFIC:
-                                        post(new FlowRuleEvent(RULE_REMOVE_SPEFIC_REQUESTED, op.target()));
-                                        break;
+                                    // case REMOVESPEFIC:
+                                    //     post(new FlowRuleEvent(RULE_REMOVE_SPEFIC_REQUESTED, op.target()));
+                                    //     break;
                                     case MODIFY:
                                         //TODO: do something here when the time comes.
                                         break;

@@ -43,6 +43,7 @@ public final class ForwardingObjectiveCodec extends JsonCodec<ForwardingObjectiv
     private static final String FLAG = "flag";
     private static final String OPERATION = "operation";
     private static final String NEXT_ID = "nextId";
+    private static final String FLOW_ID = "flowId";
     private static final String TREATMENT = "treatment";
     private static final String TABLE_ID = "tableId";
 
@@ -163,6 +164,13 @@ public final class ForwardingObjectiveCodec extends JsonCodec<ForwardingObjectiv
             builder.nextStep(nextIdJson.asInt());
         }
 
+        // decode flowId
+        JsonNode flowIdJson = json.get(FLOW_ID);
+        if (flowIdJson != null) {
+            String hexFlowId = flowIdJson.asText();
+            builder.withFlowId(Long.parseLong(hexFlowId, 16));
+        }
+        
         // decode operation
         String opStr = nullIsIllegal(json.get(OPERATION), OPERATION + MISSING_MEMBER_MESSAGE).asText();
         ForwardingObjective forwardingObjective = null;

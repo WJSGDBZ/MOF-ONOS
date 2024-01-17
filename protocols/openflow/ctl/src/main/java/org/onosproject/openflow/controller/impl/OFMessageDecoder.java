@@ -71,7 +71,7 @@ public final class OFMessageDecoder extends ByteToMessageDecoder {
         // bb.readerIndex(start);
         switch (type) {
             case (byte)253:
-                log.info("receive MOF_STATS_REPLY message!");
+                //log.info("receive MOF_STATS_REPLY message!");
                 if (bb.readableBytes() < STATS_REPLY_MINIMUM_LENGTH){
                     bb.readerIndex(start);
                     return null;

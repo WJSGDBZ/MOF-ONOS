@@ -535,20 +535,17 @@ public class MofFlowStatsRequestImpl implements MofFlowStatsRequest {
 
             // length is length of variable message, will be updated at the end
             int lengthIndex = bb.writerIndex();
-            //tableId;
-            message.tableId.writeByte(bb);
-            //log.info("Mof add flow on tableId" + message.tableId);
-            // fixed value property command = 0
-            bb.writeByte(0);
-
+            bb.writeShort((short) 0x00);
             bb.writeInt((int)message.xid);
+
             // fixed value property statsType = 1
             bb.writeShort((short) 0x1);
             OFStatsRequestFlagsSerializerVer10.writeTo(bb, message.flags);
 
             DefaultTrafficSelector.writeStatsFlowRequestAllMatch(bb);
-            
-            logger.info("Mof request on tableId" + message.tableId);
+
+            //tableId;
+            //logger.info("Mof request on tableId" + message.tableId);
             message.tableId.writeByte(bb);
             // pad: 1 bytes
             bb.writeZero(1);

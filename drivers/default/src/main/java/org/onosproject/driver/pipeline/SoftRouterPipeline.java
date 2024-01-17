@@ -128,7 +128,7 @@ public class SoftRouterPipeline extends AbstractHandlerBehaviour implements Pipe
     public void forward(ForwardingObjective fwd) {
         Collection<FlowRule> rules;
         FlowRuleOperations.Builder flowOpsBuilder = FlowRuleOperations.builder();
-
+        log.info("pipliner execute forward");
         rules = processForward(fwd);
         switch (fwd.op()) {
             case ADD:

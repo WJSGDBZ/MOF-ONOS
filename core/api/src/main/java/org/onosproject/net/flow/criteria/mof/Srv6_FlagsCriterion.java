@@ -10,45 +10,53 @@ import java.util.Arrays;
 
 import org.onosproject.net.flow.criteria.parser.*;
 
-public final class Frag_Off_ICriterion implements Criterion {
+public final class Srv6_FlagsCriterion implements Criterion {
 
 
-    private final long frag_off_i;
+    private final long srv6_flags;
   	private final long mask;
 
-    public static final int LEN = 2;
+    public static final int LEN = 1;
 
-    Frag_Off_ICriterion(long frag_off_i) {
-        this(frag_off_i, 0xFFFF);
+    public long value() {
+        return srv6_flags;
+    }
+  
+    public long mask(){
+        return mask;
+    }
+
+    Srv6_FlagsCriterion(long srv6_flags) {
+        this(srv6_flags, 0xFF);
     }
 
     /**
      * Constructor.
      *
-     * @param frag_off_i the Ethernet frame type to match
+     * @param srv6_flags the Ethernet frame type to match
      */
-    Frag_Off_ICriterion(long frag_off_i, long mask) {
-        this.frag_off_i = frag_off_i;
+    Srv6_FlagsCriterion(long srv6_flags, long mask) {
+        this.srv6_flags = srv6_flags;
       	this.mask = mask;
     }
 
   	@Override
     public void write(ByteBuf bb){
-        bb.writeShort((short)frag_off_i);
+        bb.writeByte((byte)srv6_flags);
     }
 
     @Override
     public void writeMask(ByteBuf bb){
-        bb.writeShort((short)mask);
+        bb.writeByte((byte)mask);
     }
 
     public static void writeZero(ByteBuf bb){
-        bb.writeZero(2);
+        bb.writeZero(1);
     }
 
     @Override
     public Type type() {
-        return Type.FRAG_OFF_I;
+        return Type.SRV6_FLAGS;
     }
 
     /**
@@ -56,18 +64,18 @@ public final class Frag_Off_ICriterion implements Criterion {
      *
      * @return the Ethernet frame type to match (16 bits unsigned integer)
      */
-    public long frag_off_i() {
-        return frag_off_i;
+    public long srv6_flags() {
+        return srv6_flags;
     }
 
     @Override
     public String toString() {
-        return type().toString() + SEPARATOR + CriterionParser.BasicParser(frag_off_i, mask, type());
+        return type().toString() + SEPARATOR + CriterionParser.BasicParser(srv6_flags, mask, type());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type().ordinal(), frag_off_i);
+        return Objects.hash(type().ordinal(), srv6_flags);
     }
 
     @Override
@@ -75,21 +83,21 @@ public final class Frag_Off_ICriterion implements Criterion {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof Frag_Off_ICriterion) {
-            Frag_Off_ICriterion that = (Frag_Off_ICriterion) obj;
-            return frag_off_i == that.frag_off_i && mask == that.mask;
+        if (obj instanceof Srv6_FlagsCriterion) {
+            Srv6_FlagsCriterion that = (Srv6_FlagsCriterion) obj;
+            return srv6_flags == that.srv6_flags && mask == that.mask;
         }
         return false;
     }
 
     public static class Builder implements Criterion.Builder {
-        private long frag_off_i;
+        private long srv6_flags;
         private long mask;
         private boolean valid_mask;
 
         @Override
         public boolean readMask(ByteBuf bb){
-            mask = bb.readShort();
+            mask = bb.readByte() & 0xFFL;
             if(mask != 0){
                 valid_mask = true;
             }
@@ -100,21 +108,24 @@ public final class Frag_Off_ICriterion implements Criterion {
         @Override
         public Builder setValid(boolean valid){
             valid_mask = valid;
+            if(valid){ 
+                this.mask = 0xFFL;
+            }
             return this;
         }
 
         @Override
         public Builder readData(ByteBuf bb){
-            frag_off_i = bb.readShort();
+            srv6_flags = bb.readByte() & 0xFFL;
             return this;
         }
 
         @Override
-        public Frag_Off_ICriterion build(){
+        public Srv6_FlagsCriterion build(){
             if(!valid_mask){
-                throw new IllegalArgumentException("Frag_Off_ICriterion Mask should not be zero");
+                throw new IllegalArgumentException("Srv6_FlagsCriterion Mask should not be zero");
             }
-            return new Frag_Off_ICriterion(frag_off_i, mask);
+            return new Srv6_FlagsCriterion(srv6_flags, mask);
         }
     }
 }

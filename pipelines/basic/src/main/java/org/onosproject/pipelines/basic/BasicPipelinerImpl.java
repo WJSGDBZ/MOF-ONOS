@@ -84,9 +84,11 @@ public class BasicPipelinerImpl extends AbstractHandlerBehaviour implements Pipe
 
         switch (obj.op()) {
             case ADD:
+                log.info("BasicPipelinerImpl execute ADD flow");
                 flowRuleService.applyFlowRules(ruleBuilder.build());
                 break;
             case REMOVE:
+                log.info("BasicPipelinerImpl execute REMOVE flow");
                 flowRuleService.removeFlowRules(ruleBuilder.build());
                 break;
             default:

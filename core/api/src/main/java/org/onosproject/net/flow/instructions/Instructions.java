@@ -1649,7 +1649,8 @@ public final class Instructions {
             }
 
             int pad = 8 - ((bb.readerIndex() - start) % 8);
-            bb.skipBytes(pad); 
+            if(pad % 8 != 0)
+                bb.skipBytes(pad); 
 
             return createAddProtocol(protocol_type, result);
         }
@@ -1670,7 +1671,8 @@ public final class Instructions {
             protocol.write(bb);
             //pad
             int pad = 8 - ((bb.writerIndex() - start) % 8);
-            bb.writeZero(pad);
+            if(pad % 8 != 0)
+                bb.writeZero(pad);
 
             int length = bb.writerIndex() - start;
             bb.setShort(lengthIndex, Short.reverseBytes((short)length));
@@ -1981,7 +1983,8 @@ public final class Instructions {
             }
         
             int pad = 8 - ((bb.readerIndex() - start) % 8);
-            bb.skipBytes(pad); 
+            if(pad % 8 != 0)
+                bb.skipBytes(pad); 
         
             return createModField(protocol_type, result);
         }
@@ -2004,7 +2007,8 @@ public final class Instructions {
             protocol.writeMask(bb);
             //pad
             int pad = 8 - ((bb.writerIndex() - start) % 8);
-            bb.writeZero(pad);
+            if(pad % 8 != 0)
+                bb.writeZero(pad);
         
             int length = bb.writerIndex() - start;
             bb.setShort(lengthIndex, Short.reverseBytes((short)length));

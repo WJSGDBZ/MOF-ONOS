@@ -18,6 +18,14 @@ public final class Ack_SeqCriterion implements Criterion {
 
     public static final int LEN = 4;
 
+    public long value() {
+        return ack_seq;
+    }
+  
+    public long mask(){
+        return mask;
+    }
+
     Ack_SeqCriterion(long ack_seq) {
         this(ack_seq, 0xFFFFFFFF);
     }
@@ -89,7 +97,7 @@ public final class Ack_SeqCriterion implements Criterion {
 
         @Override
         public boolean readMask(ByteBuf bb){
-            mask = bb.readInt();
+            mask = bb.readInt() & 0xFFFFFFFFL;
             if(mask != 0){
                 valid_mask = true;
             }
@@ -100,12 +108,15 @@ public final class Ack_SeqCriterion implements Criterion {
         @Override
         public Builder setValid(boolean valid){
             valid_mask = valid;
+            if(valid){ 
+                this.mask = 0xFFFFFFFFL;
+            }
             return this;
         }
 
         @Override
         public Builder readData(ByteBuf bb){
-            ack_seq = bb.readInt();
+            ack_seq = bb.readInt() & 0xFFFFFFFFL;
             return this;
         }
 

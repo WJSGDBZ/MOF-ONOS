@@ -158,18 +158,6 @@ public class Srv6_3_Protocol implements Protocol {
         Srv6_Segmentlist1Criterion.Builder b8 = new Srv6_Segmentlist1Criterion.Builder();
         Srv6_Segmentlist2Criterion.Builder b9 = new Srv6_Segmentlist2Criterion.Builder();
         Srv6_Segmentlist3Criterion.Builder b10 = new Srv6_Segmentlist3Criterion.Builder();
-        b1.readMask(bb);
-        b2.readMask(bb);
-        b3.readMask(bb);
-        b4.readMask(bb);
-        b5.readMask(bb);
-        b6.readMask(bb);
-        b7.readMask(bb);
-        b8.readMask(bb);
-        b9.readMask(bb);
-        b10.readMask(bb);
-        
-
         b1.readData(bb);
         b2.readData(bb);
         b3.readData(bb);
@@ -180,6 +168,18 @@ public class Srv6_3_Protocol implements Protocol {
         b8.readData(bb);
         b9.readData(bb);
         b10.readData(bb);
+        
+
+        b1.readMask(bb);
+        b2.readMask(bb);
+        b3.readMask(bb);
+        b4.readMask(bb);
+        b5.readMask(bb);
+        b6.readMask(bb);
+        b7.readMask(bb);
+        b8.readMask(bb);
+        b9.readMask(bb);
+        b10.readMask(bb);
         
 
         return new Srv6_3_Protocol(b1.build(), b2.build(), b3.build(), b4.build(), b5.build(), b6.build(), b7.build(), b8.build(), b9.build(), b10.build());

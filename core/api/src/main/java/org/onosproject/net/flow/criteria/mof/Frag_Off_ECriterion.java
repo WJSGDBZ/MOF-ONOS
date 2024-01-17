@@ -10,31 +10,39 @@ import java.util.Arrays;
 
 import org.onosproject.net.flow.criteria.parser.*;
 
-public final class Tot_Len_ECriterion implements Criterion {
+public final class Frag_Off_ECriterion implements Criterion {
 
 
-    private final long tot_len_e;
+    private final long frag_off_e;
   	private final long mask;
 
     public static final int LEN = 2;
 
-    Tot_Len_ECriterion(long tot_len_e) {
-        this(tot_len_e, 0xFFFF);
+    public long value() {
+        return frag_off_e;
+    }
+  
+    public long mask(){
+        return mask;
+    }
+
+    Frag_Off_ECriterion(long frag_off_e) {
+        this(frag_off_e, 0xFFFF);
     }
 
     /**
      * Constructor.
      *
-     * @param tot_len_e the Ethernet frame type to match
+     * @param frag_off_e the Ethernet frame type to match
      */
-    Tot_Len_ECriterion(long tot_len_e, long mask) {
-        this.tot_len_e = tot_len_e;
+    Frag_Off_ECriterion(long frag_off_e, long mask) {
+        this.frag_off_e = frag_off_e;
       	this.mask = mask;
     }
 
   	@Override
     public void write(ByteBuf bb){
-        bb.writeShort((short)tot_len_e);
+        bb.writeShort((short)frag_off_e);
     }
 
     @Override
@@ -48,7 +56,7 @@ public final class Tot_Len_ECriterion implements Criterion {
 
     @Override
     public Type type() {
-        return Type.TOT_LEN_E;
+        return Type.FRAG_OFF_E;
     }
 
     /**
@@ -56,18 +64,18 @@ public final class Tot_Len_ECriterion implements Criterion {
      *
      * @return the Ethernet frame type to match (16 bits unsigned integer)
      */
-    public long tot_len_e() {
-        return tot_len_e;
+    public long frag_off_e() {
+        return frag_off_e;
     }
 
     @Override
     public String toString() {
-        return type().toString() + SEPARATOR + CriterionParser.BasicParser(tot_len_e, mask, type());
+        return type().toString() + SEPARATOR + CriterionParser.BasicParser(frag_off_e, mask, type());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type().ordinal(), tot_len_e);
+        return Objects.hash(type().ordinal(), frag_off_e);
     }
 
     @Override
@@ -75,21 +83,21 @@ public final class Tot_Len_ECriterion implements Criterion {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof Tot_Len_ECriterion) {
-            Tot_Len_ECriterion that = (Tot_Len_ECriterion) obj;
-            return tot_len_e == that.tot_len_e && mask == that.mask;
+        if (obj instanceof Frag_Off_ECriterion) {
+            Frag_Off_ECriterion that = (Frag_Off_ECriterion) obj;
+            return frag_off_e == that.frag_off_e && mask == that.mask;
         }
         return false;
     }
 
     public static class Builder implements Criterion.Builder {
-        private long tot_len_e;
+        private long frag_off_e;
         private long mask;
         private boolean valid_mask;
 
         @Override
         public boolean readMask(ByteBuf bb){
-            mask = bb.readShort();
+            mask = bb.readShort() & 0xFFFFL;
             if(mask != 0){
                 valid_mask = true;
             }
@@ -100,21 +108,24 @@ public final class Tot_Len_ECriterion implements Criterion {
         @Override
         public Builder setValid(boolean valid){
             valid_mask = valid;
+            if(valid){ 
+                this.mask = 0xFFFFL;
+            }
             return this;
         }
 
         @Override
         public Builder readData(ByteBuf bb){
-            tot_len_e = bb.readShort();
+            frag_off_e = bb.readShort() & 0xFFFFL;
             return this;
         }
 
         @Override
-        public Tot_Len_ECriterion build(){
+        public Frag_Off_ECriterion build(){
             if(!valid_mask){
-                throw new IllegalArgumentException("Tot_Len_ECriterion Mask should not be zero");
+                throw new IllegalArgumentException("Frag_Off_ECriterion Mask should not be zero");
             }
-            return new Tot_Len_ECriterion(tot_len_e, mask);
+            return new Frag_Off_ECriterion(frag_off_e, mask);
         }
     }
 }

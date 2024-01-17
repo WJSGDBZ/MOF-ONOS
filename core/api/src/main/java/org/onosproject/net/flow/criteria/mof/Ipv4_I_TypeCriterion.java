@@ -97,7 +97,7 @@ public final class Ipv4_I_TypeCriterion implements Criterion {
 
         @Override
         public boolean readMask(ByteBuf bb){
-            mask = bb.readByte();
+            mask = bb.readByte() & 0xFFL;
             if(mask != 0){
                 valid_mask = true;
             }
@@ -109,14 +109,14 @@ public final class Ipv4_I_TypeCriterion implements Criterion {
         public Builder setValid(boolean valid){
             valid_mask = valid;
             if(valid){ 
-                this.mask = 0xFF;
+                this.mask = 0xFFL;
             }
             return this;
         }
 
         @Override
         public Builder readData(ByteBuf bb){
-            ipv4_i_type = bb.readByte() & 0xFF;
+            ipv4_i_type = bb.readByte() & 0xFFL;
             return this;
         }
 

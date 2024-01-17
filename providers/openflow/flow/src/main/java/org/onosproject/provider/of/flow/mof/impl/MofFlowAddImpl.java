@@ -131,7 +131,7 @@ public class MofFlowAddImpl implements MofFlowMod{
     }
 
     public void writeTo(ByteBuf bb){
-        log.info("MofFlowAddImpl ready to write!!!");
+        //log.info("MofFlowAddImpl ready to write!!!");
         WRITER.write(bb, this);
     }
 
@@ -152,11 +152,11 @@ public class MofFlowAddImpl implements MofFlowMod{
 
         //openflow
         //message.selector.writeTo(bb); 
-
+        //log.info("write cookie " + message.cookie.getValue());
         bb.writeLong(message.cookie.getValue());
         //tableId;
         message.tableId.writeByte(bb);
-        //log.info("Mof add flow on tableId" + message.tableId);
+        log.info("Mof add flow on tableId" + message.tableId);
         // fixed value property command = 0
         bb.writeByte(0);
         bb.writeShort(U16.t(message.idleTimeout));
@@ -182,7 +182,7 @@ public class MofFlowAddImpl implements MofFlowMod{
         throw new IllegalArgumentException("MofFlowAddImpl: message length (" + length + ") exceeds maximum (0xFFFF)");
         }
         bb.setShort(lengthIndex, length);
-        log.info("MofFlowAddImpl write done!!!");
+        //log.info("MofFlowAddImpl write done!!!");
 
         }  
     }

@@ -131,7 +131,7 @@ public class MofFlowDelImpl implements MofFlowMod{
     }
 
     public void writeTo(ByteBuf bb){
-        log.info("MofFlowDelImpl ready to write!!!");
+        //log.info("MofFlowDelImpl ready to write!!!");
         WRITER.write(bb, this);
     }
 
@@ -156,7 +156,7 @@ public class MofFlowDelImpl implements MofFlowMod{
         bb.writeLong(message.cookie.getValue());
         //tableId;
         message.tableId.writeByte(bb);
-        log.info("Mof delete flow on tableId" + message.tableId);
+        //log.info("Mof delete flow on tableId" + message.tableId);
         // fixed value property command = 3
         bb.writeByte(0x03);
         bb.writeShort(U16.t(message.idleTimeout));

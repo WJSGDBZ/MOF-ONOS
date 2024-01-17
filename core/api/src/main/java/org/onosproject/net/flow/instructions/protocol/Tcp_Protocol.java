@@ -136,16 +136,6 @@ public class Tcp_Protocol implements Protocol {
         WindowCriterion.Builder b6 = new WindowCriterion.Builder();
         Tcp_CheckCriterion.Builder b7 = new Tcp_CheckCriterion.Builder();
         Urg_PtrCriterion.Builder b8 = new Urg_PtrCriterion.Builder();
-        b1.readMask(bb);
-        b2.readMask(bb);
-        b3.readMask(bb);
-        b4.readMask(bb);
-        b5.readMask(bb);
-        b6.readMask(bb);
-        b7.readMask(bb);
-        b8.readMask(bb);
-        bb.skipBytes(36);
-
         b1.readData(bb);
         b2.readData(bb);
         b3.readData(bb);
@@ -154,6 +144,16 @@ public class Tcp_Protocol implements Protocol {
         b6.readData(bb);
         b7.readData(bb);
         b8.readData(bb);
+        bb.skipBytes(36);
+
+        b1.readMask(bb);
+        b2.readMask(bb);
+        b3.readMask(bb);
+        b4.readMask(bb);
+        b5.readMask(bb);
+        b6.readMask(bb);
+        b7.readMask(bb);
+        b8.readMask(bb);
         bb.skipBytes(36);
 
         return new Tcp_Protocol(b1.build(), b2.build(), b3.build(), b4.build(), b5.build(), b6.build(), b7.build(), b8.build());

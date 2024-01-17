@@ -125,6 +125,8 @@ import static org.onosproject.fwd.OsgiPropertyConstants.INHERIT_FLOW_TREATMENT_D
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.onlab.packet.Mac_Dst;
+import org.onosproject.net.packet.mof.*;
+import org.onosproject.net.flow.instructions.protocol.*;
 /**
  * Sample reactive forwarding application.
  */
@@ -489,6 +491,12 @@ public class ReactiveForwarding {
             // Stop processing if the packet has been handled, since we
             // can't do any more to it.
             MOFFlow mof_flow = context.inPacket().parsed_mof();
+            
+            MOFL4Layer ml4 = mof_flow.getL4Layer();
+            if(ml4.isSrv6_2_Protocol()){
+                Srv6_2_Protocol srv6_2 = ml4.getSrv6_2_Protocol();
+                byte[] srv6_segmentlist1 = srv6_2.srv6_segmentlist1.value().toBytes();
+            }
             
             if (context.isHandled()) {
                 return;

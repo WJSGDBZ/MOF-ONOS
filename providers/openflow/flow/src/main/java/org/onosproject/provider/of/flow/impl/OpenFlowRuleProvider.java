@@ -416,7 +416,7 @@ public class OpenFlowRuleProvider extends AbstractProvider
         }
         pendingBatches.put(batch.id(), new InternalCacheEntry(batch));
         // Build a batch of flow mods - to reduce the number i/o asked to the SO
-        Set<OFFlowMod> mods = Sets.newHashSet();
+        //Set<OFFlowMod> mods = Sets.newHashSet();
         Set<MofFlowMod> mmods = Sets.newHashSet();
         // Test
         //List<OFMessage> modsTosend = Lists.newArrayList();
@@ -424,22 +424,22 @@ public class OpenFlowRuleProvider extends AbstractProvider
         for (FlowRuleBatchEntry fbe : batch.getOperations()) {
             MofFlowModBuilder mbuilder = new MofFlowModBuilder(fbe.target(),
                             Optional.of(batch.id()), Optional.of(driverService));
-                            
+            //log.info("start to build packet");                    
             // OFFlowMod mod = null;
             MofFlowMod mmod = null;
             switch (fbe.operator()) {
                 case ADD:
                     //mod = builder.buildFlowAdd();
-                    log.info("start to build mofFlowAdd packet");
+                    //log.info("start to build mofFlowAdd packet");
                     mmod = mbuilder.buildMofFlowAdd();
                     break;
                 case REMOVE:
-                    log.info("start to build mofFlowDel packet");
+                    //log.info("start to build mofFlowDel packet");
                     // mod = builder.buildFlowDel();
                     mmod = mbuilder.buildMofFlowDel();
                     break;
                 case REMOVESPEFIC:
-                    log.info("start to build mofFlowDelSpec packet");
+                    //log.info("start to build mofFlowDelSpec packet");
                     // mod = builder.buildFlowDel();
                     mmod = mbuilder.buildMofFlowDelSpec();
                     break;
@@ -452,7 +452,7 @@ public class OpenFlowRuleProvider extends AbstractProvider
         }
         // Build a list to mantain the order
         List<OFMessage> modsTosend = Lists.newArrayList(mmods);
-        modsTosend.addAll(mods);
+        //modsTosend.addAll(mods);
 
         OFBarrierRequest.Builder builder = sw.factory().buildBarrierRequest()
                 .setXid(batch.id());
@@ -535,9 +535,9 @@ public class OpenFlowRuleProvider extends AbstractProvider
                     FlowEntry fr = new FlowEntryBuilder(deviceId, removed, getDriver(deviceId)).build();
                     providerService.flowRemoved(fr);
                     break;
-                                case STATS_REPLY:
+                case STATS_REPLY:
                     if (((OFStatsReply) msg).getStatsType() == OFStatsType.FLOW) {
-                        log.info("provider process MofFlowStatsReply Message!");
+                        // log.info("provider process MofFlowStatsReply Message!");
                         // Let's unblock first the collector
                         SwitchDataCollector collector;
                         if (adaptiveFlowSampling) {
@@ -792,7 +792,7 @@ public class OpenFlowRuleProvider extends AbstractProvider
 
 
         private void pushMofFlowMetrics(Dpid dpid, MofFlowStatsReply replies, DriverHandler handler) {
-            log.info("provider process MofFlowStatsReply Flow Message!");
+            //log.info("provider process MofFlowStatsReply Flow Message!");
             DeviceId did = DeviceId.deviceId(Dpid.uri(dpid));
             NewAdaptiveFlowStatsCollector afsc = afsCollectors.get(dpid);
 
@@ -808,7 +808,7 @@ public class OpenFlowRuleProvider extends AbstractProvider
                 }
                 // Check that OFFlowStatsReply Xid is same with the one of OFFlowStatsRequest?
                 if (afsc.getFlowMissingXid() != NewAdaptiveFlowStatsCollector.NO_FLOW_MISSING_XID) {
-                        log.debug("OpenFlowRuleProvider:pushFlowMetrics, flowMissingXid={}, "
+                        log.info("OpenFlowRuleProvider:pushFlowMetrics, flowMissingXid={}, "
                                           + "OFFlowStatsReply Xid={}, for {}",
                                   afsc.getFlowMissingXid(), replies.getXid(), dpid);
                     if (afsc.getFlowMissingXid() == replies.getXid()) {

@@ -70,12 +70,12 @@ public class Vlan1_Protocol implements Protocol {
     public static Vlan1_Protocol readWithMask(ByteBuf bb){
         Vlan1_TpidCriterion.Builder b1 = new Vlan1_TpidCriterion.Builder();
         Vlan1_QidCriterion.Builder b2 = new Vlan1_QidCriterion.Builder();
-        b1.readMask(bb);
-        b2.readMask(bb);
-        bb.skipBytes(52);
-
         b1.readData(bb);
         b2.readData(bb);
+        bb.skipBytes(52);
+
+        b1.readMask(bb);
+        b2.readMask(bb);
         bb.skipBytes(52);
 
         return new Vlan1_Protocol(b1.build(), b2.build());

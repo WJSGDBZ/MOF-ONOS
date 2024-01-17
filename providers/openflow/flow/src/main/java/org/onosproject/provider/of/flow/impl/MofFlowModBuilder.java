@@ -83,6 +83,7 @@ public class MofFlowModBuilder {
     public MofFlowMod buildMofFlowAdd() {
 
         long cookie = flowRule().id().value();
+        //log.info("cookie = " + cookie);
         TableId tableId = TableId.of(flowRule().table().getValue());
 
         MofFlowMod fm = new MofFlowAddImpl.Builder()
@@ -114,6 +115,7 @@ public class MofFlowModBuilder {
                                         .setCookie(U64.of(cookie))
                                         .setBufferId(OFBufferId.NO_BUFFER)
                                         .setSelector(selector)
+                                        .setTreatment(treatment)
                                         .setFlags(Collections.singleton(OFFlowModFlags.SEND_FLOW_REM))
                                         .setHardTimeout(flowRule().hardTimeout())
                                         .build();
@@ -131,6 +133,7 @@ public class MofFlowModBuilder {
                                         .setCookie(U64.of(cookie))
                                         .setBufferId(OFBufferId.NO_BUFFER)
                                         .setSelector(selector)
+                                        .setTreatment(treatment)
                                         .setFlags(Collections.singleton(OFFlowModFlags.SEND_FLOW_REM))
                                         .setPriority(flowRule().priority())
                                         .setHardTimeout(flowRule().hardTimeout())

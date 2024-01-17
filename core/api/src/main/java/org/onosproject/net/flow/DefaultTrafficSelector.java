@@ -1988,7 +1988,7 @@ public final class DefaultTrafficSelector implements TrafficSelector {
     }
     @Override
     public void writeTo(ByteBuf bb) {
-        log.info("DefaultTrafficSelector ready to write!!!");
+        //log.info("DefaultTrafficSelector ready to write!!!");
         //mof
         // flow flow_mask pad
 

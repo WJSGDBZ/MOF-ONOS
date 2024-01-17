@@ -92,16 +92,16 @@ public class Udp_Protocol implements Protocol {
         Udp_DestCriterion.Builder b2 = new Udp_DestCriterion.Builder();
         LenCriterion.Builder b3 = new LenCriterion.Builder();
         Udp_CheckCriterion.Builder b4 = new Udp_CheckCriterion.Builder();
-        b1.readMask(bb);
-        b2.readMask(bb);
-        b3.readMask(bb);
-        b4.readMask(bb);
-        bb.skipBytes(48);
-
         b1.readData(bb);
         b2.readData(bb);
         b3.readData(bb);
         b4.readData(bb);
+        bb.skipBytes(48);
+
+        b1.readMask(bb);
+        b2.readMask(bb);
+        b3.readMask(bb);
+        b4.readMask(bb);
         bb.skipBytes(48);
 
         return new Udp_Protocol(b1.build(), b2.build(), b3.build(), b4.build());

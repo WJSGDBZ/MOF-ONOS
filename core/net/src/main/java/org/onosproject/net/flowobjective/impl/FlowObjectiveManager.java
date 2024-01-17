@@ -312,6 +312,7 @@ public class FlowObjectiveManager implements FlowObjectiveService {
                         nextToDevice.put(objective.id(), deviceId);
                         pipeliner.next((NextObjective) objective);
                     } else if (objective instanceof ForwardingObjective) {
+                        //log.info("pipeliner execute forward");
                         pipeliner.forward((ForwardingObjective) objective);
                     } else {
                         pipeliner.filter((FilteringObjective) objective);

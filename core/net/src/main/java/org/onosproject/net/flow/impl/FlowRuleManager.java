@@ -339,7 +339,7 @@ public class FlowRuleManager
     @Override
     public void removeFlowRules(FlowRule... flowRules) {
         checkPermission(FLOWRULE_WRITE);
-
+        log.info("ready to remove Rules");
         apply(buildFlowRuleOperations(false, null, flowRules));
     }
 
@@ -398,6 +398,7 @@ public class FlowRuleManager
             // consistency issues as the original order between conflictual
             // writes is not maintained. If conflictual writes can be easily
             // handled using different stages, this is the approach to use.
+            //log.info("apply ops without stripeKey");
             operationsService.execute(new FlowOperationsProcessor(ops));
         } else {
             // Following approach is suggested when it is hard to handle
@@ -410,6 +411,7 @@ public class FlowRuleManager
             // For this reason we have introduced PredictableFlowOperationsProcessor
             // which uses the striped key (provided by the apps) to serialize the ops
             // on the same executor.
+            log.info("apply ops with stripeKey");
             operationsService.execute(new PredictableFlowOperationsProcessor(ops));
         }
     }
@@ -640,11 +642,16 @@ public class FlowRuleManager
             store.getFlowEntries(deviceId).forEach(f -> storedRules.put(f, f));
             NodeId master;
             boolean done;
-
+            //storedRules.forEach((key, value) -> log.info("Key: " + key + ", Value: " + value));
             // Processing flow rules
             for (FlowEntry rule : flowEntries) {
                 try {
                     FlowEntry storedRule = storedRules.remove(rule);
+                    // storedRules.forEach((key, value) -> {
+                    //     log.info("storedRules HashCode: " + key.hashCode() + ", rule HashCode: " + rule.hashCode());
+                    // });
+                    // log.info("storedRule = " + storedRule);
+                    // log.info("Rule = " + rule);
                     if (storedRule != null) {
                         if (storedRule.exactMatch(rule)) {
                             // we both have the rule, let's update some info then.
@@ -835,7 +842,7 @@ public class FlowRuleManager
 
         protected void process(Set<FlowRuleOperation> ops) {
             Multimap<DeviceId, FlowRuleBatchEntry> perDeviceBatches = ArrayListMultimap.create();
-
+            //log.info("process ops");
             for (FlowRuleOperation op : ops) {
                 perDeviceBatches.put(op.rule().deviceId(),
                                      new FlowRuleBatchEntry(mapOperationType(op.type()), op.rule()));

@@ -250,9 +250,10 @@ public class FlowEntryBuilder {
                 .withPriority(stat.getPriority())
                 .withIdleTimeout(stat.getIdleTimeout())
                 .withCookie(stat.getCookie().getValue());
-        if (stat.getVersion() != OFVersion.OF_10) {
-            builder.forTable(stat.getTableId().getValue());
-        }
+        // if (stat.getVersion() != OFVersion.OF_10) {
+        //     builder.forTable(stat.getTableId().getValue());
+        // }
+        builder.forTable(stat.getTableId().getValue());
         if (stat.getVersion().getWireVersion() < OFVersion.OF_15.getWireVersion()) {
             if (afsc != null) {
                 FlowEntry.FlowLiveType liveType = afsc.calFlowLiveType(stat.getDurationSec());

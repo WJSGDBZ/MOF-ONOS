@@ -716,10 +716,11 @@ public class MofFlowStatsEntryVer10 implements MofFlowStatsEntry {
             // pad: 6 bytes
             bb.skipBytes(30);
             U64 cookie = U64.ofRaw(bb.readLong());
+            // logger.info("read cookie = " + cookie);
             U64 packetCount = U64.ofRaw(bb.readLong());
             U64 byteCount = U64.ofRaw(bb.readLong());
 
-            logger.info("ready to parser action " + (length - (bb.readerIndex() - start)) + "bytes");
+            // logger.info("ready to parser action " + (length - (bb.readerIndex() - start)) + "bytes");
             DefaultTrafficTreatment actions = DefaultTrafficTreatment.readFrom(bb, length - (bb.readerIndex() - start)); //Action
 
             MofFlowStatsEntryVer10 flowStatsEntryVer10 = new MofFlowStatsEntryVer10(

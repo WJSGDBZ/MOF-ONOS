@@ -836,11 +836,22 @@ public final class DecodeCriterionCodecHelper {
                                         MISSING_MEMBER_MESSAGE).asText();
             if(str.contains("/")){
                 String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
                 byte[] data = HexStringToByteArray(parts[0]);
                 byte[] mask = HexStringToByteArray(parts[1]);
                 
                 return Criteria.selectMac_Dst(Mac_Dst.valueOf(data), Mac_Dst.valueOf(mask));
             }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
                 byte[] data = HexStringToByteArray(str);
 
                 return Criteria.selectMac_Dst(Mac_Dst.valueOf(data));
@@ -855,11 +866,22 @@ public final class DecodeCriterionCodecHelper {
                                         MISSING_MEMBER_MESSAGE).asText();
             if(str.contains("/")){
                 String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
                 byte[] data = HexStringToByteArray(parts[0]);
                 byte[] mask = HexStringToByteArray(parts[1]);
                 
                 return Criteria.selectMac_Src(Mac_Src.valueOf(data), Mac_Src.valueOf(mask));
             }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
                 byte[] data = HexStringToByteArray(str);
 
                 return Criteria.selectMac_Src(Mac_Src.valueOf(data));
@@ -1463,11 +1485,22 @@ public final class DecodeCriterionCodecHelper {
                                         MISSING_MEMBER_MESSAGE).asText();
             if(str.contains("/")){
                 String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
                 byte[] data = HexStringToByteArray(parts[0]);
                 byte[] mask = HexStringToByteArray(parts[1]);
                 
                 return Criteria.selectIpv6_Src_E(Ipv6_Src_E.valueOf(data), Ipv6_Src_E.valueOf(mask));
             }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
                 byte[] data = HexStringToByteArray(str);
 
                 return Criteria.selectIpv6_Src_E(Ipv6_Src_E.valueOf(data));
@@ -1482,11 +1515,22 @@ public final class DecodeCriterionCodecHelper {
                                         MISSING_MEMBER_MESSAGE).asText();
             if(str.contains("/")){
                 String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
                 byte[] data = HexStringToByteArray(parts[0]);
                 byte[] mask = HexStringToByteArray(parts[1]);
                 
                 return Criteria.selectIpv6_Dst_E(Ipv6_Dst_E.valueOf(data), Ipv6_Dst_E.valueOf(mask));
             }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
                 byte[] data = HexStringToByteArray(str);
 
                 return Criteria.selectIpv6_Dst_E(Ipv6_Dst_E.valueOf(data));
@@ -2090,11 +2134,22 @@ public final class DecodeCriterionCodecHelper {
                                         MISSING_MEMBER_MESSAGE).asText();
             if(str.contains("/")){
                 String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
                 byte[] data = HexStringToByteArray(parts[0]);
                 byte[] mask = HexStringToByteArray(parts[1]);
                 
                 return Criteria.selectSrv6_Segmentlist3(Srv6_Segmentlist3.valueOf(data), Srv6_Segmentlist3.valueOf(mask));
             }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
                 byte[] data = HexStringToByteArray(str);
 
                 return Criteria.selectSrv6_Segmentlist3(Srv6_Segmentlist3.valueOf(data));
@@ -2109,11 +2164,22 @@ public final class DecodeCriterionCodecHelper {
                                         MISSING_MEMBER_MESSAGE).asText();
             if(str.contains("/")){
                 String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
                 byte[] data = HexStringToByteArray(parts[0]);
                 byte[] mask = HexStringToByteArray(parts[1]);
                 
                 return Criteria.selectSrv6_Segmentlist2(Srv6_Segmentlist2.valueOf(data), Srv6_Segmentlist2.valueOf(mask));
             }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
                 byte[] data = HexStringToByteArray(str);
 
                 return Criteria.selectSrv6_Segmentlist2(Srv6_Segmentlist2.valueOf(data));
@@ -2128,11 +2194,22 @@ public final class DecodeCriterionCodecHelper {
                                         MISSING_MEMBER_MESSAGE).asText();
             if(str.contains("/")){
                 String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
                 byte[] data = HexStringToByteArray(parts[0]);
                 byte[] mask = HexStringToByteArray(parts[1]);
                 
                 return Criteria.selectSrv6_Segmentlist1(Srv6_Segmentlist1.valueOf(data), Srv6_Segmentlist1.valueOf(mask));
             }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
                 byte[] data = HexStringToByteArray(str);
 
                 return Criteria.selectSrv6_Segmentlist1(Srv6_Segmentlist1.valueOf(data));
@@ -2271,11 +2348,22 @@ public final class DecodeCriterionCodecHelper {
                                         MISSING_MEMBER_MESSAGE).asText();
             if(str.contains("/")){
                 String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
                 byte[] data = HexStringToByteArray(parts[0]);
                 byte[] mask = HexStringToByteArray(parts[1]);
                 
                 return Criteria.selectIpv6_Src_I(Ipv6_Src_I.valueOf(data), Ipv6_Src_I.valueOf(mask));
             }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
                 byte[] data = HexStringToByteArray(str);
 
                 return Criteria.selectIpv6_Src_I(Ipv6_Src_I.valueOf(data));
@@ -2290,11 +2378,22 @@ public final class DecodeCriterionCodecHelper {
                                         MISSING_MEMBER_MESSAGE).asText();
             if(str.contains("/")){
                 String[] parts = str.split("/");
+
+                if (parts[0].startsWith("0x")) {
+                    parts[0] = parts[0].substring(2);
+                }
+                
+                if (parts[1].startsWith("0x")) {
+                    parts[1] = parts[1].substring(2);
+                }
                 byte[] data = HexStringToByteArray(parts[0]);
                 byte[] mask = HexStringToByteArray(parts[1]);
                 
                 return Criteria.selectIpv6_Dst_I(Ipv6_Dst_I.valueOf(data), Ipv6_Dst_I.valueOf(mask));
             }else{
+                if (str.startsWith("0x")) {
+                    str = str.substring(2);
+                }
                 byte[] data = HexStringToByteArray(str);
 
                 return Criteria.selectIpv6_Dst_I(Ipv6_Dst_I.valueOf(data));

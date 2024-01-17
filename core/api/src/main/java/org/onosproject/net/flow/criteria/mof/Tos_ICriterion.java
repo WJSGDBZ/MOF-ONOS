@@ -97,7 +97,7 @@ public final class Tos_ICriterion implements Criterion {
 
         @Override
         public boolean readMask(ByteBuf bb){
-            mask = bb.readByte();
+            mask = bb.readByte() & 0xFFL;
             if(mask != 0){
                 valid_mask = true;
             }
@@ -109,14 +109,14 @@ public final class Tos_ICriterion implements Criterion {
         public Builder setValid(boolean valid){
             valid_mask = valid;
             if(valid){ 
-                this.mask = 0xFF;
+                this.mask = 0xFFL;
             }
             return this;
         }
 
         @Override
         public Builder readData(ByteBuf bb){
-            tos_i = bb.readByte() & 0xFF;
+            tos_i = bb.readByte() & 0xFFL;
             return this;
         }
 

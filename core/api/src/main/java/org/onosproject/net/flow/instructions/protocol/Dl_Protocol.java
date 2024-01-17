@@ -59,10 +59,10 @@ public class Dl_Protocol implements Protocol {
     }
     public static Dl_Protocol readWithMask(ByteBuf bb){
         Dl_TypeCriterion.Builder b1 = new Dl_TypeCriterion.Builder();
-        b1.readMask(bb);
+        b1.readData(bb);
         bb.skipBytes(54);
 
-        b1.readData(bb);
+        b1.readMask(bb);
         bb.skipBytes(54);
 
         return new Dl_Protocol(b1.build());

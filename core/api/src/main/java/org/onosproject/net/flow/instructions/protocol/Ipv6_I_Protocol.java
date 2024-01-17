@@ -114,20 +114,20 @@ public class Ipv6_I_Protocol implements Protocol {
         Ipv6_Hlmt_ICriterion.Builder b4 = new Ipv6_Hlmt_ICriterion.Builder();
         Ipv6_Src_ICriterion.Builder b5 = new Ipv6_Src_ICriterion.Builder();
         Ipv6_Dst_ICriterion.Builder b6 = new Ipv6_Dst_ICriterion.Builder();
-        b1.readMask(bb);
-        b2.readMask(bb);
-        b3.readMask(bb);
-        b4.readMask(bb);
-        b5.readMask(bb);
-        b6.readMask(bb);
-        bb.skipBytes(16);
-
         b1.readData(bb);
         b2.readData(bb);
         b3.readData(bb);
         b4.readData(bb);
         b5.readData(bb);
         b6.readData(bb);
+        bb.skipBytes(16);
+
+        b1.readMask(bb);
+        b2.readMask(bb);
+        b3.readMask(bb);
+        b4.readMask(bb);
+        b5.readMask(bb);
+        b6.readMask(bb);
         bb.skipBytes(16);
 
         return new Ipv6_I_Protocol(b1.build(), b2.build(), b3.build(), b4.build(), b5.build(), b6.build());

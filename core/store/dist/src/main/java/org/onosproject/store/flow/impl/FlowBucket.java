@@ -236,9 +236,12 @@ public class FlowBucket {
      * @return the removed flow entry
      */
     public FlowEntry remove(FlowEntry rule, long term, LogicalClock clock) {
+        //LOGGER.info("try to match and update flowTable");
         final AtomicReference<FlowEntry> removedRule = new AtomicReference<>();
         flowBucket.computeIfPresent(rule.id(), (flowId, flowEntries) -> {
+            //LOGGER.info("Bucket find");
             flowEntries.computeIfPresent((StoredFlowEntry) rule, (k, stored) -> {
+                //LOGGER.info("rule matched, type is " + rule.getClass());
                 if (rule instanceof DefaultFlowEntry) {
                     DefaultFlowEntry toRemove = (DefaultFlowEntry) rule;
                     if (stored instanceof DefaultFlowEntry) {

@@ -63,7 +63,7 @@ public final class CriterionParser {
         case IP_SADDR_I:
         case IP_DADDR_I:
         default:
-            return PREFIX + Long.toHexString(data) + "/" + Long.toHexString(mask).toUpperCase();
+            return PREFIX + Long.toHexString(data) + "/" + PREFIX + Long.toHexString(mask).toUpperCase();
         }
     }
 
@@ -80,7 +80,7 @@ public final class CriterionParser {
         case IPV6_SRC_I:
         case IPV6_DST_I:
         default:
-            return PREFIX + encodeHexStringHelper(data) + "/" + encodeHexStringHelper(mask);
+            return PREFIX + encodeHexStringHelper(data) + "/" + PREFIX + encodeHexStringHelper(mask);
         }
     }
 

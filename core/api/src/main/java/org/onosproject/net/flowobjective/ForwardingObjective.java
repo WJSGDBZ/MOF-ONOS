@@ -95,6 +95,8 @@ public interface ForwardingObjective extends Objective {
 
     int tableId();
 
+    long flowId();
+
     /**
      * Obtain the type of this objective.
      *
@@ -134,6 +136,8 @@ public interface ForwardingObjective extends Objective {
         Builder withSelector(TrafficSelector selector);
 
         Builder withTableId(int tableId);
+
+        Builder withFlowId(long flowId);
 
         /**
          * Assigns a next step to the forwarding objective.

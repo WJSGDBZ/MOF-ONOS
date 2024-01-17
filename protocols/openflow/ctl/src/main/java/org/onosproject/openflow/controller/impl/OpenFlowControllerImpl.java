@@ -588,7 +588,7 @@ public class OpenFlowControllerImpl implements OpenFlowController {
                 break;
             
             case FLOW:
-                log.info("controller receive STATS Mof FLOW REPLY Message!");
+                //log.info("controller receive STATS Mof FLOW REPLY Message!");
                 // Collection<OFFlowStatsEntry> flowStats = publishFlowStats(dpid, (OFFlowStatsReply) reply);
                 Collection<MofFlowStatsEntry> mflowStats = publishMofFlowStats(dpid, (MofFlowStatsReply) reply);
                 

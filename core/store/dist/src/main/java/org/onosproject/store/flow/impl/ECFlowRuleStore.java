@@ -440,6 +440,7 @@ public class ECFlowRuleStore
 
     @Override
     public void storeBatch(FlowRuleBatchOperation operation) {
+        //log.info("ready to store rule");
         if (operation.getOperations().isEmpty()) {
             notifyDelegate(FlowRuleBatchEvent.completed(
                 new FlowRuleBatchRequest(operation.id(), Collections.emptySet()),
@@ -464,6 +465,7 @@ public class ECFlowRuleStore
         }
 
         if (Objects.equals(local, master)) {
+            log.info("master ready to store rule");
             storeBatchInternal(operation);
             return;
         }
@@ -497,6 +499,7 @@ public class ECFlowRuleStore
         //final Collection<FlowEntry> ft = flowTable.getFlowEntries(did);
         Set<FlowRuleBatchEntry> currentOps = updateStoreInternal(operation);
         if (currentOps.isEmpty()) {
+            log.info("currentOps isEmpty");
             batchOperationComplete(FlowRuleBatchEvent.completed(
                 new FlowRuleBatchRequest(operation.id(), Collections.emptySet()),
                 new CompletedBatchOperation(true, Collections.emptySet(), did)));
@@ -524,6 +527,18 @@ public class ECFlowRuleStore
                         flowTable.update(entry);
                         return op;
                     case REMOVE:
+                        // entry = new DefaultFlowEntry(op.target());
+                        // log.info("removing flow rule: {}", entry);
+                        // flowTable.remove(entry);
+                        // return op;
+                        return flowTable.update(op.target(), stored -> {
+                            stored.setState(FlowEntryState.PENDING_REMOVE);
+                            log.debug("Setting state of rule to pending remove: {}", stored);
+                            // Using the stored value instead of op to allow the removal
+                            // of flows that do not specify actions or have empty treatment
+                            return new FlowRuleBatchEntry(op.operator(), new DefaultFlowRule(stored));
+                        });
+                    case REMOVESPEFIC:
                         return flowTable.update(op.target(), stored -> {
                             stored.setState(FlowEntryState.PENDING_REMOVE);
                             log.debug("Setting state of rule to pending remove: {}", stored);
@@ -770,6 +785,9 @@ public class ECFlowRuleStore
          */
         private DeviceFlowTable getFlowTable(DeviceId deviceId) {
             DeviceFlowTable flowTable = flowTables.get(deviceId);
+            if(flowTable == null){
+                log.info("can't find flowTable on deviceId " + deviceId);
+            }
             return flowTable != null ? flowTable : flowTables.computeIfAbsent(deviceId, id -> new DeviceFlowTable(
                 deviceId,
                 clusterService,
@@ -868,6 +886,13 @@ public class ECFlowRuleStore
          * @param function the update function to apply
          * @return a future to be completed with the update event or {@code null} if the rule was not updated
          */
+        // return flowTable.update(op.target(), stored -> {
+        //     stored.setState(FlowEntryState.PENDING_REMOVE);
+        //     log.info("Setting state of rule to pending remove: {}", stored);
+        //     // Using the stored value instead of op to allow the removal
+        //     // of flows that do not specify actions or have empty treatment
+        //     return new FlowRuleBatchEntry(op.operator(), new DefaultFlowRule(stored));
+        // });
         public <T> T update(FlowRule rule, Function<StoredFlowEntry, T> function) {
             return Tools.futureGetOrElse(
                 getFlowTable(rule.deviceId()).update(rule, function),

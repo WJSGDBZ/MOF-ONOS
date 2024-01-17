@@ -108,18 +108,21 @@ public class OpenVSwitchPipeline extends DefaultSingleTablePipeline
         Collection<FlowRule> rules;
         FlowRuleOperations.Builder flowOpsBuilder = FlowRuleOperations
                 .builder();
-
+        log.info("pipliner execute forward");
         rules = processForward(fwd);
         switch (fwd.op()) {
         case ADD:
+            log.info("ovs pipliner execute ADD");
             rules.stream().filter(Objects::nonNull)
                     .forEach(flowOpsBuilder::add);
             break;
         case REMOVE:
+            log.info("ovs pipliner execute REMOVE");
             rules.stream().filter(Objects::nonNull)
                     .forEach(flowOpsBuilder::remove);
             break;
         case REMOVESPEFIC:
+            log.info("ovs pipliner execute REMOVESPEFIC");
             rules.stream().filter(Objects::nonNull)
                     .forEach(flowOpsBuilder::removeSpec);
             break;   

@@ -10,31 +10,39 @@ import java.util.Arrays;
 
 import org.onosproject.net.flow.criteria.parser.*;
 
-public final class Udp_CheckCriterion implements Criterion {
+public final class Frag_Off_ICriterion implements Criterion {
 
 
-    private final long udp_check;
+    private final long frag_off_i;
   	private final long mask;
 
     public static final int LEN = 2;
 
-    Udp_CheckCriterion(long udp_check) {
-        this(udp_check, 0xFFFF);
+    public long value() {
+        return frag_off_i;
+    }
+  
+    public long mask(){
+        return mask;
+    }
+
+    Frag_Off_ICriterion(long frag_off_i) {
+        this(frag_off_i, 0xFFFF);
     }
 
     /**
      * Constructor.
      *
-     * @param udp_check the Ethernet frame type to match
+     * @param frag_off_i the Ethernet frame type to match
      */
-    Udp_CheckCriterion(long udp_check, long mask) {
-        this.udp_check = udp_check;
+    Frag_Off_ICriterion(long frag_off_i, long mask) {
+        this.frag_off_i = frag_off_i;
       	this.mask = mask;
     }
 
   	@Override
     public void write(ByteBuf bb){
-        bb.writeShort((short)udp_check);
+        bb.writeShort((short)frag_off_i);
     }
 
     @Override
@@ -48,7 +56,7 @@ public final class Udp_CheckCriterion implements Criterion {
 
     @Override
     public Type type() {
-        return Type.UDP_CHECK;
+        return Type.FRAG_OFF_I;
     }
 
     /**
@@ -56,18 +64,18 @@ public final class Udp_CheckCriterion implements Criterion {
      *
      * @return the Ethernet frame type to match (16 bits unsigned integer)
      */
-    public long udp_check() {
-        return udp_check;
+    public long frag_off_i() {
+        return frag_off_i;
     }
 
     @Override
     public String toString() {
-        return type().toString() + SEPARATOR + CriterionParser.BasicParser(udp_check, mask, type());
+        return type().toString() + SEPARATOR + CriterionParser.BasicParser(frag_off_i, mask, type());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type().ordinal(), udp_check);
+        return Objects.hash(type().ordinal(), frag_off_i);
     }
 
     @Override
@@ -75,21 +83,21 @@ public final class Udp_CheckCriterion implements Criterion {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof Udp_CheckCriterion) {
-            Udp_CheckCriterion that = (Udp_CheckCriterion) obj;
-            return udp_check == that.udp_check && mask == that.mask;
+        if (obj instanceof Frag_Off_ICriterion) {
+            Frag_Off_ICriterion that = (Frag_Off_ICriterion) obj;
+            return frag_off_i == that.frag_off_i && mask == that.mask;
         }
         return false;
     }
 
     public static class Builder implements Criterion.Builder {
-        private long udp_check;
+        private long frag_off_i;
         private long mask;
         private boolean valid_mask;
 
         @Override
         public boolean readMask(ByteBuf bb){
-            mask = bb.readShort();
+            mask = bb.readShort() & 0xFFFFL;
             if(mask != 0){
                 valid_mask = true;
             }
@@ -100,21 +108,24 @@ public final class Udp_CheckCriterion implements Criterion {
         @Override
         public Builder setValid(boolean valid){
             valid_mask = valid;
+            if(valid){ 
+                this.mask = 0xFFFFL;
+            }
             return this;
         }
 
         @Override
         public Builder readData(ByteBuf bb){
-            udp_check = bb.readShort();
+            frag_off_i = bb.readShort() & 0xFFFFL;
             return this;
         }
 
         @Override
-        public Udp_CheckCriterion build(){
+        public Frag_Off_ICriterion build(){
             if(!valid_mask){
-                throw new IllegalArgumentException("Udp_CheckCriterion Mask should not be zero");
+                throw new IllegalArgumentException("Frag_Off_ICriterion Mask should not be zero");
             }
-            return new Udp_CheckCriterion(udp_check, mask);
+            return new Frag_Off_ICriterion(frag_off_i, mask);
         }
     }
 }

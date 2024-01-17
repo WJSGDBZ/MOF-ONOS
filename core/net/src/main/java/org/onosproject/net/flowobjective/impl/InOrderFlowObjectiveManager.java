@@ -238,12 +238,14 @@ public class InOrderFlowObjectiveManager extends FlowObjectiveManager {
         Objective objective;
         switch (originalObjective.op()) {
             case ADD:
+                //log.info("ready to process ADD flow");
                 objective = objBuilder.add(context);
                 break;
             case ADD_TO_EXISTING:
                 objective = ((NextObjective.Builder) objBuilder).addToExisting(context);
                 break;
             case REMOVE:
+                //log.info("ready to process REMOVE flow");
                 objective = objBuilder.remove(context);
                 break;
             case REMOVESPEFIC:
@@ -424,6 +426,7 @@ public class InOrderFlowObjectiveManager extends FlowObjectiveManager {
 
         // Submit the next one in the queue, if any
         if (remaining.size() > 0) {
+            log.info("execute queue task");
             execute(deviceId, remaining.get(0));
         }
     }

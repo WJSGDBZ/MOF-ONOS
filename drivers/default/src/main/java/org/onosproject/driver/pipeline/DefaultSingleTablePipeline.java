@@ -143,11 +143,11 @@ public class DefaultSingleTablePipeline extends AbstractHandlerBehaviour impleme
     public void forward(ForwardingObjective fwd) {
         TrafficSelector selector = fwd.selector();
         if (fwd.treatment() != null) {
+            //log.info("pipliner execute forward with treatment");
             // Deal with SPECIFIC and VERSATILE in the same manner.
             FlowRule.Builder ruleBuilder = DefaultFlowRule.builder()
                     .forDevice(deviceId)
                     .withSelector(selector)
-                    .fromApp(fwd.appId())
                     .withTable(fwd.tableId())
                     .withPriority(fwd.priority())
                     .withTreatment(fwd.treatment());
@@ -157,9 +157,17 @@ public class DefaultSingleTablePipeline extends AbstractHandlerBehaviour impleme
             } else {
                 ruleBuilder.makeTemporary(fwd.timeout());
             }
+
+            if(fwd.flowId() != 0){
+                log.info("ready to remove rule flowId = " + fwd.flowId());
+                ruleBuilder.withCookie(fwd.flowId());
+            }else{
+                ruleBuilder.fromApp(fwd.appId());
+            }
             installObjective(ruleBuilder, fwd);
 
         } else {
+            //log.info("pipliner execute forward without treatment");
             NextObjective nextObjective;
             NextGroup next;
             TrafficTreatment treatment;
@@ -217,10 +225,16 @@ public class DefaultSingleTablePipeline extends AbstractHandlerBehaviour impleme
         FlowRuleOperations.Builder flowBuilder = FlowRuleOperations.builder();
         switch (objective.op()) {
             case ADD:
+                //log.info("start to execute ADD");
                 flowBuilder.add(ruleBuilder.build());
                 break;
             case REMOVE:
+                //log.info("start to execute REMOVE");
                 flowBuilder.remove(ruleBuilder.build());
+                break;
+            case REMOVESPEFIC:
+                //log.info("start to execute REMOVESPEFIC");
+                flowBuilder.removeSpec(ruleBuilder.build());
                 break;
             default:
                 log.warn("Unknown operation {}", objective.op());

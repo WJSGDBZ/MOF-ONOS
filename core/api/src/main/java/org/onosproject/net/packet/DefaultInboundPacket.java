@@ -34,7 +34,7 @@ public final class DefaultInboundPacket implements InboundPacket {
     private final Ethernet parsed;
     private final ByteBuffer unparsed;
     private final Optional<Long> cookie;
-    private final MOFFlow mof_flow;
+    private final MOFFlow mof_flow; //新增
 
     /**
      * Creates an immutable inbound packet.

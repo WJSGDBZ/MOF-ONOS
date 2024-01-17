@@ -28,11 +28,13 @@ import static com.google.common.base.MoreObjects.toStringHelper;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.onosproject.net.flow.TableId.Type.INDEX;
-
+import org.slf4j.Logger;
+import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Default flow rule.
  */
 public class DefaultFlowRule implements FlowRule {
+private final Logger log = getLogger(DefaultFlowRule.class);
 
     private final DeviceId deviceId;
     private final int priority;
@@ -172,6 +174,9 @@ public class DefaultFlowRule implements FlowRule {
 
     @Override
     public boolean exactMatch(FlowRule rule) {
+        //log.info("object equals = " + this.equals(rule));
+        //log.info("id equals = " + Objects.equals(this.id, rule.id())); 
+        //log.info("treatment equals = " + Objects.equals(this.treatment, rule.treatment()));
         return this.equals(rule) &&
                 Objects.equals(this.id, rule.id()) &&
                 Objects.equals(this.treatment, rule.treatment());

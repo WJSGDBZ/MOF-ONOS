@@ -361,6 +361,7 @@ public class DeviceFlowTable {
      * @return a future to be completed with the update result or {@code null} if the rule was not updated
      */
     public <T> CompletableFuture<T> update(FlowRule rule, Function<StoredFlowEntry, T> function) {
+        log.info("looking up flowTable ruleId = " + rule.id());
         return runInTerm(rule.id(), (bucket, term) -> bucket.update(rule, function, term, clock));
     }
 
@@ -389,7 +390,7 @@ public class DeviceFlowTable {
         }
 
         FlowBucket bucket = getBucket(flowId);
-
+        //log.info("table flow conut = " + bucket.count());
         // If the master's term is not currently active (has not been synchronized with prior replicas), enqueue
         // the change to be executed once the master has been synchronized.
         final long term = replicaInfo.term();

@@ -97,7 +97,7 @@ public final class Dl_TypeCriterion implements Criterion {
 
         @Override
         public boolean readMask(ByteBuf bb){
-            mask = bb.readShort();
+            mask = bb.readShort() & 0xFFFFL;
             if(mask != 0){
                 valid_mask = true;
             }
@@ -109,14 +109,14 @@ public final class Dl_TypeCriterion implements Criterion {
         public Builder setValid(boolean valid){
             valid_mask = valid;
             if(valid){ 
-                this.mask = 0xFFFF;
+                this.mask = 0xFFFFL;
             }
             return this;
         }
 
         @Override
         public Builder readData(ByteBuf bb){
-            dl_type = bb.readShort() & 0xFFFF;
+            dl_type = bb.readShort() & 0xFFFFL;
             return this;
         }
 
