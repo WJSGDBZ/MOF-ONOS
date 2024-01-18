@@ -512,12 +512,12 @@ public final class DefaultTrafficSelector implements TrafficSelector {
         }
 
         @Override
-        public Builder selectInport(int port) {
+        public Builder selectInport(long port) {
             return add(Criteria.matchInPort(PortNumber.portNumber(port)));
         }
 
         @Override
-        public Builder selectInport(int port, int mask) {
+        public Builder selectInport(long port, long mask) {
             return add(Criteria.matchInPort(PortNumber.portNumber(port)));
         }
                 @Override
@@ -1988,12 +1988,12 @@ public final class DefaultTrafficSelector implements TrafficSelector {
     }
     @Override
     public void writeTo(ByteBuf bb) {
-        //log.info("DefaultTrafficSelector ready to write!!!");
-        //mof
+        // log.info("DefaultTrafficSelector ready to write!!!");
+        // mof
         // flow flow_mask pad
 
         // flow
-        //before ETH_DST
+        // before ETH_DST
         bb.writeZero(472);  
 
         if(match.containsKey(Criterion.Type.MAC_DST)){

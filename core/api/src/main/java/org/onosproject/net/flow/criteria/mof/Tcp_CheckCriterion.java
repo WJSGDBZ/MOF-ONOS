@@ -26,7 +26,7 @@ public final class Tcp_CheckCriterion implements Criterion {
         return mask;
     }
 
-    Tcp_CheckCriterion(long tcp_check) {
+    public Tcp_CheckCriterion(long tcp_check) {
         this(tcp_check, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Tcp_CheckCriterion implements Criterion {
      *
      * @param tcp_check the Ethernet frame type to match
      */
-    Tcp_CheckCriterion(long tcp_check, long mask) {
+    public Tcp_CheckCriterion(long tcp_check, long mask) {
         this.tcp_check = tcp_check;
       	this.mask = mask;
     }

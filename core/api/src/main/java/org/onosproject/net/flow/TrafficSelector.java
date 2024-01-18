@@ -481,8 +481,8 @@ public interface TrafficSelector {
         @Beta
         Builder matchPi(PiCriterion piCriterion);
 
-        Builder selectInport(int inport);
-        Builder selectInport(int inport, int mask);
+        Builder selectInport(long inport);
+        Builder selectInport(long inport, long mask);
 
         Builder selectMac_Dst(Mac_Dst mac_dst);
         Builder selectMac_Dst(Mac_Dst mac_dst, Mac_Dst mask);

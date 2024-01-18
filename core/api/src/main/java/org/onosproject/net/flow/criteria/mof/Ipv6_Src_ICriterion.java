@@ -26,7 +26,7 @@ public final class Ipv6_Src_ICriterion implements Criterion {
         return mask;
     }
 
-    Ipv6_Src_ICriterion(Ipv6_Src_I ipv6_src_i) {
+    public Ipv6_Src_ICriterion(Ipv6_Src_I ipv6_src_i) {
         byte[] ones = new byte[Ipv6_Src_I.LEN];
         Arrays.fill(ones, (byte) 0xFF);
         Ipv6_Src_I mask_full_one = Ipv6_Src_I.valueOf(ones);
@@ -39,7 +39,7 @@ public final class Ipv6_Src_ICriterion implements Criterion {
      *
      * @param ipv6_src_i the Ethernet frame type to match
      */
-    Ipv6_Src_ICriterion(Ipv6_Src_I ipv6_src_i, Ipv6_Src_I mask) {
+    public Ipv6_Src_ICriterion(Ipv6_Src_I ipv6_src_i, Ipv6_Src_I mask) {
         this.ipv6_src_i = ipv6_src_i;
       	this.mask = mask;
     }

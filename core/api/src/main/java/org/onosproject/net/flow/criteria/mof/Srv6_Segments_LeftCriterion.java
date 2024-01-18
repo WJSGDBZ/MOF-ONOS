@@ -26,7 +26,7 @@ public final class Srv6_Segments_LeftCriterion implements Criterion {
         return mask;
     }
 
-    Srv6_Segments_LeftCriterion(long srv6_segments_left) {
+    public Srv6_Segments_LeftCriterion(long srv6_segments_left) {
         this(srv6_segments_left, 0xFF);
     }
 
@@ -35,7 +35,7 @@ public final class Srv6_Segments_LeftCriterion implements Criterion {
      *
      * @param srv6_segments_left the Ethernet frame type to match
      */
-    Srv6_Segments_LeftCriterion(long srv6_segments_left, long mask) {
+    public Srv6_Segments_LeftCriterion(long srv6_segments_left, long mask) {
         this.srv6_segments_left = srv6_segments_left;
       	this.mask = mask;
     }

@@ -26,7 +26,7 @@ public final class Srv6_Last_EntyCriterion implements Criterion {
         return mask;
     }
 
-    Srv6_Last_EntyCriterion(long srv6_last_enty) {
+    public Srv6_Last_EntyCriterion(long srv6_last_enty) {
         this(srv6_last_enty, 0xFF);
     }
 
@@ -35,7 +35,7 @@ public final class Srv6_Last_EntyCriterion implements Criterion {
      *
      * @param srv6_last_enty the Ethernet frame type to match
      */
-    Srv6_Last_EntyCriterion(long srv6_last_enty, long mask) {
+    public Srv6_Last_EntyCriterion(long srv6_last_enty, long mask) {
         this.srv6_last_enty = srv6_last_enty;
       	this.mask = mask;
     }

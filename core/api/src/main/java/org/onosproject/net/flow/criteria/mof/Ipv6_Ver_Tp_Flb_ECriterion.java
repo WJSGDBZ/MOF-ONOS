@@ -26,7 +26,7 @@ public final class Ipv6_Ver_Tp_Flb_ECriterion implements Criterion {
         return mask;
     }
 
-    Ipv6_Ver_Tp_Flb_ECriterion(long ipv6_ver_tp_flb_e) {
+    public Ipv6_Ver_Tp_Flb_ECriterion(long ipv6_ver_tp_flb_e) {
         this(ipv6_ver_tp_flb_e, 0xFFFFFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Ipv6_Ver_Tp_Flb_ECriterion implements Criterion {
      *
      * @param ipv6_ver_tp_flb_e the Ethernet frame type to match
      */
-    Ipv6_Ver_Tp_Flb_ECriterion(long ipv6_ver_tp_flb_e, long mask) {
+    public Ipv6_Ver_Tp_Flb_ECriterion(long ipv6_ver_tp_flb_e, long mask) {
         this.ipv6_ver_tp_flb_e = ipv6_ver_tp_flb_e;
       	this.mask = mask;
     }

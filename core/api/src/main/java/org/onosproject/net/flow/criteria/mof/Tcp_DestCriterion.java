@@ -26,7 +26,7 @@ public final class Tcp_DestCriterion implements Criterion {
         return mask;
     }
 
-    Tcp_DestCriterion(long tcp_dest) {
+    public Tcp_DestCriterion(long tcp_dest) {
         this(tcp_dest, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Tcp_DestCriterion implements Criterion {
      *
      * @param tcp_dest the Ethernet frame type to match
      */
-    Tcp_DestCriterion(long tcp_dest, long mask) {
+    public Tcp_DestCriterion(long tcp_dest, long mask) {
         this.tcp_dest = tcp_dest;
       	this.mask = mask;
     }

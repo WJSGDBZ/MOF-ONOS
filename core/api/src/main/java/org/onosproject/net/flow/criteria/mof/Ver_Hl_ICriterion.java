@@ -26,7 +26,7 @@ public final class Ver_Hl_ICriterion implements Criterion {
         return mask;
     }
 
-    Ver_Hl_ICriterion(long ver_hl_i) {
+    public Ver_Hl_ICriterion(long ver_hl_i) {
         this(ver_hl_i, 0xFF);
     }
 
@@ -35,7 +35,7 @@ public final class Ver_Hl_ICriterion implements Criterion {
      *
      * @param ver_hl_i the Ethernet frame type to match
      */
-    Ver_Hl_ICriterion(long ver_hl_i, long mask) {
+    public Ver_Hl_ICriterion(long ver_hl_i, long mask) {
         this.ver_hl_i = ver_hl_i;
       	this.mask = mask;
     }

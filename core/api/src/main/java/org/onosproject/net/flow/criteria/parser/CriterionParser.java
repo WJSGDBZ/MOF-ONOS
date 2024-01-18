@@ -5,16 +5,17 @@ import org.onosproject.net.flow.criteria.Criterion.Type;;
 public final class CriterionParser {
     
     final static String PREFIX = "0x";
-    //parser 1, 2, 4, 8bytes 
+    //parser 1, 2, 4 bytes 
     public static String BasicParser(long data, long mask, Type type) {
         switch(type){
+        case DL_TYPE:
+            return PREFIX + Long.toHexString(data);
         case IN_PORT:
             return data + "";
         case VLAN1_TPID:
         case VLAN1_QID:
         case VLAN2_TPID:
         case VLAN2_QID:
-        case DL_TYPE:
         case VER_HL_E:
         case TOS_E:
         case TOT_LEN_E:
@@ -71,7 +72,9 @@ public final class CriterionParser {
     public static String ComplexParser(byte[] data, byte[] mask, Type type) {
         switch(type){
         case MAC_DST:
+            return encodeMACStringHelper(data, mask);
         case MAC_SRC:
+            return encodeMACStringHelper(data, mask);
         case IPV6_SRC_E:
         case IPV6_DST_E:
         case SRV6_SEGMENTLIST3:

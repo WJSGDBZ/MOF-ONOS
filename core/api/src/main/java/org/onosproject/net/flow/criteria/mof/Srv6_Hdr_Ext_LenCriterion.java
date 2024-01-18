@@ -26,7 +26,7 @@ public final class Srv6_Hdr_Ext_LenCriterion implements Criterion {
         return mask;
     }
 
-    Srv6_Hdr_Ext_LenCriterion(long srv6_hdr_ext_len) {
+    public Srv6_Hdr_Ext_LenCriterion(long srv6_hdr_ext_len) {
         this(srv6_hdr_ext_len, 0xFF);
     }
 
@@ -35,7 +35,7 @@ public final class Srv6_Hdr_Ext_LenCriterion implements Criterion {
      *
      * @param srv6_hdr_ext_len the Ethernet frame type to match
      */
-    Srv6_Hdr_Ext_LenCriterion(long srv6_hdr_ext_len, long mask) {
+    public Srv6_Hdr_Ext_LenCriterion(long srv6_hdr_ext_len, long mask) {
         this.srv6_hdr_ext_len = srv6_hdr_ext_len;
       	this.mask = mask;
     }

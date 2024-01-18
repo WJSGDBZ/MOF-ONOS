@@ -35,6 +35,7 @@ import org.onosproject.net.flow.instructions.Instructions;
 import org.onosproject.net.meter.MeterId;
 import org.onosproject.net.pi.runtime.PiTableAction;
 import io.netty.buffer.ByteBuf;
+import org.onosproject.net.flow.instructions.protocol.*;
 /**
  * Abstraction of network traffic treatment.
  */
@@ -145,8 +146,16 @@ public interface TrafficTreatment {
         Builder setOutput(PortNumber number);
         
         Builder treatOutput(PortNumber number);
+
+        Builder treatDeleteProtocol(int flag);
         
-        Builder treatGOTO_TABLE(short tableId);
+        Builder treatSegRougting();
+
+        Builder treatMoveProtocol(int src, int dst);
+
+        Builder treatAddProtocol(int flag, Protocol protocol);
+
+        Builder treatModField(int flag, Protocol protocol);
 
         /**
          * Sets the src l2 address.

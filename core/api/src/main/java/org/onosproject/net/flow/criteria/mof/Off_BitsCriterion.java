@@ -26,7 +26,7 @@ public final class Off_BitsCriterion implements Criterion {
         return mask;
     }
 
-    Off_BitsCriterion(long off_bits) {
+    public Off_BitsCriterion(long off_bits) {
         this(off_bits, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Off_BitsCriterion implements Criterion {
      *
      * @param off_bits the Ethernet frame type to match
      */
-    Off_BitsCriterion(long off_bits, long mask) {
+    public Off_BitsCriterion(long off_bits, long mask) {
         this.off_bits = off_bits;
       	this.mask = mask;
     }

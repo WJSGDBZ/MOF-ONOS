@@ -26,7 +26,7 @@ public final class Mac_SrcCriterion implements Criterion {
         return mask;
     }
 
-    Mac_SrcCriterion(Mac_Src mac_src) {
+    public Mac_SrcCriterion(Mac_Src mac_src) {
         byte[] ones = new byte[Mac_Src.LEN];
         Arrays.fill(ones, (byte) 0xFF);
         Mac_Src mask_full_one = Mac_Src.valueOf(ones);
@@ -39,7 +39,7 @@ public final class Mac_SrcCriterion implements Criterion {
      *
      * @param mac_src the Ethernet frame type to match
      */
-    Mac_SrcCriterion(Mac_Src mac_src, Mac_Src mask) {
+    public Mac_SrcCriterion(Mac_Src mac_src, Mac_Src mask) {
         this.mac_src = mac_src;
       	this.mask = mask;
     }

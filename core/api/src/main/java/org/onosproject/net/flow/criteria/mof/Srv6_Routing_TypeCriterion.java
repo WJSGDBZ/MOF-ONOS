@@ -26,7 +26,7 @@ public final class Srv6_Routing_TypeCriterion implements Criterion {
         return mask;
     }
 
-    Srv6_Routing_TypeCriterion(long srv6_routing_Type) {
+    public Srv6_Routing_TypeCriterion(long srv6_routing_Type) {
         this(srv6_routing_Type, 0xFF);
     }
 
@@ -35,7 +35,7 @@ public final class Srv6_Routing_TypeCriterion implements Criterion {
      *
      * @param srv6_routing_Type the Ethernet frame type to match
      */
-    Srv6_Routing_TypeCriterion(long srv6_routing_Type, long mask) {
+    public Srv6_Routing_TypeCriterion(long srv6_routing_Type, long mask) {
         this.srv6_routing_Type = srv6_routing_Type;
       	this.mask = mask;
     }

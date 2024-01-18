@@ -26,7 +26,7 @@ public final class Srv6_TagCriterion implements Criterion {
         return mask;
     }
 
-    Srv6_TagCriterion(long srv6_tag) {
+    public Srv6_TagCriterion(long srv6_tag) {
         this(srv6_tag, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Srv6_TagCriterion implements Criterion {
      *
      * @param srv6_tag the Ethernet frame type to match
      */
-    Srv6_TagCriterion(long srv6_tag, long mask) {
+    public Srv6_TagCriterion(long srv6_tag, long mask) {
         this.srv6_tag = srv6_tag;
       	this.mask = mask;
     }

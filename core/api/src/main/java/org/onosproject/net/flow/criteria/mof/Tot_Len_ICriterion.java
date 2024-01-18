@@ -26,7 +26,7 @@ public final class Tot_Len_ICriterion implements Criterion {
         return mask;
     }
 
-    Tot_Len_ICriterion(long tot_len_i) {
+    public Tot_Len_ICriterion(long tot_len_i) {
         this(tot_len_i, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Tot_Len_ICriterion implements Criterion {
      *
      * @param tot_len_i the Ethernet frame type to match
      */
-    Tot_Len_ICriterion(long tot_len_i, long mask) {
+    public Tot_Len_ICriterion(long tot_len_i, long mask) {
         this.tot_len_i = tot_len_i;
       	this.mask = mask;
     }

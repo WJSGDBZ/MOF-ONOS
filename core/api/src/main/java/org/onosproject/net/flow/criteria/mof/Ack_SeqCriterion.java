@@ -26,7 +26,7 @@ public final class Ack_SeqCriterion implements Criterion {
         return mask;
     }
 
-    Ack_SeqCriterion(long ack_seq) {
+    public Ack_SeqCriterion(long ack_seq) {
         this(ack_seq, 0xFFFFFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Ack_SeqCriterion implements Criterion {
      *
      * @param ack_seq the Ethernet frame type to match
      */
-    Ack_SeqCriterion(long ack_seq, long mask) {
+    public Ack_SeqCriterion(long ack_seq, long mask) {
         this.ack_seq = ack_seq;
       	this.mask = mask;
     }

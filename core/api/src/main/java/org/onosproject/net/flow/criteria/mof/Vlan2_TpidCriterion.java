@@ -26,7 +26,7 @@ public final class Vlan2_TpidCriterion implements Criterion {
         return mask;
     }
 
-    Vlan2_TpidCriterion(long vlan2_tpid) {
+    public Vlan2_TpidCriterion(long vlan2_tpid) {
         this(vlan2_tpid, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Vlan2_TpidCriterion implements Criterion {
      *
      * @param vlan2_tpid the Ethernet frame type to match
      */
-    Vlan2_TpidCriterion(long vlan2_tpid, long mask) {
+    public Vlan2_TpidCriterion(long vlan2_tpid, long mask) {
         this.vlan2_tpid = vlan2_tpid;
       	this.mask = mask;
     }

@@ -26,7 +26,7 @@ public final class Ipv6_I_TypeCriterion implements Criterion {
         return mask;
     }
 
-    Ipv6_I_TypeCriterion(long ipv6_i_type) {
+    public Ipv6_I_TypeCriterion(long ipv6_i_type) {
         this(ipv6_i_type, 0xFF);
     }
 
@@ -35,7 +35,7 @@ public final class Ipv6_I_TypeCriterion implements Criterion {
      *
      * @param ipv6_i_type the Ethernet frame type to match
      */
-    Ipv6_I_TypeCriterion(long ipv6_i_type, long mask) {
+    public Ipv6_I_TypeCriterion(long ipv6_i_type, long mask) {
         this.ipv6_i_type = ipv6_i_type;
       	this.mask = mask;
     }

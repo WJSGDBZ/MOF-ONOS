@@ -26,7 +26,7 @@ public final class WindowCriterion implements Criterion {
         return mask;
     }
 
-    WindowCriterion(long window) {
+    public WindowCriterion(long window) {
         this(window, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class WindowCriterion implements Criterion {
      *
      * @param window the Ethernet frame type to match
      */
-    WindowCriterion(long window, long mask) {
+    public WindowCriterion(long window, long mask) {
         this.window = window;
       	this.mask = mask;
     }

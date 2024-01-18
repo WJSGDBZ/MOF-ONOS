@@ -26,7 +26,7 @@ public final class Tos_ECriterion implements Criterion {
         return mask;
     }
 
-    Tos_ECriterion(long tos_e) {
+    public Tos_ECriterion(long tos_e) {
         this(tos_e, 0xFF);
     }
 
@@ -35,7 +35,7 @@ public final class Tos_ECriterion implements Criterion {
      *
      * @param tos_e the Ethernet frame type to match
      */
-    Tos_ECriterion(long tos_e, long mask) {
+    public Tos_ECriterion(long tos_e, long mask) {
         this.tos_e = tos_e;
       	this.mask = mask;
     }

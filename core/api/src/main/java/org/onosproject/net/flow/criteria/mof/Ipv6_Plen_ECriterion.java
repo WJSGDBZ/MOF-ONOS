@@ -26,7 +26,7 @@ public final class Ipv6_Plen_ECriterion implements Criterion {
         return mask;
     }
 
-    Ipv6_Plen_ECriterion(long ipv6_plen_e) {
+    public Ipv6_Plen_ECriterion(long ipv6_plen_e) {
         this(ipv6_plen_e, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Ipv6_Plen_ECriterion implements Criterion {
      *
      * @param ipv6_plen_e the Ethernet frame type to match
      */
-    Ipv6_Plen_ECriterion(long ipv6_plen_e, long mask) {
+    public Ipv6_Plen_ECriterion(long ipv6_plen_e, long mask) {
         this.ipv6_plen_e = ipv6_plen_e;
       	this.mask = mask;
     }

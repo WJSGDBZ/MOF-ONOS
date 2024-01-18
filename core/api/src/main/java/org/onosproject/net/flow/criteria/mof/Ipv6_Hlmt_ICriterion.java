@@ -26,7 +26,7 @@ public final class Ipv6_Hlmt_ICriterion implements Criterion {
         return mask;
     }
 
-    Ipv6_Hlmt_ICriterion(long ipv6_hlmt_i) {
+    public Ipv6_Hlmt_ICriterion(long ipv6_hlmt_i) {
         this(ipv6_hlmt_i, 0xFF);
     }
 
@@ -35,7 +35,7 @@ public final class Ipv6_Hlmt_ICriterion implements Criterion {
      *
      * @param ipv6_hlmt_i the Ethernet frame type to match
      */
-    Ipv6_Hlmt_ICriterion(long ipv6_hlmt_i, long mask) {
+    public Ipv6_Hlmt_ICriterion(long ipv6_hlmt_i, long mask) {
         this.ipv6_hlmt_i = ipv6_hlmt_i;
       	this.mask = mask;
     }

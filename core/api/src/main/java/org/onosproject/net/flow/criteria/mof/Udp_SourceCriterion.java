@@ -26,7 +26,7 @@ public final class Udp_SourceCriterion implements Criterion {
         return mask;
     }
 
-    Udp_SourceCriterion(long udp_source) {
+    public Udp_SourceCriterion(long udp_source) {
         this(udp_source, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Udp_SourceCriterion implements Criterion {
      *
      * @param udp_source the Ethernet frame type to match
      */
-    Udp_SourceCriterion(long udp_source, long mask) {
+    public Udp_SourceCriterion(long udp_source, long mask) {
         this.udp_source = udp_source;
       	this.mask = mask;
     }

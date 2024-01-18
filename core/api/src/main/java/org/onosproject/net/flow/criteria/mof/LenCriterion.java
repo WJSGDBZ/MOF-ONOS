@@ -26,7 +26,7 @@ public final class LenCriterion implements Criterion {
         return mask;
     }
 
-    LenCriterion(long len) {
+    public LenCriterion(long len) {
         this(len, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class LenCriterion implements Criterion {
      *
      * @param len the Ethernet frame type to match
      */
-    LenCriterion(long len, long mask) {
+    public LenCriterion(long len, long mask) {
         this.len = len;
       	this.mask = mask;
     }

@@ -26,7 +26,7 @@ public final class Srv6_Segmentlist3Criterion implements Criterion {
         return mask;
     }
 
-    Srv6_Segmentlist3Criterion(Srv6_Segmentlist3 srv6_segmentlist3) {
+    public Srv6_Segmentlist3Criterion(Srv6_Segmentlist3 srv6_segmentlist3) {
         byte[] ones = new byte[Srv6_Segmentlist3.LEN];
         Arrays.fill(ones, (byte) 0xFF);
         Srv6_Segmentlist3 mask_full_one = Srv6_Segmentlist3.valueOf(ones);
@@ -39,7 +39,7 @@ public final class Srv6_Segmentlist3Criterion implements Criterion {
      *
      * @param srv6_segmentlist3 the Ethernet frame type to match
      */
-    Srv6_Segmentlist3Criterion(Srv6_Segmentlist3 srv6_segmentlist3, Srv6_Segmentlist3 mask) {
+    public Srv6_Segmentlist3Criterion(Srv6_Segmentlist3 srv6_segmentlist3, Srv6_Segmentlist3 mask) {
         this.srv6_segmentlist3 = srv6_segmentlist3;
       	this.mask = mask;
     }

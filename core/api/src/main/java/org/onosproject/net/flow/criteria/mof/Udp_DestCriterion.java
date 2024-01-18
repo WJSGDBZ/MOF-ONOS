@@ -26,7 +26,7 @@ public final class Udp_DestCriterion implements Criterion {
         return mask;
     }
 
-    Udp_DestCriterion(long udp_dest) {
+    public Udp_DestCriterion(long udp_dest) {
         this(udp_dest, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Udp_DestCriterion implements Criterion {
      *
      * @param udp_dest the Ethernet frame type to match
      */
-    Udp_DestCriterion(long udp_dest, long mask) {
+    public Udp_DestCriterion(long udp_dest, long mask) {
         this.udp_dest = udp_dest;
       	this.mask = mask;
     }

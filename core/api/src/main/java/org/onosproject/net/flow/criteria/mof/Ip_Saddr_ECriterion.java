@@ -26,7 +26,7 @@ public final class Ip_Saddr_ECriterion implements Criterion {
         return mask;
     }
 
-    Ip_Saddr_ECriterion(long ip_saddr_e) {
+    public Ip_Saddr_ECriterion(long ip_saddr_e) {
         this(ip_saddr_e, 0xFFFFFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Ip_Saddr_ECriterion implements Criterion {
      *
      * @param ip_saddr_e the Ethernet frame type to match
      */
-    Ip_Saddr_ECriterion(long ip_saddr_e, long mask) {
+    public Ip_Saddr_ECriterion(long ip_saddr_e, long mask) {
         this.ip_saddr_e = ip_saddr_e;
       	this.mask = mask;
     }

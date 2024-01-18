@@ -26,7 +26,7 @@ public final class Srv6_TypeCriterion implements Criterion {
         return mask;
     }
 
-    Srv6_TypeCriterion(long srv6_type) {
+    public Srv6_TypeCriterion(long srv6_type) {
         this(srv6_type, 0xFF);
     }
 
@@ -35,7 +35,7 @@ public final class Srv6_TypeCriterion implements Criterion {
      *
      * @param srv6_type the Ethernet frame type to match
      */
-    Srv6_TypeCriterion(long srv6_type, long mask) {
+    public Srv6_TypeCriterion(long srv6_type, long mask) {
         this.srv6_type = srv6_type;
       	this.mask = mask;
     }

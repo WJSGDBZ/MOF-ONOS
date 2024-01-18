@@ -26,7 +26,7 @@ public final class SeqCriterion implements Criterion {
         return mask;
     }
 
-    SeqCriterion(long seq) {
+    public SeqCriterion(long seq) {
         this(seq, 0xFFFFFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class SeqCriterion implements Criterion {
      *
      * @param seq the Ethernet frame type to match
      */
-    SeqCriterion(long seq, long mask) {
+    public SeqCriterion(long seq, long mask) {
         this.seq = seq;
       	this.mask = mask;
     }

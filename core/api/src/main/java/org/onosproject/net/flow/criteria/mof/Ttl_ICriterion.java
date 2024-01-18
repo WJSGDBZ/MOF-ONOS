@@ -26,7 +26,7 @@ public final class Ttl_ICriterion implements Criterion {
         return mask;
     }
 
-    Ttl_ICriterion(long ttl_i) {
+    public Ttl_ICriterion(long ttl_i) {
         this(ttl_i, 0xFF);
     }
 
@@ -35,7 +35,7 @@ public final class Ttl_ICriterion implements Criterion {
      *
      * @param ttl_i the Ethernet frame type to match
      */
-    Ttl_ICriterion(long ttl_i, long mask) {
+    public Ttl_ICriterion(long ttl_i, long mask) {
         this.ttl_i = ttl_i;
       	this.mask = mask;
     }

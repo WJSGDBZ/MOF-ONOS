@@ -26,7 +26,7 @@ public final class Frag_Off_ECriterion implements Criterion {
         return mask;
     }
 
-    Frag_Off_ECriterion(long frag_off_e) {
+    public Frag_Off_ECriterion(long frag_off_e) {
         this(frag_off_e, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Frag_Off_ECriterion implements Criterion {
      *
      * @param frag_off_e the Ethernet frame type to match
      */
-    Frag_Off_ECriterion(long frag_off_e, long mask) {
+    public Frag_Off_ECriterion(long frag_off_e, long mask) {
         this.frag_off_e = frag_off_e;
       	this.mask = mask;
     }

@@ -49,6 +49,7 @@ import org.onosproject.net.pi.runtime.PiTableAction;
 import org.slf4j.Logger;
 import static org.slf4j.LoggerFactory.getLogger;
 import static com.google.common.base.Preconditions.checkNotNull;
+import org.onosproject.net.flow.instructions.protocol.*;
 
 /**
  * Default traffic treatment implementation.
@@ -415,8 +416,28 @@ public final class DefaultTrafficTreatment implements TrafficTreatment {
         }
 
         @Override
-        public Builder treatGOTO_TABLE(short tableId) {
-            return add(Instructions.createGOTO_TABLE(tableId));
+        public Builder treatDeleteProtocol(int flag) {
+            return add(Instructions.createDeleteProtocol(flag));
+        }
+
+        @Override
+        public Builder treatSegRougting() {
+            return add(Instructions.createSegRougting());
+        }
+
+        @Override
+        public Builder treatMoveProtocol(int src, int dst) {
+            return add(Instructions.createMoveProtocol(src, dst));
+        }
+
+        @Override
+        public Builder treatAddProtocol(int flag, Protocol protocol) {
+            return add(Instructions.createAddProtocol(flag, protocol));
+        }
+
+        @Override
+        public Builder treatModField(int flag, Protocol protocol) {
+            return add(Instructions.createModField(flag, protocol));
         }
 
         @Override

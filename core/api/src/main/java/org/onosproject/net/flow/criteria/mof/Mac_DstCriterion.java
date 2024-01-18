@@ -26,7 +26,7 @@ public final class Mac_DstCriterion implements Criterion {
         return mask;
     }
 
-    Mac_DstCriterion(Mac_Dst mac_dst) {
+    public Mac_DstCriterion(Mac_Dst mac_dst) {
         byte[] ones = new byte[Mac_Dst.LEN];
         Arrays.fill(ones, (byte) 0xFF);
         Mac_Dst mask_full_one = Mac_Dst.valueOf(ones);
@@ -39,7 +39,7 @@ public final class Mac_DstCriterion implements Criterion {
      *
      * @param mac_dst the Ethernet frame type to match
      */
-    Mac_DstCriterion(Mac_Dst mac_dst, Mac_Dst mask) {
+    public Mac_DstCriterion(Mac_Dst mac_dst, Mac_Dst mask) {
         this.mac_dst = mac_dst;
       	this.mask = mask;
     }

@@ -26,7 +26,7 @@ public final class Dl_TypeCriterion implements Criterion {
         return mask;
     }
 
-    Dl_TypeCriterion(long dl_type) {
+    public Dl_TypeCriterion(long dl_type) {
         this(dl_type, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Dl_TypeCriterion implements Criterion {
      *
      * @param dl_type the Ethernet frame type to match
      */
-    Dl_TypeCriterion(long dl_type, long mask) {
+    public Dl_TypeCriterion(long dl_type, long mask) {
         this.dl_type = dl_type;
       	this.mask = mask;
     }

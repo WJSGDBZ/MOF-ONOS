@@ -26,7 +26,7 @@ public final class Tcp_SourceCriterion implements Criterion {
         return mask;
     }
 
-    Tcp_SourceCriterion(long tcp_source) {
+    public Tcp_SourceCriterion(long tcp_source) {
         this(tcp_source, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Tcp_SourceCriterion implements Criterion {
      *
      * @param tcp_source the Ethernet frame type to match
      */
-    Tcp_SourceCriterion(long tcp_source, long mask) {
+    public Tcp_SourceCriterion(long tcp_source, long mask) {
         this.tcp_source = tcp_source;
       	this.mask = mask;
     }

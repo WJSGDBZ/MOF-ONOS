@@ -26,7 +26,7 @@ public final class Urg_PtrCriterion implements Criterion {
         return mask;
     }
 
-    Urg_PtrCriterion(long urg_ptr) {
+    public Urg_PtrCriterion(long urg_ptr) {
         this(urg_ptr, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Urg_PtrCriterion implements Criterion {
      *
      * @param urg_ptr the Ethernet frame type to match
      */
-    Urg_PtrCriterion(long urg_ptr, long mask) {
+    public Urg_PtrCriterion(long urg_ptr, long mask) {
         this.urg_ptr = urg_ptr;
       	this.mask = mask;
     }

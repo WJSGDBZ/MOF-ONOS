@@ -26,7 +26,7 @@ public final class Ipv4_I_TypeCriterion implements Criterion {
         return mask;
     }
 
-    Ipv4_I_TypeCriterion(long ipv4_i_type) {
+    public Ipv4_I_TypeCriterion(long ipv4_i_type) {
         this(ipv4_i_type, 0xFF);
     }
 
@@ -35,7 +35,7 @@ public final class Ipv4_I_TypeCriterion implements Criterion {
      *
      * @param ipv4_i_type the Ethernet frame type to match
      */
-    Ipv4_I_TypeCriterion(long ipv4_i_type, long mask) {
+    public Ipv4_I_TypeCriterion(long ipv4_i_type, long mask) {
         this.ipv4_i_type = ipv4_i_type;
       	this.mask = mask;
     }

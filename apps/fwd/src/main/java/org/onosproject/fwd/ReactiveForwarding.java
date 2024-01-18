@@ -87,6 +87,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.Arrays;
 
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static org.onlab.util.Tools.groupedThreads;
@@ -124,9 +125,12 @@ import static org.onosproject.fwd.OsgiPropertyConstants.INHERIT_FLOW_TREATMENT;
 import static org.onosproject.fwd.OsgiPropertyConstants.INHERIT_FLOW_TREATMENT_DEFAULT;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import org.onlab.packet.Mac_Dst;
+import org.onlab.packet.*;
 import org.onosproject.net.packet.mof.*;
 import org.onosproject.net.flow.instructions.protocol.*;
+import org.onlab.packet.*;
+import org.onosproject.net.flow.criteria.*;
+
 /**
  * Sample reactive forwarding application.
  */
@@ -490,13 +494,6 @@ public class ReactiveForwarding {
         public void process(PacketContext context) {
             // Stop processing if the packet has been handled, since we
             // can't do any more to it.
-            MOFFlow mof_flow = context.inPacket().parsed_mof();
-            
-            MOFL4Layer ml4 = mof_flow.getL4Layer();
-            if(ml4.isSrv6_2_Protocol()){
-                Srv6_2_Protocol srv6_2 = ml4.getSrv6_2_Protocol();
-                byte[] srv6_segmentlist1 = srv6_2.srv6_segmentlist1.value().toBytes();
-            }
             
             if (context.isHandled()) {
                 return;
@@ -631,41 +628,57 @@ public class ReactiveForwarding {
         // packet out first.
         //
         
-        Ethernet inPkt = context.inPacket().parsed();
+        // Ethernet inPkt = context.inPacket().parsed();
         
-        log.info("controller ready to install rule", appId.id());
-        // If PacketOutOnly or ARP packet than forward directly to output port
-        if (packetOutOnly || inPkt.getEtherType() == Ethernet.TYPE_ARP) {
-            log.info("packetOutOnly || inPkt.getEtherType() == Ethernet.TYPE_ARP");
-            packetOut(context, portNumber, macMetrics);
-            return;
-        }
-
-        
-        Mac_Dst mac_dst = Mac_Dst.valueOf(inPkt.getDestinationMACAddress());
-        log.info("Mac_Dst", mac_dst);
-        TrafficSelector selector = DefaultTrafficSelector.builder()
-                                                        .selectMac_Dst(mac_dst)
-                                                        // .matchDl_Type(inPkt.getEtherType())
-                                                        .build();
-        // selectorBuilder.matchInPort(context.inPacket().receivedFrom().port())
-        //                 .matchEthSrc(inPkt.getSourceMAC())
-        //                 .matchEthDst(inPkt.getDestinationMAC())
-        //                 .matchEthType(Ethernet.TYPE_MOF);
-        
-
-        // If configured Match Vlan ID
-        // if (matchVlanId && inPkt.getVlanID() != Ethernet.VLAN_UNTAGGED) {
-        //     selectorBuilder.matchVlanId(VlanId.vlanId(inPkt.getVlanID()));
+        // log.info("controller ready to install rule", appId.id());
+        // // If PacketOutOnly or ARP packet than forward directly to output port
+        // if (packetOutOnly || inPkt.getEtherType() == Ethernet.TYPE_ARP) {
+        //     log.info("packetOutOnly || inPkt.getEtherType() == Ethernet.TYPE_ARP");
+        //     packetOut(context, portNumber, macMetrics);
+        //     return;
         // }
 
+        Ethernet inPkt = context.inPacket().parsed();
+
+        TrafficSelector.Builder selector = DefaultTrafficSelector.builder();
+        MOFFlow mof_flow = context.inPacket().parsed_mof();
+        MOFL4Layer ml4 = mof_flow.getL4Layer();
+        if(ml4.isSrv6_2_Protocol()){
+            // 取出字段
+            Srv6_2_Protocol srv6_2 = ml4.getSrv6_2_Protocol();
+            byte[] srv6_segmentlist1 = srv6_2.srv6_segmentlist1.value().toBytes();
+            long seg_n = srv6_2.srv6_hdr_ext_len.value();
+
+            // 开始组装流表
+            selector.selectSrv6_Hdr_Ext_Len(seg_n)
+                    .selectSrv6_Segmentlist1(Srv6_Segmentlist1.valueOf(srv6_segmentlist1));
+        }
+        // 继续组装流表
+        Mac_Dst mac_dst = Mac_Dst.valueOf(inPkt.getDestinationMACAddress());
+        byte[] byteArray = new byte[Mac_Dst.LEN];
+        Arrays.fill(byteArray, (byte)-1);
+        Mac_Dst mac_dst_mask = Mac_Dst.valueOf(byteArray);
+        selector.selectInport(context.inPacket().receivedFrom().port().toLong())
+                .selectMac_Dst(mac_dst, mac_dst_mask)
+                .selectDl_Type(inPkt.getEtherType());
+
+        log.info("selector = " + selector.build());
+
+        Dl_Protocol dl_protcol = new Dl_Protocol(new Dl_TypeCriterion(0x800));
         TrafficTreatment treatment = DefaultTrafficTreatment.builder()
                                                             .treatOutput(portNumber)
-                                                            //.transition(1)
+                                                            .transition(1)
+                                                            .treatDeleteProtocol(Protocol.IPV4_E)
+                                                            .treatSegRougting()
+                                                            .treatMoveProtocol(Protocol.IPV4_E, Protocol.IPV4_I)
+                                                            .treatAddProtocol(Protocol.DL, dl_protcol)
+                                                            .treatModField(Protocol.DL, dl_protcol)
                                                             .build();
 
+
+        log.info("treatment = " + treatment);
         ForwardingObjective forwardingObjective = DefaultForwardingObjective.builder()
-                .withSelector(selector)
+                .withSelector(selector.build())
                 .withTreatment(treatment)
                 .withPriority(flowPriority)
                 .withFlag(ForwardingObjective.Flag.VERSATILE)
@@ -673,6 +686,16 @@ public class ReactiveForwarding {
                 .fromApp(appId)
                 .makeTemporary(flowTimeout)
                 .add();
+
+        ForwardingObjective forwardingObjectiveRemove = DefaultForwardingObjective.builder()
+                .withSelector(selector.build())
+                .withTreatment(treatment) // 必须指定, 可以创建一个空的动作域
+                .withPriority(flowPriority)
+                .withFlag(ForwardingObjective.Flag.SPECIFIC)
+                .withTableId(0)
+                .fromApp(appId)
+                .remove();
+
 
         flowObjectiveService.forward(context.inPacket().receivedFrom().deviceId(),
                                      forwardingObjective);

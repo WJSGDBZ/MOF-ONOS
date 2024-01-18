@@ -26,7 +26,7 @@ public final class Ipv6_Dst_ECriterion implements Criterion {
         return mask;
     }
 
-    Ipv6_Dst_ECriterion(Ipv6_Dst_E ipv6_dst_e) {
+    public Ipv6_Dst_ECriterion(Ipv6_Dst_E ipv6_dst_e) {
         byte[] ones = new byte[Ipv6_Dst_E.LEN];
         Arrays.fill(ones, (byte) 0xFF);
         Ipv6_Dst_E mask_full_one = Ipv6_Dst_E.valueOf(ones);
@@ -39,7 +39,7 @@ public final class Ipv6_Dst_ECriterion implements Criterion {
      *
      * @param ipv6_dst_e the Ethernet frame type to match
      */
-    Ipv6_Dst_ECriterion(Ipv6_Dst_E ipv6_dst_e, Ipv6_Dst_E mask) {
+    public Ipv6_Dst_ECriterion(Ipv6_Dst_E ipv6_dst_e, Ipv6_Dst_E mask) {
         this.ipv6_dst_e = ipv6_dst_e;
       	this.mask = mask;
     }

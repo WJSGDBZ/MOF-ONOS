@@ -26,7 +26,7 @@ public final class Ip_Check_ICriterion implements Criterion {
         return mask;
     }
 
-    Ip_Check_ICriterion(long ip_check_i) {
+    public Ip_Check_ICriterion(long ip_check_i) {
         this(ip_check_i, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Ip_Check_ICriterion implements Criterion {
      *
      * @param ip_check_i the Ethernet frame type to match
      */
-    Ip_Check_ICriterion(long ip_check_i, long mask) {
+    public Ip_Check_ICriterion(long ip_check_i, long mask) {
         this.ip_check_i = ip_check_i;
       	this.mask = mask;
     }

@@ -26,7 +26,7 @@ public final class Udp_CheckCriterion implements Criterion {
         return mask;
     }
 
-    Udp_CheckCriterion(long udp_check) {
+    public Udp_CheckCriterion(long udp_check) {
         this(udp_check, 0xFFFF);
     }
 
@@ -35,7 +35,7 @@ public final class Udp_CheckCriterion implements Criterion {
      *
      * @param udp_check the Ethernet frame type to match
      */
-    Udp_CheckCriterion(long udp_check, long mask) {
+    public Udp_CheckCriterion(long udp_check, long mask) {
         this.udp_check = udp_check;
       	this.mask = mask;
     }
