@@ -1,3 +1,57 @@
+# OVS-DPDK
+## Description
+多协议交换平台基于Openvswitch-DPDK进行设计，交换机的整体架构如图1所示，分为数据包的解析
+（Parser），匹配（Match），逆解析（Deparser）三个主要模块，而这三个模块的作用实际上就是数
+据包进入到交换平台后要进行的处理流程
+![image](https://github.com/WJSGDBZ/MOF-ONOS/assets/50448108/5ae9174f-c14c-401d-98a5-58c3ee4ffefa)
+### PHV
+在多协议解析中，有多种自定义的协议，以及不同的处理方式，涉及协议类型的添加和删除，为了解决
+这种问题，设计了PHV(Protocol Header Vector)。PHV包含所有可能用到的协议头部以及对应的使能
+位，协议头部即使用到的协议头部内容，使能位用于指示该协议是否被使用到，置为有效时，即该数据
+包（需）含有该协议。
+例如，在某包含自定义协议的系统中，使用到了A，B，C，D，E，F共6种协议，包含两种数据包，类型
+一为[ABCD(数据)]，类型二为[AEF(数据)]，并且该两种数据包会相互转换，即收到类型一的数据包，需
+要转换为类型二发出，如下图所示。
+![image](https://github.com/WJSGDBZ/MOF-ONOS/assets/50448108/c4b131e7-1eab-4458-8c2b-63e8c19ac6b4)  
+对于这样的系统，PHV的设计为{A, B, E, C, F, D}，即
+```
+struct PHV {
+	// protocol A
+	struct A { // 使能位，有效时表示（需）含有该协议头部
+		bool enable;
+		// 协议A头部各字段
+		Atype1 Afield1;
+		Atype2 Afield2; ...
+	};
+	// protocol B
+	struct B { // 使能位，有效时表示（需）含有该协议头部
+		bool enable;
+		// 协议B头部各字段
+		Btype1 Bfield1;
+		Btype2 Bfield2; ...
+	};
+	// protocol E
+	struct E { // 与上述协议A、B结构相同 ... };
+	// protocol C struct C { // 与上述协议A、B结构相同 ... };
+	// protocol F
+	struct F { // 与上述协议A、B结构相同 ... };
+	// protocol D struct D { // 与上述协议A、B结构相同 ... };
+};
+```
+顺序解释如下：在初始情况下，PHV为空，两种数据包最外层的协议头都为协议A，故添加A在第一个位
+置，类型一数据包的第二层协议为B（此处的第二层需七层模型的第二层区别开），类型二的数据包第
+二层协议为E，则将B, E加入PHV，同理加入协议C, F，最后加入协议D。即下图解析树中由上到下、由左
+到右的顺序。  
+![image](https://github.com/WJSGDBZ/MOF-ONOS/assets/50448108/7695d51f-8d52-4d74-b1c9-154ed83930ab)  
+当接收到一个类型一的数据包时，先建立一个数据该数据包的PHV，所有协议的使能位都为无效。在解
+析时就可以发现最外层是协议A，将A的使能位置为有效，在接下来的解析过程中，会依次将B, C, D的使
+能位置为有效。此时该PHV指明该数据包含有A, B, C, D四种协议类型头部。在完成匹配后，发现该数据
+包需转换为类型二，即包含A, E, F三种协议的新数据包，在执行过程中，会把B, C, D三种协议类型置为
+无效，即不需要这几种协议头部，将E, F置为有效，即需要添加这两种协议头部，在逆解析的过程中，就
+会按照PHV中的有效位，即A, E, F进行操作。PHV在解析时确定过程如下，蓝色背景表示该协议被置有
+效，即enable为true，表示含有该协议。
+![image](https://github.com/WJSGDBZ/MOF-ONOS/assets/50448108/d28fc072-42d9-43d9-ac20-d357ac262852)  
+
 # ONOS : Open Network Operating System
 
 
